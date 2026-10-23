@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0e0e11">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Ohemaa's Apparel - Chic women's fashion, wide-leg palazzo pants, cozy co-ords and streetwear shorts. Deliveries on Friday only, store pick-up & wholesale available.">
+  <title>Ohemaa’s Apparel | Luxury Streetwear & Co-ords Boutique</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Top Announcement Bar -->
+  <div class="announcement-bar" id="announcementBar">
+    <div class="announcement-ticker">
+      <span class="ticker-item"><span class="badge-icon">🚚</span> <strong>DELIVERIES ARE ONLY ON FRIDAYS</strong></span>
+      <span class="ticker-sep">•</span>
+      <span class="ticker-item"><span class="badge-icon">🏬</span> STORE PICK-UP ALLOWED</span>
+      <span class="ticker-sep">•</span>
+      <span class="ticker-item"><span class="badge-icon">📦</span> WHOLESALE AVAILABLE</span>
+      <span class="ticker-sep">•</span>
+      <span class="ticker-item"><span class="badge-icon">💬</span> CALL / WHATSAPP: <strong>0599959521</strong></span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header" id="siteHeader">
+    <div class="header-inner">
+      <button class="icon-btn mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Navigation">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+
+      <a href="#" class="brand-logo" id="brandLogoLink">
+        <div class="logo-crown">👑</div>
+        <div class="brand-text">
+          <span class="brand-title">Ohemaa’s</span>
+          <span class="brand-subtitle">APPAREL</span>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <button class="icon-btn" id="headerSearchBtn" aria-label="Search Catalog">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </button>
+
+        <button class="icon-btn wishlist-btn" id="headerWishlistBtn" aria-label="Wishlist">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+          <span class="count-badge hidden" id="wishlistCount">0</span>
+        </button>
+
+        <button class="icon-btn cart-btn" id="headerCartBtn" aria-label="Shopping Bag">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+          <span class="count-badge" id="cartCount">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Search Dropdown / Bar -->
+    <div class="header-search-bar hidden" id="headerSearchBar">
+      <div class="search-input-wrapper">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="catalogSearchInput" placeholder="Search palazzo pants, co-ord sets, shorts..." autocomplete="off">
+        <button class="clear-search-btn hidden" id="clearSearchBtn" aria-label="Clear Search">✕</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="drawer-overlay hidden" id="mobileDrawerOverlay"></div>
+  <aside class="mobile-drawer" id="mobileDrawer">
+    <div class="drawer-header">
+      <div class="drawer-brand">
+        <span class="crown-icon">👑</span>
+        <div>
+          <h4>Ohemaa’s Apparel</h4>
+          <p class="tag-sm">Royal Wardrobe Boutique</p>
+        </div>
+      </div>
+      <button class="close-drawer-btn" id="closeDrawerBtn" aria-label="Close Menu">✕</button>
+    </div>
+
+    <div class="drawer-body">
+      <div class="drawer-policy-card">
+        <div class="policy-alert">
+          <span class="alert-icon">🚚</span>
+          <div>
+            <strong>Deliveries are on FRIDAY ONLY</strong>
+            <p>Order ahead for weekly dispatch across Ghana</p>
+          </div>
+        </div>
+        <div class="policy-alert pickup">
+          <span class="alert-icon">🏬</span>
+          <div>
+            <strong>Store Pick-Up is Allowed</strong>
+            <p>Walk in & collect directly</p>
+          </div>
+        </div>
+      </div>
+
+      <nav class="drawer-nav">
+        <a href="#catalogSection" class="drawer-link" data-category="all">
+          <span class="nav-icon">🛍️</span>
+          <span>All Collection (33 Items)</span>
+        </a>
+        <a href="#catalogSection" class="drawer-link" data-category="co-ords">
+          <span class="nav-icon">✨</span>
+          <span>Co-ord & Crop Sets</span>
+        </a>
+        <a href="#catalogSection" class="drawer-link" data-category="palazzo">
+          <span class="nav-icon">👗</span>
+          <span>Palazzo Wide-Leg Pants</span>
+        </a>
+        <a href="#catalogSection" class="drawer-link" data-category="shorts">
+          <span class="nav-icon">🩳</span>
+          <span>Comfort Lounge Shorts</span>
+        </a>
+        <a href="#catalogSection" class="drawer-link" data-category="crown">
+          <span class="nav-icon">👑</span>
+          <span>Queen Crown Edition</span>
+        </a>
+        <a href="#catalogSection" class="drawer-link" data-category="tie-dye">
+          <span class="nav-icon">🎨</span>
+          <span>Tie-Dye Swirl Drops</span>
+        </a>
+      </nav>
+
+      <div class="drawer-divider"></div>
+
+      <div class="drawer-quick-actions">
+        <button class="btn btn-outline full-width" id="drawerVideoBtn">
+          🎬 Watch Studio Walkthrough
+        </button>
+        <button class="btn btn-gold full-width" id="drawerWholesaleBtn">
+          📦 Wholesale Bulk Inquiries
+        </button>
+      </div>
+
+      <div class="drawer-socials">
+        <h5>Official Channels & Orders</h5>
+        <a href="tel:0599959521" class="social-contact-item">
+          <span class="contact-icon">📞</span>
+          <div>
+            <span class="label">Phone / WhatsApp</span>
+            <strong>0599959521</strong>
+          </div>
+        </a>
+        <a href="https://snapchat.com/add/mummy's_fav" target="_blank" rel="noopener" class="social-contact-item">
+          <span class="contact-icon">👻</span>
+          <div>
+            <span class="label">Snapchat</span>
+            <strong>mummy’s _fav</strong>
+          </div>
+        </a>
+        <a href="https://www.tiktok.com/@obaa" target="_blank" rel="noopener" class="social-contact-item">
+          <span class="contact-icon">🎵</span>
+          <div>
+            <span class="label">TikTok</span>
+            <strong>@obaa</strong>
+          </div>
+        </a>
+      </div>
+
+      <div class="drawer-footer">
+        <button class="admin-portal-link" id="drawerAdminBtn">
+          🔐 Admin Portal (Big_Ohemaa)
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Container -->
+  <main class="main-content">
+    
+    <!-- Instagram/TikTok Style Stories Bar -->
+    <section class="stories-section" aria-label="Featured Story Highlights">
+      <div class="stories-container" id="storiesContainer">
+        <!-- Story 1: Video Showcase Reel -->
+        <div class="story-item active-ring" id="storyVideoReel" role="button" tabindex="0">
+          <div class="story-ring video-ring">
+            <div class="story-avatar">
+              <span class="story-play-icon">▶</span>
+              <img src="./pics/Gh100.jpg.jpeg" alt="Studio Video Reel">
+            </div>
+          </div>
+          <span class="story-label">Studio Reel</span>
+        </div>
+
+        <!-- Story 2: Friday Drop -->
+        <div class="story-item" data-filter="palazzo" role="button" tabindex="0">
+          <div class="story-ring">
+            <div class="story-avatar">
+              <img src="./pics/IMG-20261022-WA0071.jpg.jpeg" alt="Friday Drops">
+            </div>
+          </div>
+          <span class="story-label">Friday Drop</span>
+        </div>
+
+        <!-- Story 3: Queen Crown -->
+        <div class="story-item" data-filter="crown" role="button" tabindex="0">
+          <div class="story-ring">
+            <div class="story-avatar">
+              <img src="./pics/IMG-20261022-WA0085.jpg.jpeg" alt="Crown Shorts">
+            </div>
+          </div>
+          <span class="story-label">👑 Crown</span>
+        </div>
+
+        <!-- Story 4: Co-ords -->
+        <div class="story-item" data-filter="co-ords" role="button" tabindex="0">
+          <div class="story-ring">
+            <div class="story-avatar">
+              <img src="./pics/Gh150.jpg.jpeg" alt="Co-ords">
+            </div>
+          </div>
+          <span class="story-label">Co-ords</span>
+        </div>
+
+        <!-- Story 5: Lounge Shorts -->
+        <div class="story-item" data-filter="shorts" role="button" tabindex="0">
+          <div class="story-ring">
+            <div class="story-avatar">
+              <img src="./pics/Gh120.jpg.jpeg" alt="Shorts">
+            </div>
+          </div>
+          <span class="story-label">Shorts</span>
+        </div>
+
+        <!-- Story 6: Tie-Dye -->
+        <div class="story-item" data-filter="tie-dye" role="button" tabindex="0">
+          <div class="story-ring">
+            <div class="story-avatar">
+              <img src="./pics/IMG-20261022-WA0096.jpg.jpeg" alt="Tie-Dye">
+            </div>
+          </div>
+          <span class="story-label">Tie-Dye</span>
+        </div>
+
+        <!-- Story 7: Wholesale -->
+        <div class="story-item" id="storyWholesale" role="button" tabindex="0">
+          <div class="story-ring wholesale-ring">
+            <div class="story-avatar">
+              <span class="story-icon-center">📦</span>
+            </div>
+          </div>
+          <span class="story-label">Wholesale</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mobile-First Hero Section -->
+    <section class="hero-section">
+      <div class="hero-card">
+        <div class="hero-bg-accent"></div>
+        <div class="hero-content">
+          <div class="hero-pill-badge">
+            <span class="pulse-dot"></span>
+            <span>Ghana's Trendiest Queen Wardrobe</span>
+          </div>
+          
+          <h1 class="hero-title">Elevate Your Everyday <span class="gold-gradient-text">Queen Elegance</span></h1>
+          
+          <p class="hero-desc">
+            Premium wide-leg palazzo trousers, luxe rib co-ords & comfort lounge shorts made for effortless glamour.
+          </p>
+
+          <div class="hero-alert-banner">
+            <div class="alert-pill delivery">
+              <span class="icon">🚚</span>
+              <span><strong>Friday Deliveries Only</strong> (Nationwide)</span>
+            </div>
+            <div class="alert-pill pickup">
+              <span class="icon">🏬</span>
+              <span><strong>Store Pick-Up Allowed</strong></span>
+            </div>
+          </div>
+
+          <div class="hero-cta-group">
+            <a href="#catalogSection" class="btn btn-gold hero-btn">
+              <span>Explore Collection</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+            <button class="btn btn-glass hero-video-btn" id="heroPlayVideoBtn">
+              <span class="play-triangle">▶</span>
+              <span>Watch Studio Reel</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Operational Highlights Cards (Mobile Swipeable Strip) -->
+    <section class="policy-strip">
+      <div class="policy-grid">
+        <div class="policy-card">
+          <div class="policy-icon-wrapper gold">🚚</div>
+          <div class="policy-info">
+            <h4>Friday Delivery Only</h4>
+            <p>Every Friday delivery route across Accra, Kumasi & nationwide Ghana.</p>
+          </div>
+        </div>
+
+        <div class="policy-card">
+          <div class="policy-icon-wrapper emerald">🏬</div>
+          <div class="policy-info">
+            <h4>Pick-Up Allowed</h4>
+            <p>Collect orders at our studio boutique after placing your reservation.</p>
+          </div>
+        </div>
+
+        <div class="policy-card">
+          <div class="policy-icon-wrapper purple">📦</div>
+          <div class="policy-info">
+            <h4>Wholesale Available</h4>
+            <p>Bulk rates for boutiques & retailers. Min order 10 pieces with custom packs.</p>
+            <button class="text-link-btn" id="policyWholesaleLink">Inquire Rates →</button>
+          </div>
+        </div>
+
+        <div class="policy-card">
+          <div class="policy-icon-wrapper green">💬</div>
+          <div class="policy-info">
+            <h4>Fast WhatsApp Desk</h4>
+            <p>Direct service on <strong>0599959521</strong>. Friendly instant confirmation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Video Showcase Reel Banner -->
+    <section class="video-showcase-section">
+      <div class="video-banner-card">
+        <div class="video-preview-wrapper" id="videoBannerPlayerWrapper">
+          <video id="featuredInlineVideo" playsinline loop muted preload="metadata" poster="./pics/Gh100.jpg.jpeg">
+            <source src="./pics/VID-20261022-WA0108.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <div class="video-overlay" id="videoBannerOverlay">
+            <button class="video-play-center-btn" id="inlineVideoPlayBtn" aria-label="Play Video Reel">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            </button>
+            <div class="video-tag-pill">🎬 LIVE STUDIO REEL</div>
+            <div class="video-sound-pill" id="inlineVideoSoundToggle">
+              <span id="soundIcon">🔇 Unmute</span>
+            </div>
+          </div>
+        </div>
+        <div class="video-card-body">
+          <div class="badge-tag">Boutique Lookbook</div>
+          <h3>See The Fabric & Quality In Motion</h3>
+          <p>Real-life studio recording showcasing fit, vibrant tones, and elastic comfort waistbands.</p>
+          <div class="video-actions">
+            <button class="btn btn-outline btn-sm" id="openFullscreenReelBtn">
+              📱 Open Vertical Reel Mode
+            </button>
+            <a href="#catalogSection" class="btn btn-gold btn-sm">
+              Shop Outfits (33)
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Catalog Section -->
+    <section class="catalog-section" id="catalogSection">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <div class="sub-heading">THE ROYAL CATALOGUE</div>
+          <h2 class="section-title">Trending Styles & Drops</h2>
+        </div>
+        <div class="admin-quick-pill" id="adminQuickPill">
+          <span>👑 Price Status:</span>
+          <span class="price-status-badge" id="priceStatusSummary">GH₵ ___ (Client sets prices in Admin)</span>
+        </div>
+      </div>
+
+      <!-- Categories Navigation Pills (Horizontal Touch Slider) -->
+      <div class="category-nav-wrapper">
+        <div class="category-nav" id="categoryNav">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Search & Sorting Filters Toolbar -->
+      <div class="catalog-toolbar">
+        <div class="toolbar-search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" id="inlineSearchInput" placeholder="Search by color, pants, shorts...">
+        </div>
+
+        <div class="toolbar-filters">
+          <select id="priceFilterSelect" class="filter-select" aria-label="Filter by Price Setup">
+            <option value="all">All Items</option>
+            <option value="unpriced">Pending Price (GH₵ ___)</option>
+            <option value="priced">Priced by Admin</option>
+          </select>
+
+          <select id="sortSelect" class="filter-select" aria-label="Sort Catalog">
+            <option value="featured">Featured First</option>
+            <option value="name-asc">Name (A-Z)</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Active Filter Chips -->
+      <div class="active-filter-chips hidden" id="activeFilterChips">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Products Grid -->
+      <div class="products-grid" id="productsGrid">
+        <!-- Products populated dynamically by JS -->
+      </div>
+
+      <!-- Empty State -->
+      <div class="catalog-empty-state hidden" id="catalogEmptyState">
+        <div class="empty-icon">🔍</div>
+        <h3>No products found</h3>
+        <p>Try searching with another keyword or reset the category filters.</p>
+        <button class="btn btn-outline" id="resetFiltersBtn">Reset All Filters</button>
+      </div>
+    </section>
+
+    <!-- Wholesale Dedicated Section -->
+    <section class="wholesale-section" id="wholesaleSection">
+      <div class="wholesale-card">
+        <div class="wholesale-badge">📦 BULK & BOUTIQUE SUPPLY</div>
+        <h2>Wholesale Distribution Available</h2>
+        <p>
+          Stock your shop or online boutique with Ohemaa’s best-selling palazzo sweatpants, loungewear sets, and shorts.
+        </p>
+
+        <div class="wholesale-perks-grid">
+          <div class="perk-item">
+            <span class="perk-icon">✨</span>
+            <h4>Low MOQ (10 Pcs)</h4>
+            <p>Start with a manageable order of 10 mixed colors and sizes.</p>
+          </div>
+          <div class="perk-item">
+            <span class="perk-icon">💰</span>
+            <h4>Tiered Discounts</h4>
+            <p>Attractive margins designed for resellers and Ghanaian boutiques.</p>
+          </div>
+          <div class="perk-item">
+            <span class="perk-icon">🚚</span>
+            <h4>Friday Cargo Dispatch</h4>
+            <p>Reliable weekly Friday freight to Kumasi, Takoradi, Tamale & nationwide.</p>
+          </div>
+        </div>
+
+        <div class="wholesale-action-box">
+          <button class="btn btn-gold" id="openWholesaleModalBtn">
+            <span>Request Wholesale Rate Card</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+          <a href="https://wa.me/233599959521?text=Hello%20Ohemaa%E2%80%99s%20Apparel,%20I%20am%20interested%20in%20placing%20a%20wholesale%20order." target="_blank" rel="noopener" class="btn btn-outline whatsapp-btn">
+            💬 Quick WhatsApp Wholesale Inquiry
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Store Pick-Up & Friday Delivery Schedule Guide -->
+    <section class="schedule-section">
+      <div class="schedule-grid">
+        <div class="schedule-card delivery-schedule">
+          <div class="schedule-header">
+            <div class="header-icon">🚚</div>
+            <div>
+              <h3>Friday Delivery Schedule</h3>
+              <p class="subtitle">Weekly Scheduled Deliveries Across Ghana</p>
+            </div>
+          </div>
+          <ul class="schedule-points">
+            <li><strong>Weekly Dispatch:</strong> All door-to-door deliveries are conducted strictly every <strong>Friday</strong>.</li>
+            <li><strong>Cut-Off Window:</strong> Place orders by Thursday 6:00 PM to guarantee inclusion in the Friday batch.</li>
+            <li><strong>Coverage:</strong> Greater Accra, Tema, Kumasi, and nationwide parcel via VIP / OA / Fedex stations.</li>
+          </ul>
+        </div>
+
+        <div class="schedule-card pickup-schedule">
+          <div class="schedule-header">
+            <div class="header-icon">🏬</div>
+            <div>
+              <h3>Store Pick-Up Guidelines</h3>
+              <p class="subtitle">Pick Up Allowed at Our Studio</p>
+            </div>
+          </div>
+          <ul class="schedule-points">
+            <li><strong>Self-Collection:</strong> You are welcome to pick up your order directly from our location.</li>
+            <li><strong>Fast Processing:</strong> After placing your order via web/WhatsApp, we prepare and bag your items.</li>
+            <li><strong>Direct Assistance:</strong> Call or WhatsApp <strong>0599959521</strong> before visiting for landmark directions.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Official Socials & Direct Contact Footer Strip -->
+    <section class="socials-feature-section">
+      <div class="socials-card">
+        <h3>Connect With Ohemaa</h3>
+        <p>Follow our daily outfit styling, client fits, and behind-the-scenes drops:</p>
+        
+        <div class="social-badges-row">
+          <a href="tel:0599959521" class="social-pill phone-pill">
+            <span class="social-icon">📞</span>
+            <div class="text">
+              <small>Call Direct</small>
+              <strong>0599959521</strong>
+            </div>
+          </a>
+
+          <a href="https://wa.me/233599959521" target="_blank" rel="noopener" class="social-pill whatsapp-pill">
+            <span class="social-icon">💬</span>
+            <div class="text">
+              <small>WhatsApp</small>
+              <strong>0599959521</strong>
+            </div>
+          </a>
+
+          <a href="https://snapchat.com/add/mummy's_fav" target="_blank" rel="noopener" class="social-pill snap-pill">
+            <span class="social-icon">👻</span>
+            <div class="text">
+              <small>Snapchat</small>
+              <strong>mummy’s _fav</strong>
+            </div>
+          </a>
+
+          <a href="https://www.tiktok.com/@obaa" target="_blank" rel="noopener" class="social-pill tiktok-pill">
+            <span class="social-icon">🎵</span>
+            <div class="text">
+              <small>TikTok</small>
+              <strong>@obaa</strong>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Site Footer -->
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="footer-logo">👑 Ohemaa’s Apparel</div>
+          <p class="footer-tagline">
+            Ghana's destination for comfy, chic wide-leg trousers, co-ord sets, and everyday luxury loungewear.
+          </p>
+        </div>
+
+        <div class="footer-details">
+          <p><strong>Deliveries:</strong> Fridays Only Across Ghana</p>
+          <p><strong>Pick-Up:</strong> Allowed daily upon order confirmation</p>
+          <p><strong>Wholesale:</strong> Available for boutique owners</p>
+          <p><strong>Phone:</strong> 0599959521</p>
+        </div>
+
+        <div class="footer-admin-link">
+          <button class="admin-footer-btn" id="footerAdminBtn">
+            👑 Client Admin Portal Login
+          </button>
+        </div>
+
+        <div class="footer-copyright">
+          © 2026 Ohemaa’s Apparel. All Rights Reserved. Real-World Ready Boutique.
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Mobile Bottom Sticky Navigation Dock -->
+  <nav class="bottom-dock" id="bottomDock" aria-label="Mobile Bottom Navigation">
+    <a href="#" class="dock-item active" id="dockHomeBtn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+      <span>Home</span>
+    </a>
+
+    <a href="#catalogSection" class="dock-item" id="dockShopBtn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+      <span>Catalog</span>
+    </a>
+
+    <button class="dock-item" id="dockVideoBtn">
+      <div class="dock-video-bubble">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      </div>
+      <span>Reel</span>
+    </button>
+
+    <button class="dock-item" id="dockCartBtn">
+      <div class="dock-cart-wrapper">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+        <span class="dock-badge" id="dockCartCount">0</span>
+      </div>
+      <span>Cart</span>
+    </button>
+
+    <button class="dock-item" id="dockAdminBtn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      <span id="dockAdminLabel">Admin</span>
+    </button>
+  </nav>
+
+  <!-- ==================== MODALS & DRAWERS ==================== -->
+
+  <!-- Cart / Checkout Slide-out Drawer -->
+  <div class="modal-overlay hidden" id="cartOverlay"></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping Cart">
+    <div class="cart-drawer-header">
+      <div class="header-title-box">
+        <h3>Shopping Bag</h3>
+        <span class="cart-items-counter" id="cartHeaderCount">0 Items</span>
+      </div>
+      <button class="close-cart-btn" id="closeCartBtn" aria-label="Close Bag">✕</button>
+    </div>
+
+    <!-- Friday Delivery Notice In Cart -->
+    <div class="cart-delivery-alert">
+      <span class="alert-ico">🚚</span>
+      <div>
+        <strong>Deliveries are strictly on Fridays</strong>
+        <p>Pick-up is also available daily at our store.</p>
+      </div>
+    </div>
+
+    <!-- Cart Body -->
+    <div class="cart-drawer-body" id="cartDrawerBody">
+      <!-- Items dynamically injected -->
+      <div class="cart-empty" id="cartEmptyState">
+        <div class="empty-bag-icon">🛍️</div>
+        <h4>Your bag is empty</h4>
+        <p>Browse our trendy palazzo trousers and co-ords to add your favorites.</p>
+        <button class="btn btn-gold btn-sm" id="cartEmptyShopBtn">Start Shopping</button>
+      </div>
+
+      <div class="cart-items-list hidden" id="cartItemsList">
+        <!-- Cart item cards -->
+      </div>
+    </div>
+
+    <!-- Cart Footer & Checkout Form -->
+    <div class="cart-drawer-footer hidden" id="cartDrawerFooter">
+      <div class="cart-summary-row">
+        <span>Order Subtotal:</span>
+        <strong id="cartSubtotalText">GH₵ ___</strong>
+      </div>
+      <p class="unpriced-notice-note" id="cartUnpricedNote">
+        *Some items display <strong>GH₵ ___</strong>. The exact final price will be confirmed directly on WhatsApp by Big Ohemaa!
+      </p>
+
+      <!-- Delivery Method Selection -->
+      <div class="checkout-method-box">
+        <label class="section-label">Fulfillment Method:</label>
+        <div class="method-options">
+          <label class="method-option-card">
+            <input type="radio" name="deliveryMethod" value="friday-delivery" checked>
+            <div class="option-content">
+              <span class="ico">🚚</span>
+              <div>
+                <strong>Friday Delivery</strong>
+                <small>Dispatched this upcoming Friday</small>
+              </div>
+            </div>
+          </label>
+
+          <label class="method-option-card">
+            <input type="radio" name="deliveryMethod" value="store-pickup">
+            <div class="option-content">
+              <span class="ico">🏬</span>
+              <div>
+                <strong>Store Pick-Up</strong>
+                <small>Allowed & ready after confirmation</small>
+              </div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Customer Details Form -->
+      <div class="checkout-fields">
+        <div class="input-group">
+          <label for="custName">Your Full Name *</label>
+          <input type="text" id="custName" placeholder="e.g. Ama Serwaa" required>
+        </div>
+
+        <div class="input-group">
+          <label for="custPhone">Phone / WhatsApp Number *</label>
+          <input type="tel" id="custPhone" placeholder="e.g. 0244123456" required>
+        </div>
+
+        <div class="input-group" id="deliveryAddressGroup">
+          <label for="custAddress">Delivery Location / Address (Ghana) *</label>
+          <input type="text" id="custAddress" placeholder="e.g. East Legon, near ANC Mall / Kumasi">
+        </div>
+
+        <div class="input-group">
+          <label for="custNotes">Special Notes or Color Request</label>
+          <input type="text" id="custNotes" placeholder="e.g. Preferred shades, gift packaging">
+        </div>
+
+        <label class="wholesale-checkbox-label">
+          <input type="checkbox" id="cartWholesaleCheck">
+          <span>This is a Wholesale Order (10+ items)</span>
+        </label>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="cart-action-buttons">
+        <button class="btn btn-whatsapp full-width" id="checkoutWhatsappBtn">
+          <span>💬 Complete Order on WhatsApp</span>
+        </button>
+        <button class="btn btn-outline full-width" id="generateReceiptBtn">
+          🧾 Generate Digital Receipt
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Product Detail / Quick View Modal -->
+  <div class="modal-overlay hidden" id="productModalOverlay"></div>
+  <div class="product-modal hidden" id="productModal" role="dialog" aria-modal="true">
+    <button class="modal-close-btn" id="closeProductModalBtn" aria-label="Close Product View">✕</button>
+    <div class="product-modal-inner" id="productModalContent">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+
+  <!-- Fullscreen Vertical Reels Video Player Modal -->
+  <div class="modal-overlay hidden" id="reelModalOverlay"></div>
+  <div class="reel-modal hidden" id="reelModal">
+    <!-- Instagram/TikTok Style Segmented Progress Bars -->
+    <div class="reel-progress-container" id="reelProgressBarWrap">
+      <!-- Dynamic segmented bars injected by JS -->
+    </div>
+
+    <div class="reel-top-bar">
+      <div class="reel-brand">
+        <span>👑</span>
+        <strong id="reelHeaderBrand">Ohemaa’s Studio Reel</strong>
+        <span class="reel-counter-badge" id="reelCounterBadge">1 / 10</span>
+      </div>
+      <button class="reel-close-btn" id="closeReelModalBtn" aria-label="Close Reel">✕</button>
+    </div>
+
+    <!-- Multi-Reel Content Container -->
+    <div class="reel-video-container" id="reelContainer">
+      <!-- Media Elements: Video & Image -->
+      <video id="reelModalVideo" playsinline loop preload="metadata" class="reel-media-element">
+        <source src="./pics/VID-20261022-WA0108.mp4" type="video/mp4">
+      </video>
+      <img id="reelModalImage" src="" alt="Reel Outfit" class="reel-media-element hidden">
+
+      <!-- Navigation Arrows (Left / Back and Right / Forward) -->
+      <button class="reel-nav-arrow reel-prev-arrow" id="reelPrevBtn" aria-label="Previous Reel">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+
+      <button class="reel-nav-arrow reel-next-arrow" id="reelNextBtn" aria-label="Next Reel">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+
+      <!-- Invisible Touch Zones for Fast Mobile Left/Right Tap -->
+      <div class="reel-tap-zone left" id="reelTapLeft" title="Tap for Previous"></div>
+      <div class="reel-tap-zone center" id="reelTapCenter" title="Tap to Pause/Resume"></div>
+      <div class="reel-tap-zone right" id="reelTapRight" title="Tap for Next"></div>
+
+      <div class="reel-controls-overlay">
+        <button class="reel-play-toggle" id="reelPlayToggle" aria-label="Play/Pause">
+          <span class="icon-play" id="reelPlayIcon">▶</span>
+        </button>
+        
+        <div class="reel-floating-actions">
+          <button class="reel-action-bubble" id="reelMuteToggle" aria-label="Mute/Unmute">
+            <span id="reelSoundIcon">🔊</span>
+          </button>
+          <button class="reel-action-bubble" id="reelShareBtn" aria-label="Share Reel">
+            <span>↗</span>
+          </button>
+          <button class="reel-action-bubble" id="reelWishlistBtn" aria-label="Favorite Outfit">
+            <span id="reelWishlistIcon">♥</span>
+          </button>
+        </div>
+
+        <div class="reel-bottom-info">
+          <div class="reel-tag-row">
+            <span class="reel-tag" id="reelCurrentTag">Live Reel</span>
+            <span class="reel-policy-pill">🚚 Friday Dispatch</span>
+          </div>
+          <h4 id="reelCurrentTitle">Studio Walkthrough & Co-ord Outfits</h4>
+          <p id="reelCurrentDesc">Real textures, vibrant dye washes, and gold mannequin fits.</p>
+          <div class="reel-cta-bar">
+            <button class="btn btn-gold btn-sm" id="reelShopBtn">
+              🛍️ Shop This Look
+            </button>
+            <button class="btn btn-whatsapp btn-sm" id="reelWhatsAppOrderBtn">
+              💬 Order on WhatsApp
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wholesale Inquiries Modal -->
+  <div class="modal-overlay hidden" id="wholesaleModalOverlay"></div>
+  <div class="app-modal hidden" id="wholesaleModal">
+    <div class="app-modal-header">
+      <div class="title-wrap">
+        <span class="crown-icon">📦</span>
+        <h3>Wholesale & Bulk Orders</h3>
+      </div>
+      <button class="modal-close-btn" id="closeWholesaleModalBtn">✕</button>
+    </div>
+
+    <div class="app-modal-body">
+      <div class="wholesale-calculator-card">
+        <h4>Wholesale Price Estimator</h4>
+        <p>Minimum Order Quantity: <strong>10 Pieces</strong> (Mix & Match styles, sizes, and colors)</p>
+        
+        <div class="calc-row">
+          <label for="wholesaleQtyInput">Select Quantity:</label>
+          <div class="stepper-input">
+            <button class="step-btn" id="wholesaleMinusBtn">-</button>
+            <input type="number" id="wholesaleQtyInput" value="10" min="10" max="500">
+            <button class="step-btn" id="wholesalePlusBtn">+</button>
+          </div>
+        </div>
+
+        <div class="tier-pills">
+          <div class="tier-pill active" data-qty="10">10-24 pcs (Standard Bulk)</div>
+          <div class="tier-pill" data-qty="25">25-49 pcs (Silver Tier)</div>
+          <div class="tier-pill" data-qty="50">50+ pcs (Gold Partner)</div>
+        </div>
+
+        <div class="calc-summary">
+          <div class="summary-line">
+            <span>Wholesale Perks:</span>
+            <strong>Friday Priority Dispatch + Color Packs</strong>
+          </div>
+          <div class="summary-line">
+            <span>Delivery Method:</span>
+            <strong>Friday Nationwide Cargo or Store Pick-Up</strong>
+          </div>
+        </div>
+      </div>
+
+      <form id="wholesaleInquiryForm" class="wholesale-form">
+        <div class="input-group">
+          <label for="wsName">Your Name / Boutique Name *</label>
+          <input type="text" id="wsName" placeholder="e.g. Queen Boutique Kumasi" required>
+        </div>
+
+        <div class="input-group">
+          <label for="wsPhone">WhatsApp Number *</label>
+          <input type="tel" id="wsPhone" placeholder="e.g. 0599959521" required>
+        </div>
+
+        <div class="input-group">
+          <label for="wsLocation">Your City / Location in Ghana</label>
+          <input type="text" id="wsLocation" placeholder="e.g. Kumasi Adum / Accra Central">
+        </div>
+
+        <div class="input-group">
+          <label for="wsMessage">Styles of Interest</label>
+          <textarea id="wsMessage" rows="2" placeholder="e.g. 10 palazzo wide-leg pants + 10 Hello Kitty shorts"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-whatsapp full-width">
+          💬 Send Wholesale Inquiry via WhatsApp (0599959521)
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Digital Order Receipt Modal -->
+  <div class="modal-overlay hidden" id="receiptModalOverlay"></div>
+  <div class="app-modal receipt-modal hidden" id="receiptModal">
+    <div class="app-modal-header no-border">
+      <div class="title-wrap">
+        <span>👑</span>
+        <h3>Official Order Receipt</h3>
+      </div>
+      <button class="modal-close-btn" id="closeReceiptModalBtn">✕</button>
+    </div>
+
+    <div class="receipt-paper" id="receiptPrintArea">
+      <div class="receipt-header">
+        <h2>Ohemaa’s Apparel</h2>
+        <p class="receipt-sub">Ghana's Luxury Fashion Boutique</p>
+        <p class="receipt-contact">Phone: 0599959521 | Snapchat: mummy’s _fav | TikTok: @obaa</p>
+        <div class="receipt-id-tag" id="receiptIdTag">ORDER #OHE-1024</div>
+        <div class="receipt-date" id="receiptDateTag">Date: 23 Oct 2026</div>
+      </div>
+
+      <div class="receipt-badge-banner" id="receiptDeliveryNotice">
+        🚚 SCHEDULED FOR FRIDAY DELIVERY
+      </div>
+
+      <div class="receipt-customer-box" id="receiptCustomerInfo">
+        <!-- Rendered by JS -->
+      </div>
+
+      <table class="receipt-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Qty</th>
+            <th class="text-right">Price</th>
+          </tr>
+        </thead>
+        <tbody id="receiptTableBody">
+          <!-- Injected by JS -->
+        </tbody>
+      </table>
+
+      <div class="receipt-totals" id="receiptTotalsBox">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="receipt-footer-notes">
+        <p><strong>Notice:</strong> All door deliveries are dispatched exclusively on <strong>FRIDAYS</strong>. Pick-up orders can be collected at our studio once confirmed.</p>
+        <p class="thank-you">Thank you for reigning with Ohemaa’s Apparel! 👑</p>
+      </div>
+    </div>
+
+    <div class="receipt-actions">
+      <button class="btn btn-gold full-width" id="printReceiptBtn">
+        🖨️ Print or Save as PDF
+      </button>
+      <button class="btn btn-whatsapp full-width" id="shareReceiptWhatsappBtn">
+        💬 Share Receipt on WhatsApp (0599959521)
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== ADMIN PORTAL MODAL ==================== -->
+  <div class="modal-overlay hidden" id="adminModalOverlay"></div>
+  <div class="admin-modal hidden" id="adminModal" role="dialog" aria-modal="true">
+    
+    <!-- Admin Login Screen (Shown when not authenticated) -->
+    <div class="admin-login-screen" id="adminLoginScreen">
+      <div class="login-card">
+        <button class="modal-close-btn top-right" id="closeAdminLoginBtn">✕</button>
+        <div class="login-crown">👑</div>
+        <h2>Owner Admin Portal</h2>
+        <p class="login-sub">Ohemaa's Apparel Management Suite</p>
+        <p class="login-info-pill">Enter your official credentials to update prices & manage orders</p>
+
+        <form id="adminLoginForm" class="admin-login-form">
+          <div class="input-group">
+            <label for="adminUsername">Username</label>
+            <input type="text" id="adminUsername" placeholder="Enter username" autocomplete="username" required>
+            <small class="helper-text">Hint: Big_Ohemaa</small>
+          </div>
+
+          <div class="input-group">
+            <label for="adminPassword">Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="adminPassword" placeholder="Enter password" autocomplete="current-password" required>
+              <button type="button" class="toggle-pw-btn" id="togglePwBtn" aria-label="Toggle Password Visibility">👁️</button>
+            </div>
+            <small class="helper-text">Hint: Ohemaa12345</small>
+          </div>
+
+          <div class="login-error-msg hidden" id="loginErrorMsg">
+            ⚠️ Invalid username or password. Please check and try again.
+          </div>
+
+          <button type="submit" class="btn btn-gold full-width">
+            <span>Unlock Admin Dashboard</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Authenticated Admin Panel -->
+    <div class="admin-dashboard-screen hidden" id="adminDashboardScreen">
+      <!-- Admin Header -->
+      <div class="admin-header">
+        <div class="admin-brand">
+          <span class="crown">👑</span>
+          <div>
+            <h3>Welcome, Big_Ohemaa</h3>
+            <span class="status-live-tag">● Store Live & Active</span>
+          </div>
+        </div>
+
+        <div class="admin-header-actions">
+          <button class="btn btn-outline btn-sm" id="adminPreviewStoreBtn">
+            👁️ View Store
+          </button>
+          <button class="btn btn-danger btn-sm" id="adminLogoutBtn">
+            🚪 Logout
+          </button>
+        </div>
+      </div>
+
+      <!-- Admin Navigation Tabs -->
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" data-tab="pricesTab">
+          💰 Quick Price Editor
+        </button>
+        <button class="admin-tab-btn" data-tab="ordersTab">
+          📋 Orders (<span id="adminOrdersBadge">0</span>)
+        </button>
+        <button class="admin-tab-btn" data-tab="productsTab">
+          👗 Inventory & Add Item
+        </button>
+        <button class="admin-tab-btn" data-tab="settingsTab">
+          ⚙️ Store Settings
+        </button>
+      </div>
+
+      <!-- Tab 1: Fast Price Editor (Primary User Requirement!) -->
+      <div class="admin-tab-content active" id="pricesTab">
+        <div class="admin-notice-box">
+          <div class="ico">💡</div>
+          <div>
+            <strong>How Price Setting Works:</strong>
+            <p>Products currently show <strong>GH₵ ___</strong> in the store. Simply type the price amount in Ghana Cedis (GH₵) below and click <strong>"Save All Prices"</strong> to update them instantly live for customers!</p>
+          </div>
+        </div>
+
+        <div class="price-editor-toolbar">
+          <div class="search-wrap">
+            <input type="text" id="adminPriceSearch" placeholder="Filter products by name...">
+          </div>
+          <button class="btn btn-gold" id="saveAllPricesBtn">
+            💾 Save All Prices Now
+          </button>
+        </div>
+
+        <div class="quick-price-stats">
+          <div class="stat-pill">
+            <span>Total Catalog:</span> <strong id="adminTotalCount">33</strong>
+          </div>
+          <div class="stat-pill unpriced">
+            <span>Needs Price (GH₵ ___):</span> <strong id="adminUnpricedCount">33</strong>
+          </div>
+          <div class="stat-pill priced">
+            <span>Prices Set:</span> <strong id="adminPricedCount">0</strong>
+          </div>
+        </div>
+
+        <div class="price-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Current Display</th>
+                <th>Set Price (GH₵)</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminPriceTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab 2: Orders Manager -->
+      <div class="admin-tab-content" id="ordersTab">
+        <div class="orders-toolbar">
+          <div class="order-filter-pills">
+            <button class="order-filter-pill active" data-filter="all">All Orders (<span id="allOrdersCount">0</span>)</button>
+            <button class="order-filter-pill" data-filter="friday-delivery">🚚 Friday Deliveries (<span id="fridayOrdersCount">0</span>)</button>
+            <button class="order-filter-pill" data-filter="store-pickup">🏬 Pick-Ups (<span id="pickupOrdersCount">0</span>)</button>
+          </div>
+          <button class="btn btn-outline btn-sm" id="clearCompletedOrdersBtn">Clean List</button>
+        </div>
+
+        <div class="admin-orders-list" id="adminOrdersList">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <!-- Tab 3: Products Management & Add New Item -->
+      <div class="admin-tab-content" id="productsTab">
+        <div class="tab-two-col">
+          <!-- Left: Add New Product Form -->
+          <div class="admin-card add-product-card">
+            <h4>➕ Add New Item to Catalog</h4>
+            <form id="addNewProductForm">
+              <div class="input-group">
+                <label for="newProdName">Product Title *</label>
+                <input type="text" id="newProdName" placeholder="e.g. Emerald Green Silk Palazzo Pants" required>
+              </div>
+
+              <div class="grid-2-col">
+                <div class="input-group">
+                  <label for="newProdCategory">Category</label>
+                  <select id="newProdCategory">
+                    <option value="co-ords">Co-ord Sets</option>
+                    <option value="palazzo">Palazzo Pants</option>
+                    <option value="shorts">Lounge Shorts</option>
+                    <option value="crown">Crown Edition</option>
+                    <option value="tie-dye">Tie-Dye</option>
+                  </select>
+                </div>
+
+                <div class="input-group">
+                  <label for="newProdPrice">Price (Leave blank for GH₵ ___)</label>
+                  <input type="number" id="newProdPrice" placeholder="e.g. 150">
+                </div>
+              </div>
+
+              <div class="input-group">
+                <label for="newProdSizes">Available Sizes (comma separated)</label>
+                <input type="text" id="newProdSizes" value="S, M, L, XL, Free Size">
+              </div>
+
+              <div class="input-group">
+                <label for="newProdColors">Colors Available</label>
+                <input type="text" id="newProdColors" placeholder="e.g. Pink, Lilac, Emerald">
+              </div>
+
+              <div class="input-group">
+                <label for="newProdBadge">Special Badge</label>
+                <input type="text" id="newProdBadge" placeholder="e.g. New Drop / Bestseller">
+              </div>
+
+              <div class="input-group">
+                <label for="newProdDesc">Description</label>
+                <textarea id="newProdDesc" rows="2" placeholder="Fabric texture, fit, styling tips..."></textarea>
+              </div>
+
+              <div class="input-group">
+                <label for="newProdImageFile">Product Photo Upload</label>
+                <input type="file" id="newProdImageFile" accept="image/*">
+                <input type="text" id="newProdImageUrl" placeholder="Or enter image URL / pick from pics" style="margin-top:6px;">
+              </div>
+
+              <button type="submit" class="btn btn-gold full-width">
+                Add Product to Store
+              </button>
+            </form>
+          </div>
+
+          <!-- Right: Current Inventory Quick List -->
+          <div class="admin-card">
+            <h4>📦 Current Inventory (<span id="inventoryCount">33</span>)</h4>
+            <div class="admin-inventory-list" id="adminInventoryList">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Settings & Backup -->
+      <div class="admin-tab-content" id="settingsTab">
+        <div class="tab-two-col">
+          <div class="admin-card">
+            <h4>⚙️ Store Identity & Details</h4>
+            <form id="storeSettingsForm">
+              <div class="input-group">
+                <label for="setPhone">Store Phone / WhatsApp</label>
+                <input type="text" id="setPhone" value="0599959521">
+              </div>
+
+              <div class="input-group">
+                <label for="setSnapchat">Snapchat Handle</label>
+                <input type="text" id="setSnapchat" value="mummy’s _fav">
+              </div>
+
+              <div class="input-group">
+                <label for="setTiktok">TikTok Handle</label>
+                <input type="text" id="setTiktok" value="obaa">
+              </div>
+
+              <div class="input-group">
+                <label for="setAnnouncement">Top Marquee Announcement</label>
+                <textarea id="setAnnouncement" rows="2">🚚 DELIVERIES ARE ONLY ON FRIDAYS • 🏬 STORE PICK-UP AVAILABLE • 📦 WHOLESALE AVAILABLE • CALL/WHATSAPP: 0599959521</textarea>
+              </div>
+
+              <div class="input-group">
+                <label for="setPickupInfo">Pick-Up Details & Location Notes</label>
+                <textarea id="setPickupInfo" rows="2">Ohemaa’s Fashion Studio / Boutique, Accra, Ghana (Contact 0599959521 for directions)</textarea>
+              </div>
+
+              <button type="submit" class="btn btn-gold full-width">
+                Save Store Settings
+              </button>
+            </form>
+          </div>
+
+          <div class="admin-card">
+            <h4>💾 Database Backup & Reset</h4>
+            <p>Export all products and prices to a backup file, or reset to original gallery.</p>
+            <div class="backup-actions">
+              <button class="btn btn-outline full-width" id="exportDataBtn">
+                📥 Export Store Data (JSON)
+              </button>
+              <label class="btn btn-outline full-width file-upload-btn">
+                📤 Import Store Data (JSON)
+                <input type="file" id="importDataFile" accept=".json" class="hidden">
+              </label>
+              <button class="btn btn-danger-outline full-width" id="resetCatalogBtn">
+                ⚠️ Reset All Prices to GH₵ ___
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- App Logic -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>

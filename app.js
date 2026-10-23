@@ -421,6 +421,17 @@ const elements = {
   toastContainer: document.getElementById('toastContainer')
 };
 
+// --- HTML ESCAPING UTILITY FOR XSS PREVENTION ---
+export function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 // --- PRICE FORMATTING HELPER ---
 export function formatPrice(price, includeSymbol = true) {
   if (price === null || price === undefined || price === "" || isNaN(Number(price))) {
@@ -438,7 +449,13 @@ export function isPriceSet(price) {
 export function showToast(message, icon = "👑") {
   const toast = document.createElement('div');
   toast.className = 'toast';
-  toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+  const iconSpan = document.createElement('span');
+  iconSpan.textContent = icon;
+  const msgSpan = document.createElement('span');
+  msgSpan.textContent = message;
+  toast.appendChild(iconSpan);
+  toast.appendChild(document.createTextNode(' '));
+  toast.appendChild(msgSpan);
   elements.toastContainer.appendChild(toast);
   setTimeout(() => {
     toast.style.opacity = '0';
@@ -472,11 +489,19 @@ function renderCategoryNav() {
     const pill = document.createElement('button');
     pill.className = `cat-pill ${cat.id === state.currentCategory ? 'active' : ''}`;
     pill.dataset.category = cat.id;
-    pill.innerHTML = `
-      <span>${cat.icon}</span>
-      <span>${cat.name}</span>
-      <span class="count">${getCategoryCount(cat.id)}</span>
-    `;
+
+    const iconSpan = document.createElement('span');
+    iconSpan.textContent = cat.icon;
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = cat.name;
+    const countSpan = document.createElement('span');
+    countSpan.className = 'count';
+    countSpan.textContent = getCategoryCount(cat.id);
+
+    pill.appendChild(iconSpan);
+    pill.appendChild(nameSpan);
+    pill.appendChild(countSpan);
+
     pill.addEventListener('click', () => {
       state.currentCategory = cat.id;
       document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
@@ -572,38 +597,38 @@ function createProductCard(product) {
   card.dataset.id = product.id;
 
   card.innerHTML = `
-    <div class="product-image-box" data-action="quickview" data-id="${product.id}">
-      <img src="${product.image}" alt="${product.name}" loading="lazy" onerror="this.src='./pics/Gh100.jpg.jpeg'">
+    <div class="product-image-box" data-action="quickview" data-id="${escapeHtml(product.id)}">
+      <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" loading="lazy" onerror="this.src='./pics/Gh100.jpg.jpeg'">
       
       <div class="product-badge-overlay">
-        ${product.badge ? `<span class="badge-pill gold">${product.badge}</span>` : ''}
+        ${product.badge ? `<span class="badge-pill gold">${escapeHtml(product.badge)}</span>` : ''}
         <span class="badge-pill friday">🚚 Friday Delivery</span>
       </div>
 
-      <button class="product-wishlist-toggle ${isWishlisted ? 'active' : ''}" data-action="wishlist" data-id="${product.id}" aria-label="Add to Wishlist">
+      <button class="product-wishlist-toggle ${isWishlisted ? 'active' : ''}" data-action="wishlist" data-id="${escapeHtml(product.id)}" aria-label="Add to Wishlist">
         ♥
       </button>
     </div>
 
     <div class="product-info">
-      <span class="product-category-tag">${product.category}</span>
-      <h3 class="product-title" title="${product.name}">${product.name}</h3>
+      <span class="product-category-tag">${escapeHtml(product.category)}</span>
+      <h3 class="product-title" title="${escapeHtml(product.name)}">${escapeHtml(product.name)}</h3>
       
       <div class="product-price-row">
-        <span class="price-tag ${isPriced ? '' : 'unpriced'}">${formattedPrice}</span>
+        <span class="price-tag ${isPriced ? '' : 'unpriced'}">${escapeHtml(formattedPrice)}</span>
         ${!isPriced ? `<span class="suggested-hint">(Pending setup)</span>` : ''}
       </div>
 
       <div class="product-meta-row">
-        <span>${product.colors ? product.colors.length + ' Colors' : 'Multi-color'}</span>
-        <span class="size-pill-tag">${product.sizes ? product.sizes[0] + ' - ' + product.sizes[product.sizes.length - 1] : 'Free Size'}</span>
+        <span>${escapeHtml(product.colors ? product.colors.length + ' Colors' : 'Multi-color')}</span>
+        <span class="size-pill-tag">${escapeHtml(product.sizes ? product.sizes[0] + ' - ' + product.sizes[product.sizes.length - 1] : 'Free Size')}</span>
       </div>
 
       <div class="product-card-actions">
-        <button class="btn quick-view-btn" data-action="quickview" data-id="${product.id}">
+        <button class="btn quick-view-btn" data-action="quickview" data-id="${escapeHtml(product.id)}">
           👁️ View
         </button>
-        <button class="btn quick-add-btn" data-action="add-cart" data-id="${product.id}">
+        <button class="btn quick-add-btn" data-action="add-cart" data-id="${escapeHtml(product.id)}">
           + Add
         </button>
       </div>
@@ -808,25 +833,25 @@ function renderCartDrawer() {
     itemCard.className = 'cart-item';
     itemCard.innerHTML = `
       <div class="cart-item-thumb">
-        <img src="${item.image}" alt="${item.name}">
+        <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">
       </div>
       <div class="cart-item-details">
         <div>
-          <h4>${item.name}</h4>
-          <p class="cart-item-variant">Size: <strong>${item.size}</strong> • Color: <strong>${item.color}</strong></p>
+          <h4>${escapeHtml(item.name)}</h4>
+          <p class="cart-item-variant">Size: <strong>${escapeHtml(item.size)}</strong> • Color: <strong>${escapeHtml(item.color)}</strong></p>
         </div>
         <div class="cart-item-price-stepper">
           <span class="cart-price ${isPriced ? '' : 'unpriced'}">
             ${isPriced ? `GH₵ ${(Number(item.price) * item.quantity).toFixed(2)}` : 'GH₵ ___'}
           </span>
           <div class="qty-stepper">
-            <button class="qty-btn" data-action="minus" data-id="${item.cartItemId}">-</button>
-            <span class="qty-number">${item.quantity}</span>
-            <button class="qty-btn" data-action="plus" data-id="${item.cartItemId}">+</button>
+            <button class="qty-btn" data-action="minus" data-id="${escapeHtml(item.cartItemId)}">-</button>
+            <span class="qty-number">${escapeHtml(item.quantity)}</span>
+            <button class="qty-btn" data-action="plus" data-id="${escapeHtml(item.cartItemId)}">+</button>
           </div>
         </div>
       </div>
-      <button class="remove-cart-item-btn" data-action="remove" data-id="${item.cartItemId}" title="Remove Item">✕</button>
+      <button class="remove-cart-item-btn" data-action="remove" data-id="${escapeHtml(item.cartItemId)}" title="Remove Item">✕</button>
     `;
 
     itemCard.addEventListener('click', (e) => {
@@ -896,23 +921,23 @@ function openProductModal(productId) {
 
   elements.productModalContent.innerHTML = `
     <div class="modal-product-media">
-      <img src="${product.image}" alt="${product.name}">
+      <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}">
       <div class="product-badge-overlay">
-        ${product.badge ? `<span class="badge-pill gold">${product.badge}</span>` : ''}
+        ${product.badge ? `<span class="badge-pill gold">${escapeHtml(product.badge)}</span>` : ''}
         <span class="badge-pill friday">🚚 Friday Dispatch</span>
       </div>
     </div>
 
     <div class="modal-product-details">
-      <span class="modal-category">${product.category}</span>
-      <h2 class="modal-title">${product.name}</h2>
+      <span class="modal-category">${escapeHtml(product.category)}</span>
+      <h2 class="modal-title">${escapeHtml(product.name)}</h2>
       
       <div class="modal-price-box">
-        <span class="modal-price-val ${isPriced ? '' : 'unpriced'}">${formattedPrice}</span>
+        <span class="modal-price-val ${isPriced ? '' : 'unpriced'}">${escapeHtml(formattedPrice)}</span>
         ${!isPriced ? `<small style="color:var(--text-muted);">(Pending Client Pricing)</small>` : ''}
       </div>
 
-      <p class="modal-desc">${product.description || 'Premium luxury garment.'}</p>
+      <p class="modal-desc">${escapeHtml(product.description || 'Premium luxury garment.')}</p>
 
       <div class="modal-notice-banner">
         <p>🚚 <strong>Friday Delivery Only:</strong> Scheduled weekly dispatch across Ghana.</p>
@@ -924,7 +949,7 @@ function openProductModal(productId) {
         <label>Select Size:</label>
         <div class="pills-select-row" id="modalSizePills">
           ${sizes.map((s, idx) => `
-            <button class="choice-pill ${idx === 0 ? 'active' : ''}" data-val="${s}">${s}</button>
+            <button class="choice-pill ${idx === 0 ? 'active' : ''}" data-val="${escapeHtml(s)}">${escapeHtml(s)}</button>
           `).join('')}
         </div>
       </div>
@@ -934,7 +959,7 @@ function openProductModal(productId) {
         <label>Select Color / Shade:</label>
         <div class="pills-select-row" id="modalColorPills">
           ${colors.map((c, idx) => `
-            <button class="choice-pill ${idx === 0 ? 'active' : ''}" data-val="${c}">${c}</button>
+            <button class="choice-pill ${idx === 0 ? 'active' : ''}" data-val="${escapeHtml(c)}">${escapeHtml(c)}</button>
           `).join('')}
         </div>
       </div>
@@ -1027,7 +1052,10 @@ function initReelsEngine() {
     const segment = document.createElement('div');
     segment.className = 'reel-prog-segment';
     segment.dataset.index = idx;
-    segment.innerHTML = `<div class="reel-prog-fill" id="reelFill-${idx}"></div>`;
+    const fill = document.createElement('div');
+    fill.className = 'reel-prog-fill';
+    fill.id = `reelFill-${idx}`;
+    segment.appendChild(fill);
     elements.reelProgressBarWrap.appendChild(segment);
   });
 
@@ -1431,37 +1459,41 @@ function openReceiptModal(order) {
   }
 
   elements.receiptCustomerInfo.innerHTML = `
-    <p><strong>Customer:</strong> ${order.customer.name}</p>
-    <p><strong>Phone:</strong> ${order.customer.phone}</p>
-    <p><strong>Location/Method:</strong> ${order.customer.address}</p>
-    ${order.customer.notes ? `<p><strong>Notes:</strong> ${order.customer.notes}</p>` : ''}
+    <p><strong>Customer:</strong> ${escapeHtml(order.customer.name)}</p>
+    <p><strong>Phone:</strong> ${escapeHtml(order.customer.phone)}</p>
+    <p><strong>Location/Method:</strong> ${escapeHtml(order.customer.address)}</p>
+    ${order.customer.notes ? `<p><strong>Notes:</strong> ${escapeHtml(order.customer.notes)}</p>` : ''}
   `;
 
   elements.receiptTableBody.innerHTML = order.items.map(item => `
     <tr>
       <td>
-        <strong>${item.name}</strong><br>
-        <small style="color:#64748b;">${item.size} • ${item.color}</small>
+        <strong>${escapeHtml(item.name)}</strong><br>
+        <small style="color:#64748b;">${escapeHtml(item.size)} • ${escapeHtml(item.color)}</small>
       </td>
-      <td>${item.quantity}</td>
+      <td>${escapeHtml(item.quantity)}</td>
       <td class="text-right">
         ${isPriceSet(item.price) ? `GH₵ ${(Number(item.price) * item.quantity).toFixed(2)}` : 'GH₵ ___'}
       </td>
     </tr>
   `).join('');
 
+  const subtotalFormatted = order.totalAmount ? `GH₵ ${Number(order.totalAmount).toFixed(2)}` : 'GH₵ ___ (Pending)';
+  const fulfillmentFormatted = order.deliveryMethod === 'friday-delivery' ? 'Friday Route Dispatch' : 'Free In-Store Pick-up';
+  const totalFormatted = order.totalAmount ? `GH₵ ${Number(order.totalAmount).toFixed(2)}` : 'GH₵ ___';
+
   elements.receiptTotalsBox.innerHTML = `
     <div class="row">
       <span>Subtotal</span>
-      <span>${order.totalAmount ? `GH₵ ${Number(order.totalAmount).toFixed(2)}` : 'GH₵ ___ (Pending)'}</span>
+      <span>${escapeHtml(subtotalFormatted)}</span>
     </div>
     <div class="row">
       <span>Fulfillment</span>
-      <span>${order.deliveryMethod === 'friday-delivery' ? 'Friday Route Dispatch' : 'Free In-Store Pick-up'}</span>
+      <span>${escapeHtml(fulfillmentFormatted)}</span>
     </div>
     <div class="row grand-total">
       <span>Total Estimated</span>
-      <span>${order.totalAmount ? `GH₵ ${Number(order.totalAmount).toFixed(2)}` : 'GH₵ ___'}</span>
+      <span>${escapeHtml(totalFormatted)}</span>
     </div>
   `;
 
@@ -1564,17 +1596,17 @@ function renderAdminPriceTable(searchFilter = '') {
     row.innerHTML = `
       <td>
         <div class="table-product-cell">
-          <img src="${product.image}" alt="${product.name}" class="table-thumb">
+          <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" class="table-thumb">
           <div>
-            <strong>${product.name}</strong><br>
-            <small style="color:var(--text-dim); font-size:0.7rem;">ID: ${product.id}</small>
+            <strong>${escapeHtml(product.name)}</strong><br>
+            <small style="color:var(--text-dim); font-size:0.7rem;">ID: ${escapeHtml(product.id)}</small>
           </div>
         </div>
       </td>
-      <td><span class="product-category-tag">${product.category}</span></td>
+      <td><span class="product-category-tag">${escapeHtml(product.category)}</span></td>
       <td>
-        <span class="price-tag ${isPriced ? '' : 'unpriced'}" id="tableDisplay-${product.id}">
-          ${formatPrice(product.price)}
+        <span class="price-tag ${isPriced ? '' : 'unpriced'}" id="tableDisplay-${escapeHtml(product.id)}">
+          ${escapeHtml(formatPrice(product.price))}
         </span>
       </td>
       <td>
@@ -1582,14 +1614,14 @@ function renderAdminPriceTable(searchFilter = '') {
           <span>GH₵</span>
           <input type="number" 
                  class="table-price-input" 
-                 data-id="${product.id}" 
-                 value="${isPriced ? product.price : ''}" 
+                 data-id="${escapeHtml(product.id)}" 
+                 value="${isPriced ? escapeHtml(product.price) : ''}" 
                  placeholder="0.00" 
                  step="5">
         </div>
       </td>
       <td>
-        <button class="btn btn-gold btn-sm single-save-price-btn" data-id="${product.id}">
+        <button class="btn btn-gold btn-sm single-save-price-btn" data-id="${escapeHtml(product.id)}">
           Save
         </button>
       </td>
@@ -1677,7 +1709,7 @@ function renderAdminOrdersList(filter = 'all') {
     <div class="admin-order-card ${order.deliveryMethod === 'friday-delivery' ? 'friday' : 'pickup'}">
       <div class="admin-order-top">
         <div>
-          <h4>#${order.orderId} - ${order.customer.name}</h4>
+          <h4>#${escapeHtml(order.orderId)} - ${escapeHtml(order.customer.name)}</h4>
           <span class="order-method-badge ${order.deliveryMethod === 'friday-delivery' ? 'friday' : 'pickup'}">
             ${order.deliveryMethod === 'friday-delivery' ? '🚚 Friday Delivery' : '🏬 Store Pick-up'}
           </span>
@@ -1689,21 +1721,21 @@ function renderAdminOrdersList(filter = 'all') {
       </div>
 
       <div class="admin-order-details">
-        <p>📞 Phone: <a href="tel:${order.customer.phone}" style="color:#ffffff;">${order.customer.phone}</a> | 📅 Date: ${order.date}</p>
-        <p>📍 Location / Address: <strong>${order.customer.address}</strong></p>
-        ${order.customer.notes ? `<p>📝 Notes: ${order.customer.notes}</p>` : ''}
+        <p>📞 Phone: <a href="tel:${escapeHtml(order.customer.phone)}" style="color:#ffffff;">${escapeHtml(order.customer.phone)}</a> | 📅 Date: ${escapeHtml(order.date)}</p>
+        <p>📍 Location / Address: <strong>${escapeHtml(order.customer.address)}</strong></p>
+        ${order.customer.notes ? `<p>📝 Notes: ${escapeHtml(order.customer.notes)}</p>` : ''}
       </div>
 
       <div class="admin-order-items">
         <strong>Items (${order.items.reduce((s, i) => s + i.quantity, 0)} pcs):</strong><br>
-        ${order.items.map(i => `• ${i.name} (${i.size}, ${i.color}) x${i.quantity}`).join('<br>')}
+        ${order.items.map(i => `• ${escapeHtml(i.name)} (${escapeHtml(i.size)}, ${escapeHtml(i.color)}) x${escapeHtml(i.quantity)}`).join('<br>')}
       </div>
 
       <div class="admin-order-actions">
-        <button class="btn btn-whatsapp btn-sm whatsapp-order-reply-btn" data-phone="${order.customer.phone}" data-id="${order.orderId}" data-name="${order.customer.name}">
+        <button class="btn btn-whatsapp btn-sm whatsapp-order-reply-btn" data-phone="${escapeHtml(order.customer.phone)}" data-id="${escapeHtml(order.orderId)}" data-name="${escapeHtml(order.customer.name)}">
           💬 WhatsApp Customer
         </button>
-        <button class="btn btn-outline btn-sm delete-order-btn" data-id="${order.orderId}">
+        <button class="btn btn-outline btn-sm delete-order-btn" data-id="${escapeHtml(order.orderId)}">
           🗑️ Archive Order
         </button>
       </div>
@@ -1742,13 +1774,13 @@ function renderAdminInventoryList() {
   elements.adminInventoryList.innerHTML = state.products.map(p => `
     <div class="inventory-row">
       <div class="inventory-info">
-        <img src="${p.image}" alt="${p.name}">
+        <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}">
         <div>
-          <strong>${p.name}</strong><br>
-          <small style="color:var(--text-muted);">${p.category} • ${formatPrice(p.price)}</small>
+          <strong>${escapeHtml(p.name)}</strong><br>
+          <small style="color:var(--text-muted);">${escapeHtml(p.category)} • ${escapeHtml(formatPrice(p.price))}</small>
         </div>
       </div>
-      <button class="btn btn-danger-outline btn-sm remove-product-btn" data-id="${p.id}">
+      <button class="btn btn-danger-outline btn-sm remove-product-btn" data-id="${escapeHtml(p.id)}">
         ✕
       </button>
     </div>
@@ -2155,7 +2187,7 @@ function setupEventListeners() {
       <span class="ticker-sep">•</span>
       <span class="ticker-item"><span class="badge-icon">📦</span> WHOLESALE AVAILABLE</span>
       <span class="ticker-sep">•</span>
-      <span class="ticker-item"><span class="badge-icon">💬</span> CALL / WHATSAPP: <strong>${phone}</strong></span>
+      <span class="ticker-item"><span class="badge-icon">💬</span> CALL / WHATSAPP: <strong>${escapeHtml(phone)}</strong></span>
     `;
 
     showToast('Store settings saved successfully!', '⚙️');

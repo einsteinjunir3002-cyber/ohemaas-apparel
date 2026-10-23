@@ -5,10 +5,24 @@ const SUPABASE_KEY = process.env.SUPABASE_KEY || 'sb_publishable_hrYtHIzuHF6SDut
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+const ALLOWED_ORIGIN_PATTERNS = [
+  /^https:\/\/[a-zA-Z0-9-]+\.vercel\.app$/,
+  /^http:\/\/localhost(:\d+)?$/,
+  /^http:\/\/127\.0\.0\.1(:\d+)?$/
+];
+
+function applyCors(req, res) {
+  const origin = req.headers.origin;
+  if (origin && ALLOWED_ORIGIN_PATTERNS.some(pattern => pattern.test(origin))) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+}
+
+export default async function handler(req, res) {
+  applyCors(req, res);
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();

@@ -188,21 +188,27 @@ class StoreState {
 
   async createOrderInSupabase(orderRecord) {
     try {
-      const { data, error } = await supabase.from('ohemaa_orders').insert([{
-        order_id: orderRecord.orderId,
-        customer_name: orderRecord.customer.name,
-        customer_phone: orderRecord.customer.phone,
-        delivery_method: orderRecord.deliveryMethod,
-        address: orderRecord.customer.address,
-        notes: orderRecord.customer.notes || '',
-        items: orderRecord.items,
-        total_amount: orderRecord.totalAmount,
-        is_wholesale: orderRecord.isWholesale,
-        status: orderRecord.status || 'Pending Confirmation'
-      }]).select();
+      // 1. Insert summary row to ohemaa_orders table
+      const orderSummary = `${orderRecord.customer.name} (${orderRecord.customer.phone}) - ${orderRecord.deliveryMethod === 'store-pickup' ? 'Store Pick-Up' : 'Friday Delivery'}`;
+      await supabase.from('ohemaa_orders').insert([{
+        id: orderRecord.orderId,
+        customer_name: orderSummary
+      }]);
 
-      if (error) console.warn('Supabase order insert error:', error);
-      return data;
+      // 2. Persist rich JSON array in ohemaa_settings (store_orders)
+      const { data: settingData } = await supabase
+        .from('ohemaa_settings')
+        .select('value')
+        .eq('key', 'store_orders')
+        .maybeSingle();
+
+      const existing = settingData && Array.isArray(settingData.value) ? settingData.value : [];
+      const updated = [orderRecord, ...existing.filter(o => o.orderId !== orderRecord.orderId)];
+
+      await supabase.from('ohemaa_settings').upsert({
+        key: 'store_orders',
+        value: updated
+      });
     } catch (e) {
       console.warn('Supabase create order error:', e);
     }
@@ -210,29 +216,14 @@ class StoreState {
 
   async fetchRemoteOrders() {
     try {
-      const { data, error } = await supabase
-        .from('ohemaa_orders')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data: settingData, error } = await supabase
+        .from('ohemaa_settings')
+        .select('value')
+        .eq('key', 'store_orders')
+        .maybeSingle();
 
-      if (!error && Array.isArray(data)) {
-        const mapped = data.map(row => ({
-          orderId: row.order_id,
-          date: new Date(row.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
-          customer: {
-            name: row.customer_name,
-            phone: row.customer_phone,
-            address: row.address,
-            notes: row.notes
-          },
-          deliveryMethod: row.delivery_method,
-          isWholesale: row.is_wholesale,
-          items: row.items,
-          totalAmount: row.total_amount,
-          status: row.status
-        }));
-
-        this.orders = mapped;
+      if (!error && settingData && Array.isArray(settingData.value)) {
+        this.orders = settingData.value;
         this.saveOrders();
         renderAdminOrdersList();
       }

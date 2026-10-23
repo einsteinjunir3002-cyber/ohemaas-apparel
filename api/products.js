@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       const { data, error } = await supabase
         .from('ohemaa_products')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: true });
 
       if (error) throw error;
       return res.status(200).json({ success: true, count: data.length, products: data });
@@ -37,7 +37,6 @@ export default async function handler(req, res) {
       if (badge !== undefined) updates.badge = badge;
       if (name !== undefined) updates.name = name;
       if (description !== undefined) updates.description = description;
-      updates.updated_at = new Date().toISOString();
 
       const { data, error } = await supabase
         .from('ohemaa_products')

@@ -16,13 +16,24 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      const { data, error } = await supabase
+      // 1. Try to fetch from ohemaa_settings (key: store_orders)
+      const { data: settingData } = await supabase
+        .from('ohemaa_settings')
+        .select('value')
+        .eq('key', 'store_orders')
+        .maybeSingle();
+
+      if (settingData && Array.isArray(settingData.value)) {
+        return res.status(200).json({ success: true, count: settingData.value.length, orders: settingData.value });
+      }
+
+      // 2. Fallback to ohemaa_orders table
+      const { data: ordersData, error } = await supabase
         .from('ohemaa_orders')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select('*');
 
       if (error) throw error;
-      return res.status(200).json({ success: true, count: data.length, orders: data });
+      return res.status(200).json({ success: true, count: (ordersData || []).length, orders: ordersData || [] });
     }
 
     if (req.method === 'POST') {
@@ -32,27 +43,48 @@ export default async function handler(req, res) {
         return res.status(400).json({ success: false, error: 'Customer name, phone, and items are required' });
       }
 
-      const orderRecord = {
-        order_id: order_id || `OHE-${Math.floor(1000 + Math.random() * 9000)}`,
-        customer_name,
-        customer_phone,
-        delivery_method: delivery_method || 'friday-delivery',
-        address: address || (delivery_method === 'store-pickup' ? 'Store Pick-Up' : 'Accra, Ghana'),
-        notes: notes || '',
+      const generatedId = order_id || `OHE-${Math.floor(1000 + Math.random() * 9000)}`;
+      const orderSummary = `${customer_name} (${customer_phone}) - ${delivery_method === 'store-pickup' ? 'Store Pick-Up' : 'Friday Delivery'}`;
+
+      // Insert minimal summary row into ohemaa_orders table
+      await supabase.from('ohemaa_orders').insert([{
+        id: generatedId,
+        customer_name: orderSummary
+      }]).select();
+
+      // Persist rich JSON order into ohemaa_settings
+      const fullOrder = {
+        orderId: generatedId,
+        date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+        timestamp: Date.now(),
+        customer: {
+          name: customer_name,
+          phone: customer_phone,
+          address: address || (delivery_method === 'store-pickup' ? 'Store Pick-Up' : 'Accra, Ghana'),
+          notes: notes || ''
+        },
+        deliveryMethod: delivery_method || 'friday-delivery',
+        isWholesale: Boolean(is_wholesale),
         items: items,
-        total_amount: total_amount ? parseFloat(total_amount) : null,
-        is_wholesale: Boolean(is_wholesale),
-        status: 'Pending Confirmation',
-        created_at: new Date().toISOString()
+        totalAmount: total_amount ? parseFloat(total_amount) : null,
+        status: 'Pending Confirmation'
       };
 
-      const { data, error } = await supabase
-        .from('ohemaa_orders')
-        .insert([orderRecord])
-        .select();
+      const { data: currentSettings } = await supabase
+        .from('ohemaa_settings')
+        .select('value')
+        .eq('key', 'store_orders')
+        .maybeSingle();
 
-      if (error) throw error;
-      return res.status(201).json({ success: true, order: data[0] });
+      const existingOrders = currentSettings && Array.isArray(currentSettings.value) ? currentSettings.value : [];
+      const updatedOrders = [fullOrder, ...existingOrders];
+
+      await supabase.from('ohemaa_settings').upsert({
+        key: 'store_orders',
+        value: updatedOrders
+      });
+
+      return res.status(201).json({ success: true, order: fullOrder });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });

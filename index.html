@@ -66,7 +66,7 @@
     <div class="header-search-bar hidden" id="headerSearchBar">
       <div class="search-input-wrapper">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <input type="text" id="catalogSearchInput" placeholder="Search palazzo pants, co-ord sets, shorts..." autocomplete="off">
+        <input type="text" id="catalogSearchInput" placeholder="Search palazzo pants, co-ord sets, shorts..." autocomplete="off" aria-label="Search clothing catalog by keyword">
         <button class="clear-search-btn hidden" id="clearSearchBtn" aria-label="Clear Search">✕</button>
       </div>
     </div>
@@ -74,12 +74,12 @@
 
   <!-- Mobile Drawer Menu -->
   <div class="drawer-overlay hidden" id="mobileDrawerOverlay"></div>
-  <aside class="mobile-drawer" id="mobileDrawer">
+  <aside class="mobile-drawer" id="mobileDrawer" aria-label="Mobile Navigation Menu">
     <div class="drawer-header">
       <div class="drawer-brand">
         <span class="crown-icon">👑</span>
         <div>
-          <h4>Ohemaa’s Apparel</h4>
+          <div class="drawer-brand-name">Ohemaa’s Apparel</div>
           <p class="tag-sm">Royal Wardrobe Boutique</p>
         </div>
       </div>
@@ -104,7 +104,7 @@
         </div>
       </div>
 
-      <nav class="drawer-nav">
+      <nav class="drawer-nav" aria-label="Product Categories Navigation">
         <a href="#catalogSection" class="drawer-link" data-category="all">
           <span class="nav-icon">🛍️</span>
           <span>All Collection (33 Items)</span>
@@ -143,7 +143,7 @@
       </div>
 
       <div class="drawer-socials">
-        <h5>Official Channels & Orders</h5>
+        <div class="drawer-section-heading">Official Channels & Orders</div>
         <a href="tel:0599959521" class="social-contact-item">
           <span class="contact-icon">📞</span>
           <div>
@@ -186,7 +186,7 @@
           <div class="story-ring video-ring">
             <div class="story-avatar">
               <span class="story-play-icon">▶</span>
-              <img src="./pics/Gh100.jpg.jpeg" alt="Studio Video Reel">
+              <img src="./pics/Gh100.jpg.jpeg" alt="Watch Studio Lookbook Reel">
             </div>
           </div>
           <span class="story-label">Studio Reel</span>
@@ -196,7 +196,7 @@
         <div class="story-item" data-filter="palazzo" role="button" tabindex="0">
           <div class="story-ring">
             <div class="story-avatar">
-              <img src="./pics/IMG-20261022-WA0071.jpg.jpeg" alt="Friday Drops">
+              <img src="./pics/IMG-20261022-WA0071.jpg.jpeg" alt="Browse Friday Drop Palazzo Outfits">
             </div>
           </div>
           <span class="story-label">Friday Drop</span>
@@ -206,7 +206,7 @@
         <div class="story-item" data-filter="crown" role="button" tabindex="0">
           <div class="story-ring">
             <div class="story-avatar">
-              <img src="./pics/IMG-20261022-WA0085.jpg.jpeg" alt="Crown Shorts">
+              <img src="./pics/IMG-20261022-WA0085.jpg.jpeg" alt="Explore Queen Crown Embroidered Outfits">
             </div>
           </div>
           <span class="story-label">👑 Crown</span>
@@ -216,7 +216,7 @@
         <div class="story-item" data-filter="co-ords" role="button" tabindex="0">
           <div class="story-ring">
             <div class="story-avatar">
-              <img src="./pics/Gh150.jpg.jpeg" alt="Co-ords">
+              <img src="./pics/Gh150.jpg.jpeg" alt="Discover Co-ord Matching Crop Sets">
             </div>
           </div>
           <span class="story-label">Co-ords</span>
@@ -226,7 +226,7 @@
         <div class="story-item" data-filter="shorts" role="button" tabindex="0">
           <div class="story-ring">
             <div class="story-avatar">
-              <img src="./pics/Gh120.jpg.jpeg" alt="Shorts">
+              <img src="./pics/Gh120.jpg.jpeg" alt="View Casual Comfort Lounge Shorts">
             </div>
           </div>
           <span class="story-label">Shorts</span>
@@ -236,7 +236,7 @@
         <div class="story-item" data-filter="tie-dye" role="button" tabindex="0">
           <div class="story-ring">
             <div class="story-avatar">
-              <img src="./pics/IMG-20261022-WA0096.jpg.jpeg" alt="Tie-Dye">
+              <img src="./pics/IMG-20261022-WA0096.jpg.jpeg" alt="Browse Colorful Tie-Dye Swirl Patterns">
             </div>
           </div>
           <span class="story-label">Tie-Dye</span>
@@ -282,11 +282,11 @@
           </div>
 
           <div class="hero-cta-group">
-            <a href="#catalogSection" class="btn btn-gold hero-btn">
-              <span>Explore Collection</span>
+            <a href="#catalogSection" class="btn btn-gold hero-btn" aria-label="Shop Collection Now">
+              <span>Shop Collection Now</span>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </a>
-            <button class="btn btn-glass hero-video-btn" id="heroPlayVideoBtn">
+            <button class="btn btn-glass hero-video-btn" id="heroPlayVideoBtn" aria-label="Watch Studio Walkthrough Video Reel">
               <span class="play-triangle">▶</span>
               <span>Watch Studio Reel</span>
             </button>
@@ -296,12 +296,13 @@
     </section>
 
     <!-- Operational Highlights Cards (Mobile Swipeable Strip) -->
-    <section class="policy-strip">
+    <section class="policy-strip" aria-labelledby="policyStripHeading">
+      <h2 class="sr-only" id="policyStripHeading">Store Operational Highlights</h2>
       <div class="policy-grid">
         <div class="policy-card">
           <div class="policy-icon-wrapper gold">🚚</div>
           <div class="policy-info">
-            <h4>Friday Delivery Only</h4>
+            <h3>Friday Delivery Only</h3>
             <p>Every Friday delivery route across Accra, Kumasi & nationwide Ghana.</p>
           </div>
         </div>
@@ -309,7 +310,7 @@
         <div class="policy-card">
           <div class="policy-icon-wrapper emerald">🏬</div>
           <div class="policy-info">
-            <h4>Pick-Up Allowed</h4>
+            <h3>Pick-Up Allowed</h3>
             <p>Collect orders at our studio boutique after placing your reservation.</p>
           </div>
         </div>
@@ -317,7 +318,7 @@
         <div class="policy-card">
           <div class="policy-icon-wrapper purple">📦</div>
           <div class="policy-info">
-            <h4>Wholesale Available</h4>
+            <h3>Wholesale Available</h3>
             <p>Bulk rates for boutiques & retailers. Min order 10 pieces with custom packs.</p>
             <button class="text-link-btn" id="policyWholesaleLink">Inquire Rates →</button>
           </div>
@@ -326,7 +327,7 @@
         <div class="policy-card">
           <div class="policy-icon-wrapper green">💬</div>
           <div class="policy-info">
-            <h4>Fast WhatsApp Desk</h4>
+            <h3>Fast WhatsApp Desk</h3>
             <p>Direct service on <strong>0599959521</strong>. Friendly instant confirmation.</p>
           </div>
         </div>
@@ -353,7 +354,7 @@
         </div>
         <div class="video-card-body">
           <div class="badge-tag">Boutique Lookbook</div>
-          <h3>See The Fabric & Quality In Motion</h3>
+          <h2 class="section-title">See The Fabric & Quality In Motion</h2>
           <p>Real-life studio recording showcasing fit, vibrant tones, and elastic comfort waistbands.</p>
           <div class="video-actions">
             <button class="btn btn-outline btn-sm" id="openFullscreenReelBtn">
@@ -391,7 +392,7 @@
       <div class="catalog-toolbar">
         <div class="toolbar-search">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <input type="text" id="inlineSearchInput" placeholder="Search by color, pants, shorts...">
+          <input type="text" id="inlineSearchInput" placeholder="Search by color, pants, shorts..." aria-label="Search clothing items by keyword">
         </div>
 
         <div class="toolbar-filters">
@@ -423,7 +424,7 @@
       <!-- Empty State -->
       <div class="catalog-empty-state hidden" id="catalogEmptyState">
         <div class="empty-icon">🔍</div>
-        <h3>No products found</h3>
+        <div class="empty-state-title" role="status">No products found</div>
         <p>Try searching with another keyword or reset the category filters.</p>
         <button class="btn btn-outline" id="resetFiltersBtn">Reset All Filters</button>
       </div>
@@ -441,17 +442,17 @@
         <div class="wholesale-perks-grid">
           <div class="perk-item">
             <span class="perk-icon">✨</span>
-            <h4>Low MOQ (10 Pcs)</h4>
+            <h3>Low MOQ (10 Pcs)</h3>
             <p>Start with a manageable order of 10 mixed colors and sizes.</p>
           </div>
           <div class="perk-item">
             <span class="perk-icon">💰</span>
-            <h4>Tiered Discounts</h4>
+            <h3>Tiered Discounts</h3>
             <p>Attractive margins designed for resellers and Ghanaian boutiques.</p>
           </div>
           <div class="perk-item">
             <span class="perk-icon">🚚</span>
-            <h4>Friday Cargo Dispatch</h4>
+            <h3>Friday Cargo Dispatch</h3>
             <p>Reliable weekly Friday freight to Kumasi, Takoradi, Tamale & nationwide.</p>
           </div>
         </div>
@@ -469,7 +470,8 @@
     </section>
 
     <!-- Store Pick-Up & Friday Delivery Schedule Guide -->
-    <section class="schedule-section">
+    <section class="schedule-section" aria-labelledby="scheduleHeading">
+      <h2 class="sr-only" id="scheduleHeading">Store Delivery Schedule & Pick-Up Guidelines</h2>
       <div class="schedule-grid">
         <div class="schedule-card delivery-schedule">
           <div class="schedule-header">
@@ -504,7 +506,8 @@
     </section>
 
     <!-- Official Socials & Direct Contact Footer Strip -->
-    <section class="socials-feature-section">
+    <section class="socials-feature-section" aria-labelledby="socialsHeading">
+      <h2 class="sr-only" id="socialsHeading">Connect With Ohemaa Channels</h2>
       <div class="socials-card">
         <h3>Connect With Ohemaa</h3>
         <p>Follow our daily outfit styling, client fits, and behind-the-scenes drops:</p>
@@ -576,25 +579,25 @@
   </main>
 
   <!-- Mobile Bottom Sticky Navigation Dock -->
-  <nav class="bottom-dock" id="bottomDock" aria-label="Mobile Bottom Navigation">
-    <a href="#" class="dock-item active" id="dockHomeBtn">
+  <nav class="bottom-dock" id="bottomDock" aria-label="Quick Access Bar">
+    <a href="#" class="dock-item active" id="dockHomeBtn" aria-label="Home page">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
       <span>Home</span>
     </a>
 
-    <a href="#catalogSection" class="dock-item" id="dockShopBtn">
+    <a href="#catalogSection" class="dock-item" id="dockShopBtn" aria-label="Browse full catalog">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
       <span>Catalog</span>
     </a>
 
-    <button class="dock-item" id="dockVideoBtn">
+    <button class="dock-item" id="dockVideoBtn" aria-label="Watch video reel lookbook">
       <div class="dock-video-bubble">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
       </div>
       <span>Reel</span>
     </button>
 
-    <button class="dock-item" id="dockCartBtn">
+    <button class="dock-item" id="dockCartBtn" aria-label="View shopping bag">
       <div class="dock-cart-wrapper">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
         <span class="dock-badge" id="dockCartCount">0</span>
@@ -602,7 +605,7 @@
       <span>Cart</span>
     </button>
 
-    <button class="dock-item" id="dockAdminBtn">
+    <button class="dock-item" id="dockAdminBtn" aria-label="Owner admin portal">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
       <span id="dockAdminLabel">Admin</span>
     </button>
@@ -612,10 +615,10 @@
 
   <!-- Cart / Checkout Slide-out Drawer -->
   <div class="modal-overlay hidden" id="cartOverlay"></div>
-  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping Cart">
+  <aside class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-labelledby="cartDrawerHeading">
     <div class="cart-drawer-header">
       <div class="header-title-box">
-        <h3>Shopping Bag</h3>
+        <h2 class="drawer-title" id="cartDrawerHeading">Shopping Bag</h2>
         <span class="cart-items-counter" id="cartHeaderCount">0 Items</span>
       </div>
       <button class="close-cart-btn" id="closeCartBtn" aria-label="Close Bag">✕</button>
@@ -635,7 +638,7 @@
       <!-- Items dynamically injected -->
       <div class="cart-empty" id="cartEmptyState">
         <div class="empty-bag-icon">🛍️</div>
-        <h4>Your bag is empty</h4>
+        <div class="empty-bag-text">Your bag is empty</div>
         <p>Browse our trendy palazzo trousers and co-ords to add your favorites.</p>
         <button class="btn btn-gold btn-sm" id="cartEmptyShopBtn">Start Shopping</button>
       </div>
@@ -659,8 +662,8 @@
       <div class="checkout-method-box">
         <label class="section-label">Fulfillment Method:</label>
         <div class="method-options">
-          <label class="method-option-card">
-            <input type="radio" name="deliveryMethod" value="friday-delivery" checked>
+          <label class="method-option-card" for="methodFridayDelivery">
+            <input type="radio" id="methodFridayDelivery" name="deliveryMethod" value="friday-delivery" checked aria-label="Friday Delivery Only (Nationwide)">
             <div class="option-content">
               <span class="ico">🚚</span>
               <div>
@@ -670,8 +673,8 @@
             </div>
           </label>
 
-          <label class="method-option-card">
-            <input type="radio" name="deliveryMethod" value="store-pickup">
+          <label class="method-option-card" for="methodStorePickup">
+            <input type="radio" id="methodStorePickup" name="deliveryMethod" value="store-pickup" aria-label="Store Pick-Up Allowed">
             <div class="option-content">
               <span class="ico">🏬</span>
               <div>
@@ -705,8 +708,8 @@
           <input type="text" id="custNotes" placeholder="e.g. Preferred shades, gift packaging">
         </div>
 
-        <label class="wholesale-checkbox-label">
-          <input type="checkbox" id="cartWholesaleCheck">
+        <label class="wholesale-checkbox-label" for="cartWholesaleCheck">
+          <input type="checkbox" id="cartWholesaleCheck" aria-label="Apply Wholesale Order Pricing (10+ items)">
           <span>This is a Wholesale Order (10+ items)</span>
         </label>
       </div>
@@ -725,7 +728,7 @@
 
   <!-- Product Detail / Quick View Modal -->
   <div class="modal-overlay hidden" id="productModalOverlay"></div>
-  <div class="product-modal hidden" id="productModal" role="dialog" aria-modal="true">
+  <div class="product-modal hidden" id="productModal" role="dialog" aria-modal="true" aria-labelledby="productModalTitle">
     <button class="modal-close-btn" id="closeProductModalBtn" aria-label="Close Product View">✕</button>
     <div class="product-modal-inner" id="productModalContent">
       <!-- Injected by JS -->
@@ -734,7 +737,7 @@
 
   <!-- Fullscreen Vertical Reels Video Player Modal -->
   <div class="modal-overlay hidden" id="reelModalOverlay"></div>
-  <div class="reel-modal hidden" id="reelModal">
+  <div class="reel-modal hidden" id="reelModal" role="dialog" aria-modal="true" aria-labelledby="reelHeaderBrand">
     <!-- Instagram/TikTok Style Segmented Progress Bars -->
     <div class="reel-progress-container" id="reelProgressBarWrap">
       <!-- Dynamic segmented bars injected by JS -->
@@ -743,7 +746,7 @@
     <div class="reel-top-bar">
       <div class="reel-brand">
         <span>👑</span>
-        <strong id="reelHeaderBrand">Ohemaa’s Studio Reel</strong>
+        <strong id="reelHeaderBrand" role="heading" aria-level="2">Ohemaa’s Studio Reel</strong>
         <span class="reel-counter-badge" id="reelCounterBadge">1 / 10</span>
       </div>
       <button class="reel-close-btn" id="closeReelModalBtn" aria-label="Close Reel">✕</button>
@@ -793,7 +796,7 @@
             <span class="reel-tag" id="reelCurrentTag">Live Reel</span>
             <span class="reel-policy-pill">🚚 Friday Dispatch</span>
           </div>
-          <h4 id="reelCurrentTitle">Studio Walkthrough & Co-ord Outfits</h4>
+          <h3 id="reelCurrentTitle">Studio Walkthrough & Co-ord Outfits</h3>
           <p id="reelCurrentDesc">Real textures, vibrant dye washes, and gold mannequin fits.</p>
           <div class="reel-cta-bar">
             <button class="btn btn-gold btn-sm" id="reelShopBtn">
@@ -810,26 +813,26 @@
 
   <!-- Wholesale Inquiries Modal -->
   <div class="modal-overlay hidden" id="wholesaleModalOverlay"></div>
-  <div class="app-modal hidden" id="wholesaleModal">
+  <div class="app-modal hidden" id="wholesaleModal" role="dialog" aria-modal="true" aria-labelledby="wholesaleModalTitle">
     <div class="app-modal-header">
       <div class="title-wrap">
         <span class="crown-icon">📦</span>
-        <h3>Wholesale & Bulk Orders</h3>
+        <h2 class="modal-title" id="wholesaleModalTitle">Wholesale & Bulk Orders</h2>
       </div>
-      <button class="modal-close-btn" id="closeWholesaleModalBtn">✕</button>
+      <button class="modal-close-btn" id="closeWholesaleModalBtn" aria-label="Close Wholesale Modal">✕</button>
     </div>
 
     <div class="app-modal-body">
       <div class="wholesale-calculator-card">
-        <h4>Wholesale Price Estimator</h4>
+        <h3 class="calc-title">Wholesale Price Estimator</h3>
         <p>Minimum Order Quantity: <strong>10 Pieces</strong> (Mix & Match styles, sizes, and colors)</p>
         
         <div class="calc-row">
           <label for="wholesaleQtyInput">Select Quantity:</label>
           <div class="stepper-input">
-            <button class="step-btn" id="wholesaleMinusBtn">-</button>
-            <input type="number" id="wholesaleQtyInput" value="10" min="10" max="500">
-            <button class="step-btn" id="wholesalePlusBtn">+</button>
+            <button class="step-btn" id="wholesaleMinusBtn" aria-label="Decrease wholesale quantity">-</button>
+            <input type="number" id="wholesaleQtyInput" value="10" min="10" max="500" aria-label="Wholesale item quantity">
+            <button class="step-btn" id="wholesalePlusBtn" aria-label="Increase wholesale quantity">+</button>
           </div>
         </div>
 
@@ -881,18 +884,18 @@
 
   <!-- Digital Order Receipt Modal -->
   <div class="modal-overlay hidden" id="receiptModalOverlay"></div>
-  <div class="app-modal receipt-modal hidden" id="receiptModal">
+  <div class="app-modal receipt-modal hidden" id="receiptModal" role="dialog" aria-modal="true" aria-labelledby="receiptModalTitle">
     <div class="app-modal-header no-border">
       <div class="title-wrap">
         <span>👑</span>
-        <h3>Official Order Receipt</h3>
+        <h2 class="modal-title" id="receiptModalTitle">Official Order Receipt</h2>
       </div>
-      <button class="modal-close-btn" id="closeReceiptModalBtn">✕</button>
+      <button class="modal-close-btn" id="closeReceiptModalBtn" aria-label="Close Receipt Modal">✕</button>
     </div>
 
     <div class="receipt-paper" id="receiptPrintArea">
       <div class="receipt-header">
-        <h2>Ohemaa’s Apparel</h2>
+        <div class="receipt-brand-title">Ohemaa’s Apparel</div>
         <p class="receipt-sub">Ghana's Luxury Fashion Boutique</p>
         <p class="receipt-contact">Phone: 0599959521 | Snapchat: mummy’s _fav | TikTok: @obaa</p>
         <div class="receipt-id-tag" id="receiptIdTag">ORDER #OHE-1024</div>
@@ -942,14 +945,14 @@
 
   <!-- ==================== ADMIN PORTAL MODAL ==================== -->
   <div class="modal-overlay hidden" id="adminModalOverlay"></div>
-  <div class="admin-modal hidden" id="adminModal" role="dialog" aria-modal="true">
+  <div class="admin-modal hidden" id="adminModal" role="dialog" aria-modal="true" aria-labelledby="adminModalHeading">
     
     <!-- Admin Login Screen (Shown when not authenticated) -->
     <div class="admin-login-screen" id="adminLoginScreen">
       <div class="login-card">
-        <button class="modal-close-btn top-right" id="closeAdminLoginBtn">✕</button>
+        <button class="modal-close-btn top-right" id="closeAdminLoginBtn" aria-label="Close Admin Modal">✕</button>
         <div class="login-crown">👑</div>
-        <h2>Owner Admin Portal</h2>
+        <h2 id="adminModalHeading">Owner Admin Portal</h2>
         <p class="login-sub">Ohemaa's Apparel Management Suite</p>
         <p class="login-info-pill">Enter your official credentials to update prices & manage orders</p>
 
@@ -1031,7 +1034,7 @@
 
         <div class="price-editor-toolbar">
           <div class="search-wrap">
-            <input type="text" id="adminPriceSearch" placeholder="Filter products by name...">
+            <input type="text" id="adminPriceSearch" placeholder="Filter products by name..." aria-label="Filter products by name in admin editor">
           </div>
           <button class="btn btn-gold" id="saveAllPricesBtn">
             💾 Save All Prices Now
@@ -1137,7 +1140,7 @@
               <div class="input-group">
                 <label for="newProdImageFile">Product Photo Upload</label>
                 <input type="file" id="newProdImageFile" accept="image/*">
-                <input type="text" id="newProdImageUrl" placeholder="Or enter image URL / pick from pics" style="margin-top:6px;">
+                <input type="text" id="newProdImageUrl" placeholder="Or enter image URL / pick from pics" style="margin-top:6px;" aria-label="Custom image URL for new product">
               </div>
 
               <button type="submit" class="btn btn-gold full-width">
@@ -1202,7 +1205,7 @@
               </button>
               <label class="btn btn-outline full-width file-upload-btn">
                 📤 Import Store Data (JSON)
-                <input type="file" id="importDataFile" accept=".json" class="hidden">
+                <input type="file" id="importDataFile" accept=".json" class="hidden" aria-label="Upload JSON backup file to import catalog">
               </label>
               <button class="btn btn-danger-outline full-width" id="resetCatalogBtn">
                 ⚠️ Reset All Prices to GH₵ ___

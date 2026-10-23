@@ -4,38 +4,41 @@
    ========================================================================== */
 
 :root {
-  /* Core Color Palette */
-  --bg-dark: #0b0b0e;
-  --bg-surface: #141419;
-  --bg-card: #1c1c24;
-  --bg-card-hover: #23232e;
-  --bg-glass: rgba(20, 20, 25, 0.78);
-  --bg-glass-card: rgba(28, 28, 36, 0.85);
+  /* Core Color Palette - Disciplined Onyx & Royal Gold */
+  --bg-dark: #0a0a0e;
+  --bg-surface: #121218;
+  --bg-card: #181822;
+  --bg-card-hover: #22222e;
+  --bg-glass: rgba(18, 18, 24, 0.85);
+  --bg-glass-card: rgba(24, 24, 34, 0.9);
 
   /* Borders & Dividers */
-  --border-light: rgba(255, 255, 255, 0.08);
-  --border-medium: rgba(255, 255, 255, 0.14);
-  --border-gold: rgba(226, 184, 89, 0.35);
+  --border-light: rgba(255, 255, 255, 0.1);
+  --border-medium: rgba(255, 255, 255, 0.18);
+  --border-gold: rgba(212, 175, 55, 0.38);
 
   /* Gold & Royal Accents */
-  --gold-primary: #e2b859;
-  --gold-secondary: #f4d48a;
-  --gold-dark: #ab822b;
-  --gold-gradient: linear-gradient(135deg, #f4d48a 0%, #e2b859 50%, #b88a2e 100%);
-  --gold-glow: 0 4px 20px rgba(226, 184, 89, 0.25);
+  --gold-primary: #d4af37;
+  --gold-secondary: #f3d069;
+  --gold-dark: #b88a2e;
+  --gold-gradient: linear-gradient(135deg, #f3d069 0%, #d4af37 50%, #b88a2e 100%);
+  --gold-glow: 0 4px 20px rgba(212, 175, 55, 0.28);
 
-  /* Accents */
+  /* High Contrast Text on Gold (> 9.0:1 WCAG AAA) */
+  --text-on-gold: #0a0a0d;
+
+  /* Functional Accents */
   --pink-blush: #ff94a7;
   --pink-soft: rgba(255, 148, 167, 0.12);
-  --emerald-green: #25d366;
-  --emerald-glow: 0 4px 15px rgba(37, 211, 102, 0.25);
+  --emerald-green: #22c55e;
+  --emerald-glow: 0 4px 15px rgba(34, 197, 94, 0.25);
   --blue-royal: #3b82f6;
   --purple-royal: #a855f7;
 
-  /* Typography */
-  --text-main: #f5f5f7;
-  --text-muted: #9e9ea7;
-  --text-dim: #71717a;
+  /* High-Contrast WCAG AA Typography Tokens */
+  --text-main: #ffffff;
+  --text-muted: #cbd5e1;
+  --text-dim: #94a3b8;
   --font-royal: 'Cinzel', serif, Georgia;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
@@ -60,6 +63,20 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Accessibility: Prefers-Reduced-Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .announcement-ticker {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
 html {
   font-size: 15px;
   scroll-behavior: smooth;
@@ -81,7 +98,7 @@ body {
    ========================================================================== */
 .hidden { display: none !important; }
 .text-right { text-align: right; }
-.full-width { width: 100% !important; }
+.full-width { width: 100%; }
 
 /* Buttons */
 .btn {
@@ -114,8 +131,9 @@ body {
 }
 
 .btn-gold {
+  background-color: var(--gold-primary);
   background: var(--gold-gradient);
-  color: #121216;
+  color: var(--text-on-gold);
   font-weight: 700;
   box-shadow: var(--gold-glow);
 }
@@ -199,8 +217,9 @@ body {
   position: absolute;
   top: -4px;
   right: -4px;
+  background-color: var(--gold-primary);
   background: var(--gold-gradient);
-  color: #121216;
+  color: var(--text-on-gold);
   font-size: 0.7rem;
   font-weight: 800;
   min-width: 19px;
@@ -741,8 +760,9 @@ body {
   width: 60px;
   height: 60px;
   border-radius: var(--radius-full);
+  background-color: var(--gold-primary);
   background: var(--gold-gradient);
-  color: #121216;
+  color: var(--text-on-gold);
   border: none;
   cursor: pointer;
   display: flex;
@@ -903,8 +923,9 @@ body {
 }
 
 .cat-pill.active {
+  background-color: var(--gold-primary);
   background: var(--gold-gradient);
-  color: #121216;
+  color: var(--text-on-gold);
   border-color: transparent;
   font-weight: 700;
   box-shadow: var(--gold-glow);
@@ -1075,14 +1096,16 @@ body {
 }
 
 .badge-pill.gold {
+  background-color: var(--gold-primary);
   background: var(--gold-gradient);
-  color: #121216;
+  color: var(--text-on-gold);
   border: none;
 }
 
 .badge-pill.friday {
+  background-color: var(--gold-secondary);
   background: rgba(226, 184, 89, 0.9);
-  color: #121216;
+  color: var(--text-on-gold);
   font-weight: 800;
 }
 
@@ -1210,8 +1233,9 @@ body {
 }
 
 .quick-add-btn {
+  background-color: var(--gold-primary);
   background: var(--gold-gradient);
-  color: #121216;
+  color: var(--text-on-gold);
   border: none;
   border-radius: var(--radius-sm);
   font-weight: 700;
@@ -1573,8 +1597,9 @@ body {
   position: absolute;
   top: -4px;
   right: -8px;
+  background-color: var(--gold-primary);
   background: var(--gold-gradient);
-  color: #121216;
+  color: var(--text-on-gold);
   font-size: 0.65rem;
   font-weight: 800;
   min-width: 17px;
@@ -1590,8 +1615,9 @@ body {
   width: 28px;
   height: 28px;
   border-radius: var(--radius-full);
+  background-color: var(--gold-primary);
   background: linear-gradient(135deg, #ff416c, #f4d48a);
-  color: #121216;
+  color: var(--text-on-gold);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2342,8 +2368,8 @@ body {
 }
 
 .choice-pill.active {
-  background: var(--gold-primary);
-  color: #121216;
+  background-color: var(--gold-primary);
+  color: var(--text-on-gold);
   border-color: var(--gold-primary);
   font-weight: 700;
 }
@@ -2412,7 +2438,7 @@ body {
 }
 
 .reel-prog-segment.completed .reel-prog-fill {
-  width: 100% !important;
+  width: 100%;
 }
 
 .reel-top-bar {
@@ -2518,8 +2544,9 @@ body {
 }
 
 .reel-nav-arrow:hover {
+  background-color: var(--gold-primary);
   background: var(--gold-gradient);
-  color: #121216;
+  color: var(--text-on-gold);
   border-color: transparent;
   transform: translateY(-50%) scale(1.1);
 }
@@ -2631,7 +2658,8 @@ body {
   display: inline-block;
   font-size: 0.68rem;
   font-weight: 800;
-  color: #121216;
+  color: var(--text-on-gold);
+  background-color: var(--gold-primary);
   background: var(--gold-gradient);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -3157,8 +3185,9 @@ body {
 }
 
 .admin-tab-btn.active {
+  background-color: var(--gold-primary);
   background: var(--gold-gradient);
-  color: #121216;
+  color: var(--text-on-gold);
   border-color: transparent;
   font-weight: 700;
 }
@@ -3335,8 +3364,8 @@ body {
 }
 
 .order-filter-pill.active {
-  background: var(--gold-primary);
-  color: #121216;
+  background-color: var(--gold-primary);
+  color: var(--text-on-gold);
   font-weight: 700;
 }
 

@@ -598,14 +598,14 @@ function createProductCard(product) {
 
   card.innerHTML = `
     <div class="product-image-box" data-action="quickview" data-id="${escapeHtml(product.id)}">
-      <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" loading="lazy" onerror="this.src='./pics/Gh100.jpg.jpeg'">
+      <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)} - Luxury African Streetwear Outfit" loading="lazy" onerror="this.src='./pics/Gh100.jpg.jpeg'">
       
       <div class="product-badge-overlay">
         ${product.badge ? `<span class="badge-pill gold">${escapeHtml(product.badge)}</span>` : ''}
         <span class="badge-pill friday">🚚 Friday Delivery</span>
       </div>
 
-      <button class="product-wishlist-toggle ${isWishlisted ? 'active' : ''}" data-action="wishlist" data-id="${escapeHtml(product.id)}" aria-label="Add to Wishlist">
+      <button class="product-wishlist-toggle ${isWishlisted ? 'active' : ''}" data-action="wishlist" data-id="${escapeHtml(product.id)}" aria-label="Add ${escapeHtml(product.name)} to Wishlist">
         ♥
       </button>
     </div>
@@ -625,10 +625,10 @@ function createProductCard(product) {
       </div>
 
       <div class="product-card-actions">
-        <button class="btn quick-view-btn" data-action="quickview" data-id="${escapeHtml(product.id)}">
+        <button class="btn quick-view-btn" data-action="quickview" data-id="${escapeHtml(product.id)}" aria-label="Quick view details for ${escapeHtml(product.name)}">
           👁️ View
         </button>
-        <button class="btn quick-add-btn" data-action="add-cart" data-id="${escapeHtml(product.id)}">
+        <button class="btn quick-add-btn" data-action="add-cart" data-id="${escapeHtml(product.id)}" aria-label="Add ${escapeHtml(product.name)} to cart">
           + Add
         </button>
       </div>
@@ -833,7 +833,7 @@ function renderCartDrawer() {
     itemCard.className = 'cart-item';
     itemCard.innerHTML = `
       <div class="cart-item-thumb">
-        <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">
+        <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)} selected in bag">
       </div>
       <div class="cart-item-details">
         <div>
@@ -845,13 +845,13 @@ function renderCartDrawer() {
             ${isPriced ? `GH₵ ${(Number(item.price) * item.quantity).toFixed(2)}` : 'GH₵ ___'}
           </span>
           <div class="qty-stepper">
-            <button class="qty-btn" data-action="minus" data-id="${escapeHtml(item.cartItemId)}">-</button>
+            <button class="qty-btn" data-action="minus" data-id="${escapeHtml(item.cartItemId)}" aria-label="Decrease quantity of ${escapeHtml(item.name)}">-</button>
             <span class="qty-number">${escapeHtml(item.quantity)}</span>
-            <button class="qty-btn" data-action="plus" data-id="${escapeHtml(item.cartItemId)}">+</button>
+            <button class="qty-btn" data-action="plus" data-id="${escapeHtml(item.cartItemId)}" aria-label="Increase quantity of ${escapeHtml(item.name)}">+</button>
           </div>
         </div>
       </div>
-      <button class="remove-cart-item-btn" data-action="remove" data-id="${escapeHtml(item.cartItemId)}" title="Remove Item">✕</button>
+      <button class="remove-cart-item-btn" data-action="remove" data-id="${escapeHtml(item.cartItemId)}" aria-label="Remove ${escapeHtml(item.name)} from bag" title="Remove Item">✕</button>
     `;
 
     itemCard.addEventListener('click', (e) => {
@@ -921,7 +921,7 @@ function openProductModal(productId) {
 
   elements.productModalContent.innerHTML = `
     <div class="modal-product-media">
-      <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}">
+      <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)} - Luxury African Streetwear">
       <div class="product-badge-overlay">
         ${product.badge ? `<span class="badge-pill gold">${escapeHtml(product.badge)}</span>` : ''}
         <span class="badge-pill friday">🚚 Friday Dispatch</span>
@@ -930,7 +930,7 @@ function openProductModal(productId) {
 
     <div class="modal-product-details">
       <span class="modal-category">${escapeHtml(product.category)}</span>
-      <h2 class="modal-title">${escapeHtml(product.name)}</h2>
+      <h2 class="modal-title" id="productModalTitle">${escapeHtml(product.name)}</h2>
       
       <div class="modal-price-box">
         <span class="modal-price-val ${isPriced ? '' : 'unpriced'}">${escapeHtml(formattedPrice)}</span>
@@ -968,9 +968,9 @@ function openProductModal(productId) {
       <div class="modal-selector-group">
         <label>Quantity:</label>
         <div class="stepper-input" style="width:fit-content;">
-          <button class="step-btn" id="modalQtyMinus">-</button>
-          <input type="number" id="modalQtyInput" value="1" min="1" max="50">
-          <button class="step-btn" id="modalQtyPlus">+</button>
+          <button class="step-btn" id="modalQtyMinus" aria-label="Decrease item quantity">-</button>
+          <input type="number" id="modalQtyInput" aria-label="Order quantity for ${escapeHtml(product.name)}" value="1" min="1" max="50">
+          <button class="step-btn" id="modalQtyPlus" aria-label="Increase item quantity">+</button>
         </div>
       </div>
 
@@ -1617,11 +1617,12 @@ function renderAdminPriceTable(searchFilter = '') {
                  data-id="${escapeHtml(product.id)}" 
                  value="${isPriced ? escapeHtml(product.price) : ''}" 
                  placeholder="0.00" 
-                 step="5">
+                 step="5"
+                 aria-label="Set price in Ghana Cedis for ${escapeHtml(product.name)}">
         </div>
       </td>
       <td>
-        <button class="btn btn-gold btn-sm single-save-price-btn" data-id="${escapeHtml(product.id)}">
+        <button class="btn btn-gold btn-sm single-save-price-btn" data-id="${escapeHtml(product.id)}" aria-label="Save price for ${escapeHtml(product.name)}">
           Save
         </button>
       </td>

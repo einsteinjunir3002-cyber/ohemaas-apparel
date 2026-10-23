@@ -2180,15 +2180,13 @@ function setupEventListeners() {
       whatsappNumber: phone.replace(/\D/g, '')
     });
 
-    elements.announcementBar.querySelector('.announcement-ticker').innerHTML = `
-      <span class="ticker-item"><span class="badge-icon">🚚</span> <strong>DELIVERIES ARE ONLY ON FRIDAYS</strong></span>
-      <span class="ticker-sep">•</span>
-      <span class="ticker-item"><span class="badge-icon">🏬</span> STORE PICK-UP ALLOWED</span>
-      <span class="ticker-sep">•</span>
-      <span class="ticker-item"><span class="badge-icon">📦</span> WHOLESALE AVAILABLE</span>
-      <span class="ticker-sep">•</span>
-      <span class="ticker-item"><span class="badge-icon">💬</span> CALL / WHATSAPP: <strong>${escapeHtml(phone)}</strong></span>
-    `;
+    const ticker = elements.announcementBar ? elements.announcementBar.querySelector('.announcement-ticker') : null;
+    if (ticker) {
+      const phoneItem = ticker.querySelector('.ticker-item:last-child strong');
+      if (phoneItem) {
+        phoneItem.textContent = phone;
+      }
+    }
 
     showToast('Store settings saved successfully!', '⚙️');
   });

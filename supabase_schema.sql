@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS public.ohemaa_products (
 CREATE TABLE IF NOT EXISTS public.ohemaa_orders (
   id BIGSERIAL PRIMARY KEY,
   order_id TEXT UNIQUE NOT NULL,
+  user_id UUID REFERENCES auth.users(id) DEFAULT auth.uid(),
   customer_name TEXT NOT NULL,
   customer_phone TEXT NOT NULL,
   delivery_method TEXT NOT NULL,
@@ -52,27 +53,36 @@ DROP POLICY IF EXISTS "Public full access to ohemaa_products" ON public.ohemaa_p
 CREATE POLICY "Public full access to ohemaa_products" ON public.ohemaa_products FOR ALL USING (true) WITH CHECK (true);
 
 DROP POLICY IF EXISTS "Public full access to ohemaa_orders" ON public.ohemaa_orders;
--- Allow public visitors to submit new orders only
+DROP POLICY IF EXISTS "Allow public order insertion" ON public.ohemaa_orders;
+DROP POLICY IF EXISTS "Allow authenticated reads on ohemaa_orders" ON public.ohemaa_orders;
+DROP POLICY IF EXISTS "Allow authenticated updates on ohemaa_orders" ON public.ohemaa_orders;
+DROP POLICY IF EXISTS "Allow authenticated deletes on ohemaa_orders" ON public.ohemaa_orders;
+DROP POLICY IF EXISTS "Users can only read their own orders" ON public.ohemaa_orders;
+DROP POLICY IF EXISTS "Users can only update their own orders" ON public.ohemaa_orders;
+DROP POLICY IF EXISTS "Users can only delete their own orders" ON public.ohemaa_orders;
+
+-- Allow public or authenticated visitors to submit new orders
 CREATE POLICY "Allow public order insertion" ON public.ohemaa_orders 
   FOR INSERT 
   WITH CHECK (true);
 
--- Restrict order reads and management to authenticated administrative sessions
-CREATE POLICY "Allow authenticated reads on ohemaa_orders" ON public.ohemaa_orders 
+-- Restrict order reads strictly to the user who placed the order (owner-scoped)
+CREATE POLICY "Users can only read their own orders" ON public.ohemaa_orders 
   FOR SELECT 
   TO authenticated 
-  USING (true);
+  USING (auth.uid() = user_id);
 
-CREATE POLICY "Allow authenticated updates on ohemaa_orders" ON public.ohemaa_orders 
+-- Restrict updates and deletes strictly to the order owner
+CREATE POLICY "Users can only update their own orders" ON public.ohemaa_orders 
   FOR UPDATE 
   TO authenticated 
-  USING (true) 
-  WITH CHECK (true);
+  USING (auth.uid() = user_id) 
+  WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "Allow authenticated deletes on ohemaa_orders" ON public.ohemaa_orders 
+CREATE POLICY "Users can only delete their own orders" ON public.ohemaa_orders 
   FOR DELETE 
   TO authenticated 
-  USING (true);
+  USING (auth.uid() = user_id);
 
 DROP POLICY IF EXISTS "Public full access to ohemaa_settings" ON public.ohemaa_settings;
 CREATE POLICY "Public full access to ohemaa_settings" ON public.ohemaa_settings FOR ALL USING (true) WITH CHECK (true);

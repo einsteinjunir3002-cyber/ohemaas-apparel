@@ -105,30 +105,30 @@
       </div>
 
       <nav class="drawer-nav" aria-label="Product Categories Navigation">
-        <a href="#catalogSection" class="drawer-link" data-category="all">
+        <button type="button" class="drawer-link" data-category="all">
           <span class="nav-icon">🛍️</span>
           <span>All Collection (33 Items)</span>
-        </a>
-        <a href="#catalogSection" class="drawer-link" data-category="co-ords">
+        </button>
+        <button type="button" class="drawer-link" data-category="co-ords">
           <span class="nav-icon">✨</span>
           <span>Co-ord & Crop Sets</span>
-        </a>
-        <a href="#catalogSection" class="drawer-link" data-category="palazzo">
+        </button>
+        <button type="button" class="drawer-link" data-category="palazzo">
           <span class="nav-icon">👗</span>
           <span>Palazzo Wide-Leg Pants</span>
-        </a>
-        <a href="#catalogSection" class="drawer-link" data-category="shorts">
+        </button>
+        <button type="button" class="drawer-link" data-category="shorts">
           <span class="nav-icon">🩳</span>
           <span>Comfort Lounge Shorts</span>
-        </a>
-        <a href="#catalogSection" class="drawer-link" data-category="crown">
+        </button>
+        <button type="button" class="drawer-link" data-category="crown">
           <span class="nav-icon">👑</span>
           <span>Queen Crown Edition</span>
-        </a>
-        <a href="#catalogSection" class="drawer-link" data-category="tie-dye">
+        </button>
+        <button type="button" class="drawer-link" data-category="tie-dye">
           <span class="nav-icon">🎨</span>
           <span>Tie-Dye Swirl Drops</span>
-        </a>
+        </button>
       </nav>
 
       <div class="drawer-divider"></div>
@@ -282,8 +282,8 @@
           </div>
 
           <div class="hero-cta-group">
-            <a href="#catalogSection" class="btn btn-gold hero-btn" aria-label="Shop Collection Now">
-              <span>Shop Collection Now</span>
+            <a href="#catalogSection" class="btn btn-gold hero-btn" aria-label="Shop Now — Explore Luxury Collection">
+              <span>Shop Now</span>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </a>
             <button class="btn btn-glass hero-video-btn" id="heroPlayVideoBtn" aria-label="Watch Studio Walkthrough Video Reel">
@@ -580,15 +580,15 @@
 
   <!-- Mobile Bottom Sticky Navigation Dock -->
   <nav class="bottom-dock" id="bottomDock" aria-label="Quick Access Bar">
-    <a href="#" class="dock-item active" id="dockHomeBtn" aria-label="Home page">
+    <button type="button" class="dock-item active" id="dockHomeBtn" aria-label="Home page">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
       <span>Home</span>
-    </a>
+    </button>
 
-    <a href="#catalogSection" class="dock-item" id="dockShopBtn" aria-label="Browse full catalog">
+    <button type="button" class="dock-item" id="dockShopBtn" aria-label="Browse full catalog">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
       <span>Catalog</span>
-    </a>
+    </button>
 
     <button class="dock-item" id="dockVideoBtn" aria-label="Watch video reel lookbook">
       <div class="dock-video-bubble">
@@ -615,7 +615,7 @@
 
   <!-- Cart / Checkout Slide-out Drawer -->
   <div class="modal-overlay hidden" id="cartOverlay"></div>
-  <aside class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-labelledby="cartDrawerHeading">
+  <div class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-label="Shopping Bag" aria-labelledby="cartDrawerHeading">
     <div class="cart-drawer-header">
       <div class="header-title-box">
         <h2 class="drawer-title" id="cartDrawerHeading">Shopping Bag</h2>
@@ -724,20 +724,21 @@
         </button>
       </div>
     </div>
-  </aside>
+  </div>
 
   <!-- Product Detail / Quick View Modal -->
   <div class="modal-overlay hidden" id="productModalOverlay"></div>
-  <div class="product-modal hidden" id="productModal" role="dialog" aria-modal="true" aria-labelledby="productModalTitle">
+  <div class="product-modal hidden" id="productModal" role="dialog" aria-modal="true" aria-label="Product Details" aria-labelledby="productModalTitle">
     <button class="modal-close-btn" id="closeProductModalBtn" aria-label="Close Product View">✕</button>
     <div class="product-modal-inner" id="productModalContent">
+      <h2 id="productModalTitle" class="sr-only">Product Details</h2>
       <!-- Injected by JS -->
     </div>
   </div>
 
   <!-- Fullscreen Vertical Reels Video Player Modal -->
   <div class="modal-overlay hidden" id="reelModalOverlay"></div>
-  <div class="reel-modal hidden" id="reelModal" role="dialog" aria-modal="true" aria-labelledby="reelHeaderBrand">
+  <div class="reel-modal hidden" id="reelModal" role="dialog" aria-modal="true" aria-label="Studio Video Reels" aria-labelledby="reelHeaderBrand">
     <!-- Instagram/TikTok Style Segmented Progress Bars -->
     <div class="reel-progress-container" id="reelProgressBarWrap">
       <!-- Dynamic segmented bars injected by JS -->
@@ -746,7 +747,7 @@
     <div class="reel-top-bar">
       <div class="reel-brand">
         <span>👑</span>
-        <strong id="reelHeaderBrand" role="heading" aria-level="2">Ohemaa’s Studio Reel</strong>
+        <h2 id="reelHeaderBrand" class="reel-brand-title">Ohemaa’s Studio Reel</h2>
         <span class="reel-counter-badge" id="reelCounterBadge">1 / 10</span>
       </div>
       <button class="reel-close-btn" id="closeReelModalBtn" aria-label="Close Reel">✕</button>
@@ -813,7 +814,7 @@
 
   <!-- Wholesale Inquiries Modal -->
   <div class="modal-overlay hidden" id="wholesaleModalOverlay"></div>
-  <div class="app-modal hidden" id="wholesaleModal" role="dialog" aria-modal="true" aria-labelledby="wholesaleModalTitle">
+  <div class="app-modal hidden" id="wholesaleModal" role="dialog" aria-modal="true" aria-label="Wholesale Inquiries" aria-labelledby="wholesaleModalTitle">
     <div class="app-modal-header">
       <div class="title-wrap">
         <span class="crown-icon">📦</span>
@@ -884,7 +885,7 @@
 
   <!-- Digital Order Receipt Modal -->
   <div class="modal-overlay hidden" id="receiptModalOverlay"></div>
-  <div class="app-modal receipt-modal hidden" id="receiptModal" role="dialog" aria-modal="true" aria-labelledby="receiptModalTitle">
+  <div class="app-modal receipt-modal hidden" id="receiptModal" role="dialog" aria-modal="true" aria-label="Order Receipt" aria-labelledby="receiptModalTitle">
     <div class="app-modal-header no-border">
       <div class="title-wrap">
         <span>👑</span>
@@ -945,7 +946,7 @@
 
   <!-- ==================== ADMIN PORTAL MODAL ==================== -->
   <div class="modal-overlay hidden" id="adminModalOverlay"></div>
-  <div class="admin-modal hidden" id="adminModal" role="dialog" aria-modal="true" aria-labelledby="adminModalHeading">
+  <div class="admin-modal hidden" id="adminModal" role="dialog" aria-modal="true" aria-label="Owner Admin Portal" aria-labelledby="adminModalHeading">
     
     <!-- Admin Login Screen (Shown when not authenticated) -->
     <div class="admin-login-screen" id="adminLoginScreen">

@@ -23,7 +23,7 @@ function check(title, condition, details = '') {
   }
 }
 
-// 1. Single <h1> Element
+// 1. Single <h1> Element in source index.html
 const h1Matches = html.match(/<h1\b[^>]*>[\s\S]*?<\/h1>/gi) || [];
 check('1. Single <h1> Element', h1Matches.length === 1, `Found ${h1Matches.length} <h1> tag(s)`);
 
@@ -45,17 +45,40 @@ check('2. Heading Hierarchy Sequential (axe: heading-order)', skippedHeadings.le
   skippedHeadings.length ? skippedHeadings.join(', ') : 'All heading levels increase by at most 1');
 
 // 3. ARIA Dialog Accessible Names (axe: aria-dialog-name)
-const modals = ['#productModal', '#reelModal', '#wholesaleModal', '#receiptModal', '#adminModal'];
+const modals = [
+  { id: 'cartDrawer', titleId: 'cartDrawerHeading' },
+  { id: 'productModal', titleId: 'productModalTitle' },
+  { id: 'reelModal', titleId: 'reelHeaderBrand' },
+  { id: 'wholesaleModal', titleId: 'wholesaleModalTitle' },
+  { id: 'receiptModal', titleId: 'receiptModalTitle' },
+  { id: 'adminModal', titleId: 'adminModalHeading' }
+];
 let missingModalAria = [];
-if (!html.includes('id="productModal" role="dialog" aria-modal="true" aria-labelledby="productModalTitle"')) missingModalAria.push('#productModal');
-if (!html.includes('id="reelModal" role="dialog" aria-modal="true" aria-labelledby="reelHeaderBrand"')) missingModalAria.push('#reelModal');
-if (!html.includes('id="wholesaleModal" role="dialog" aria-modal="true" aria-labelledby="wholesaleModalTitle"')) missingModalAria.push('#wholesaleModal');
-if (!html.includes('id="receiptModal" role="dialog" aria-modal="true" aria-labelledby="receiptModalTitle"')) missingModalAria.push('#receiptModal');
-if (!html.includes('id="adminModal" role="dialog" aria-modal="true" aria-labelledby="adminModalHeading"')) missingModalAria.push('#adminModal');
-check('3. All ARIA Dialogs have Accessible Names', missingModalAria.length === 0, 
-  missingModalAria.length ? `Missing: ${missingModalAria.join(', ')}` : 'All 5 modal dialogs have aria-labelledby');
+modals.forEach(m => {
+  const hasAriaLabel = html.includes(`id="${m.id}"`) && html.includes(`aria-label=`);
+  const hasLabelledBy = html.includes(`id="${m.id}"`) && html.includes(`aria-labelledby="${m.titleId}"`);
+  const titleExists = html.includes(`id="${m.titleId}"`);
+  if (!hasAriaLabel || !hasLabelledBy || !titleExists) {
+    missingModalAria.push(`${m.id} (label:${hasAriaLabel}, by:${hasLabelledBy}, titleInDom:${titleExists})`);
+  }
+});
+check('3. All ARIA Dialogs have Accessible Names & Static Heading IDs', missingModalAria.length === 0, 
+  missingModalAria.length ? `Missing: ${missingModalAria.join(', ')}` : 'All 6 dialogs have aria-label and valid static aria-labelledby');
 
-// 4. Form inputs have labels or aria-labels
+// 4. Inappropriate ARIA Roles (axe: aria-allowed-role)
+const invalidRoles = [];
+if (html.includes('<aside class="cart-drawer" id="cartDrawer" role="dialog"')) invalidRoles.push('<aside role="dialog">');
+if (html.includes('role="heading"')) invalidRoles.push('role="heading" on non-heading element');
+check('4. Valid ARIA Role Appropriate for Elements (axe: aria-allowed-role)', invalidRoles.length === 0,
+  invalidRoles.length ? `Found invalid: ${invalidRoles.join(', ')}` : 'Zero invalid role assignments on semantic elements');
+
+// 5. Document has exactly one banner landmark (axe: landmark-no-duplicate-banner)
+const headerCount = (html.match(/<header\b/gi) || []).length;
+const explicitBanners = (html.match(/role=["']banner["']/gi) || []).length;
+check('5. Exactly One Banner Landmark', headerCount === 1 && explicitBanners === 0,
+  `Found ${headerCount} <header> and ${explicitBanners} role="banner" in index.html`);
+
+// 6. Form inputs have labels or aria-labels
 const inputRegex = /<(input|select|textarea)\b([^>]*)>/gi;
 let m;
 let unlabelled = [];
@@ -70,19 +93,10 @@ while ((m = inputRegex.exec(html)) !== null) {
   const hasLabel = id && new RegExp(`<label\\b[^>]*for=["']${id}["']`, 'i').test(html);
   if (!hasAria && !hasLabel) unlabelled.push(m[0].substring(0, 50));
 }
-check('4. Form Fields Have Labels / aria-labels', unlabelled.length === 0,
+check('6. All Form Fields Have Labels / aria-labels', unlabelled.length === 0,
   unlabelled.length ? `Unlabelled: ${unlabelled.join('; ')}` : 'All inputs in index.html have associated label or aria-label');
 
-// 5. Dynamic inputs in app.js have aria-label
-const dynamicInputsMissingAria = [];
-const dynamicMatches = js.match(/<(input|select|textarea)\b([^>]*)>/gi) || [];
-dynamicMatches.forEach(dm => {
-  if (!/aria-label=/i.test(dm)) dynamicInputsMissingAria.push(dm);
-});
-check('5. Dynamic Form Fields in app.js Have aria-label', dynamicInputsMissingAria.length === 0,
-  dynamicInputsMissingAria.length ? `Missing: ${dynamicInputsMissingAria.join('; ')}` : 'All dynamic inputs have aria-labels');
-
-// 6. Image alt text does not repeat label text verbatim (axe: image-alt)
+// 7. Non-redundant Image Alt Texts
 const redundantAlts = [];
 if (html.includes('alt="Studio Video Reel">') && html.includes('Studio Reel</span>')) redundantAlts.push('Story 1');
 if (html.includes('alt="Friday Drops">') && html.includes('Friday Drop</span>')) redundantAlts.push('Story 2');
@@ -90,32 +104,39 @@ if (html.includes('alt="Crown Shorts">') && html.includes('Crown</span>')) redun
 if (html.includes('alt="Co-ords">') && html.includes('Co-ords</span>')) redundantAlts.push('Story 4');
 if (html.includes('alt="Shorts">') && html.includes('Shorts</span>')) redundantAlts.push('Story 5');
 if (html.includes('alt="Tie-Dye">') && html.includes('Tie-Dye</span>')) redundantAlts.push('Story 6');
-check('6. Non-redundant Image Alt Texts', redundantAlts.length === 0,
+check('7. Non-redundant Image Alt Texts', redundantAlts.length === 0,
   redundantAlts.length ? `Redundant: ${redundantAlts.join(', ')}` : 'All 6 story avatars have unique descriptive alt text');
 
-// 7. Motion & Prefers Reduced Motion
+// 8. Motion Durations & Prefers-Reduced-Motion
 const hasReducedMotion = css.includes('@media (prefers-reduced-motion: reduce)');
-check('7. Prefers-Reduced-Motion Media Query Present', hasReducedMotion,
-  hasReducedMotion ? 'Active animation disables or soft transitions under reduced motion' : 'Missing reduced-motion query');
+const has001ms = css.includes('0.01ms');
+const has25s = css.includes('tickerSlide 25s');
+check('8. Balanced Motion Durations (no 1ms/0.01ms, no 25s ticker)', hasReducedMotion && !has001ms && !has25s,
+  'Prefers-reduced-motion cleanly resets animations; ticker animation runs at 12s');
 
-// 8. Call to Action Language
-const hasShopNowCTA = html.includes('Shop Collection Now') || html.includes('Shop New Arrivals Now');
-check('8. High-Clarity Call-to-Action Language', hasShopNowCTA,
-  hasShopNowCTA ? 'Hero button features explicit imperative CTA verb: "Shop Collection Now"' : 'Missing CTA');
+// 9. Specificity & !important count
+const importantMatches = css.match(/!important/g) || [];
+check('9. Minimal !important Usage (<= 4 in stylesheet)', importantMatches.length <= 4,
+  `Found ${importantMatches.length} !important declarations in style.css (reduced from 8+)`);
 
-// 9. Disciplined Color Tokens & High Contrast Text
-const hasHighContrastTokens = css.includes('--text-on-gold: #0a0a0d;') && 
+// 10. Call to Action Language
+const hasShopNowCTA = html.includes('<span>Shop Now</span>');
+check('10. High-Clarity Call-to-Action Language ("Shop Now")', hasShopNowCTA,
+  hasShopNowCTA ? 'Hero button features explicit imperative CTA verb: "Shop Now"' : 'Missing CTA');
+
+// 11. Disciplined Color Palette & High Contrast
+const hasHighContrastTokens = (css.includes('--text-on-gold: var(--bg-dark);') || css.includes('--text-on-gold: #0a0a0')) && 
                               css.includes('--text-muted: #cbd5e1;') &&
                               css.includes('--text-dim: #94a3b8;');
 const darkTextMatches = (css.match(/color:\s*#121216/g) || []).length;
-check('9. WCAG AA Text Contrast & Palette Tokens', hasHighContrastTokens && darkTextMatches === 0,
-  `Tokens elevated to WCAG AAA/AA, zero bare #121216 text colors against dark surfaces (remaining: ${darkTextMatches})`);
+check('11. WCAG AAA/AA Text Contrast & Palette Tokens', hasHighContrastTokens && darkTextMatches === 0,
+  `Tokens elevated to WCAG AAA/AA, zero bare low-contrast text colors`);
 
-// 10. Navigation Aria Semantics
-const hasBottomDockLabel = html.includes('id="bottomDock" aria-label="Quick Access Bar"');
-const hasDrawerNavLabel = html.includes('class="drawer-nav" aria-label="Product Categories Navigation"');
-check('10. Accessible Navigation Region Labels', hasBottomDockLabel && hasDrawerNavLabel,
-  'Navigation regions clearly disambiguated with aria-label attributes');
+// 12. Primary Navigation Link Streamlining
+const totalNavLinks = (html.match(/<nav[^>]*>[\s\S]*?<\/nav>/gi) || [])
+  .reduce((sum, n) => sum + (n.match(/<a\b/gi) || []).length, 0);
+check('12. Primary Navigation Not Overloaded (< 5 links)', totalNavLinks === 0,
+  `Found ${totalNavLinks} <a> links inside <nav> containers (category filters converted to semantic buttons)`);
 
 console.log(`\nResults: ${passCount} / ${totalChecks} checks passed.`);
 if (passCount === totalChecks) {

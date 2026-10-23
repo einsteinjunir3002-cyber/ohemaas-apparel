@@ -1900,6 +1900,21 @@ function setupEventListeners() {
     renderProducts();
   });
 
+  // Dock Navigation Buttons
+  if (elements.dockHomeBtn) {
+    elements.dockHomeBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+  if (elements.dockShopBtn) {
+    elements.dockShopBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const catSec = document.getElementById('catalogSection');
+      if (catSec) catSec.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
   // Cart Buttons
   elements.headerCartBtn.addEventListener('click', openCartDrawer);
   elements.dockCartBtn.addEventListener('click', openCartDrawer);

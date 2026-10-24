@@ -954,121 +954,204 @@
     
     <!-- ==================== SECTION 1: SIGN IN & CONTINUE AS GUEST ONLY ==================== -->
     <div class="admin-login-screen" id="adminLoginScreen">
-      <div class="login-card">
-        <button class="modal-close-btn top-right" id="closeAdminLoginBtn" aria-label="Close Sign In Modal">✕</button>
-        <div class="brand-crest">
-          <span class="crest-icon">👑</span>
-        </div>
-        <h2 id="adminModalHeading">Sign In</h2>
-        <p class="login-sub">Ohemaa's Luxury Wardrobe &amp; Co-ords</p>
-        <div class="luxury-badge-pill">ACCRA • DELIVERIES ONLY ON FRIDAYS</div>
+      <!-- Ambient luxury lighting inspired by Likem Perfumery -->
+      <div class="auth-ambient-glows">
+        <div class="ambient-glow-top"></div>
+        <div class="ambient-glow-bottom"></div>
+      </div>
 
+      <div class="login-card glass-luxury">
+        <div class="card-top-hairline"></div>
+        <button class="modal-close-btn top-right" id="closeAdminLoginBtn" aria-label="Close Sign In Modal">✕</button>
+        
+        <!-- Header -->
+        <div class="brand-icon-box animate-gold-pulse">
+          <svg class="vault-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
+
+        <div class="badge-gold">
+          <svg class="badge-sparkle" width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"/></svg>
+          <span>Ohemaa’s Apparel</span>
+        </div>
+
+        <h2 class="auth-card-title font-royal" id="adminModalHeading">WELCOME</h2>
+        <p class="auth-card-desc">Sign in to access your bespoke wardrobe vault, track Friday deliveries, and enjoy priority allocations.</p>
+
+        <!-- Error Alert -->
+        <div class="login-error-msg hidden" id="loginErrorMsg">
+          ⚠️ Invalid credentials. Please check your username/phone and password.
+        </div>
+
+        <!-- Login Form -->
         <form id="adminLoginForm" class="admin-login-form">
-          <div class="input-group">
-            <label for="adminUsername">Username or Phone Number</label>
-            <input type="text" id="adminUsername" placeholder="e.g. Big_Ohemaa or 0599959521" autocomplete="username" required>
+          <div class="input-luxury-group">
+            <label for="adminUsername" class="section-label">Email or Phone Number</label>
+            <div class="input-with-icon">
+              <span class="input-icon-left">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </span>
+              <input type="text" id="adminUsername" class="input-luxury" placeholder="Enter your email, username or phone" autocomplete="username" required>
+            </div>
             <small class="helper-text">Owner: Big_Ohemaa • Customers: your registered phone</small>
           </div>
 
-          <div class="input-group">
-            <label for="adminPassword">Password</label>
-            <div class="password-wrapper">
-              <input type="password" id="adminPassword" placeholder="Enter password" autocomplete="current-password" required>
-              <button type="button" class="toggle-pw-btn" id="togglePwBtn" aria-label="Toggle Password Visibility">👁️</button>
+          <div class="input-luxury-group">
+            <div class="label-row">
+              <label for="adminPassword" class="section-label">Password</label>
+            </div>
+            <div class="input-with-icon">
+              <span class="input-icon-left">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              </span>
+              <input type="password" id="adminPassword" class="input-luxury pr-12" placeholder="Enter your password" autocomplete="current-password" required>
+              <button type="button" class="toggle-pw-btn" id="togglePwBtn" aria-label="Toggle Password Visibility">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
             </div>
             <small class="helper-text">Owner: Ohemaa12345 • Customers: your VIP password</small>
           </div>
 
-          <div class="login-error-msg hidden" id="loginErrorMsg">
-            ⚠️ Invalid credentials. Please check your username/phone and password.
-          </div>
-
-          <button type="submit" class="btn btn-gold full-width" id="signInSubmitBtn">
+          <button type="submit" class="btn-gold-luxury" id="signInSubmitBtn">
             <span>Sign In to Account</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </button>
-
-          <div class="auth-divider">
-            <span>or continue as</span>
-          </div>
-
-          <button type="button" class="btn btn-outline full-width guest-continue-btn" id="guestContinueBtn">
-            🛍️ Continue Shopping as Guest →
-          </button>
-
-          <div class="auth-nav-box">
-            <p>New customer without an account?</p>
-            <button type="button" class="btn-create-account" id="goToSignUpBtn">
-              <span>Create an Account / Sign Up</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </button>
-          </div>
         </form>
+
+        <!-- Divider like Likem -->
+        <div class="gold-divider-wrap">
+          <div class="gold-divider"></div>
+          <span class="divider-text">or</span>
+          <div class="gold-divider"></div>
+        </div>
+
+        <!-- Continue as Guest -->
+        <button type="button" class="btn-outline-luxury" id="guestContinueBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+          <span>Continue Browsing as Guest</span>
+        </button>
+
+        <!-- Create Account switch link like Likem -->
+        <div class="auth-footer-prompt">
+          <span>New to Ohemaa’s Apparel? </span>
+          <button type="button" class="link-btn-gold" id="goToSignUpBtn">Create an Account / Sign Up</button>
+        </div>
       </div>
     </div>
 
     <!-- ==================== SECTION 2: DEDICATED SIGN UP SECTION ==================== -->
     <div class="admin-login-screen hidden" id="adminSignUpScreen">
-      <div class="login-card">
+      <!-- Ambient luxury lighting inspired by Likem Perfumery -->
+      <div class="auth-ambient-glows">
+        <div class="ambient-glow-top"></div>
+        <div class="ambient-glow-bottom"></div>
+      </div>
+
+      <div class="login-card glass-luxury">
+        <div class="card-top-hairline"></div>
         <button class="modal-back-btn top-left" id="backToSignInBtn" aria-label="Back to Sign In">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
           <span>Back to Sign In</span>
         </button>
         <button class="modal-close-btn top-right" id="closeSignUpBtn" aria-label="Close Sign Up Modal">✕</button>
-        
-        <div class="brand-crest">
-          <span class="crest-icon">✨</span>
+
+        <!-- Header -->
+        <div class="brand-icon-box animate-gold-pulse">
+          <svg class="vault-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
         </div>
-        <h2 class="auth-section-title">Create VIP Account</h2>
-        <p class="login-sub">Join Ohemaa’s Elite Member Community</p>
-        
+
+        <div class="badge-gold">
+          <svg class="badge-sparkle" width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"/></svg>
+          <span>VIP Member Registration</span>
+        </div>
+
+        <h2 class="auth-card-title font-royal" id="adminSignUpHeading">JOIN THE VAULT</h2>
+        <p class="auth-card-desc">Create your VIP account to unlock Friday drop allocations, wholesale rates, and seamless WhatsApp confirmations.</p>
+
+        <!-- Perks strip -->
         <div class="vip-perks-strip">
           <span>🚚 Friday Delivery</span>
           <span class="sep">•</span>
           <span>🏬 Store Pick-Up</span>
           <span class="sep">•</span>
-          <span>📦 Wholesale Bulk</span>
+          <span>📦 Wholesale Bulk (MOQ 10)</span>
         </div>
 
+        <!-- Error Alert -->
+        <div class="login-error-msg hidden" id="signUpErrorMsg">
+          ⚠️ Please fill in all required fields (phone and 6+ character password).
+        </div>
+
+        <!-- Sign Up Form -->
         <form id="customerSignUpForm" class="admin-login-form">
-          <div class="input-group">
-            <label for="signUpFullName">Full Name *</label>
-            <input type="text" id="signUpFullName" placeholder="e.g. Nana Ama Mansa" autocomplete="name" required>
-          </div>
-
-          <div class="input-group">
-            <label for="signUpPhone">Phone / WhatsApp Number *</label>
-            <input type="tel" id="signUpPhone" placeholder="e.g. 0599959521" autocomplete="tel" required>
-            <small class="helper-text">Used for order receipts and Friday dispatch tracking</small>
-          </div>
-
-          <div class="input-group">
-            <label for="signUpLocation">City / Town in Ghana *</label>
-            <input type="text" id="signUpLocation" placeholder="e.g. Accra Central / Kumasi / Tema" required>
-          </div>
-
-          <div class="input-group">
-            <label for="signUpPassword">Create Password *</label>
-            <div class="password-wrapper">
-              <input type="password" id="signUpPassword" placeholder="Minimum 6 characters" autocomplete="new-password" minlength="6" required>
-              <button type="button" class="toggle-pw-btn" id="toggleSignUpPwBtn" aria-label="Toggle Sign Up Password Visibility">👁️</button>
+          <div class="input-luxury-group">
+            <label for="signUpFullName" class="section-label">Full Name *</label>
+            <div class="input-with-icon">
+              <span class="input-icon-left">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </span>
+              <input type="text" id="signUpFullName" class="input-luxury" placeholder="e.g. Nana Ama Mansa" autocomplete="name" required>
             </div>
           </div>
 
-          <div class="login-error-msg hidden" id="signUpErrorMsg">
-            ⚠️ Please fill in all required fields (phone and 6+ character password).
+          <div class="input-luxury-group">
+            <label for="signUpPhone" class="section-label">Phone / WhatsApp Number *</label>
+            <div class="input-with-icon">
+              <span class="input-icon-left">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              </span>
+              <input type="tel" id="signUpPhone" class="input-luxury" placeholder="e.g. 0599959521" autocomplete="tel" required>
+            </div>
+            <small class="helper-text">Used for order receipts and Friday dispatch tracking</small>
           </div>
 
-          <button type="submit" class="btn btn-gold full-width" id="signUpSubmitBtn">
+          <div class="input-luxury-group">
+            <label for="signUpLocation" class="section-label">City / Delivery Town in Ghana *</label>
+            <div class="input-with-icon">
+              <span class="input-icon-left">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              </span>
+              <input type="text" id="signUpLocation" class="input-luxury" placeholder="e.g. Accra Central / Kumasi / Tema" required>
+            </div>
+          </div>
+
+          <div class="input-luxury-group">
+            <div class="label-row">
+              <label for="signUpPassword" class="section-label">Create Password *</label>
+            </div>
+            <div class="input-with-icon">
+              <span class="input-icon-left">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              </span>
+              <input type="password" id="signUpPassword" class="input-luxury pr-12" placeholder="Minimum 6 characters" autocomplete="new-password" minlength="6" required>
+              <button type="button" class="toggle-pw-btn" id="toggleSignUpPwBtn" aria-label="Toggle Sign Up Password Visibility">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-gold-luxury" id="signUpSubmitBtn">
             <span>Sign Up &amp; Get Started</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </button>
-
-          <div class="auth-switch-prompt">
-            <span>Already registered with us?</span>
-            <button type="button" class="link-btn" id="switchToSignInBtn">Sign In here</button>
-          </div>
         </form>
+
+        <!-- Divider like Likem -->
+        <div class="gold-divider-wrap">
+          <div class="gold-divider"></div>
+          <span class="divider-text">or</span>
+          <div class="gold-divider"></div>
+        </div>
+
+        <!-- Continue as Guest on Sign Up as well like Likem -->
+        <button type="button" class="btn-outline-luxury" id="signUpGuestContinueBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+          <span>Continue Browsing as Guest</span>
+        </button>
+
+        <div class="auth-footer-prompt">
+          <span>Already registered with us? </span>
+          <button type="button" class="link-btn-gold" id="switchToSignInBtn">Sign In here</button>
+        </div>
       </div>
     </div>
 

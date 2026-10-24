@@ -3021,140 +3021,300 @@ body {
   flex-direction: column;
 }
 
-/* Admin Login Screen */
+/* Admin Login & Sign Up Screens */
 .admin-login-screen {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px 16px;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
 }
 
-.login-card {
+/* Ambience Background Lighting (Inspired by Likem Haute Parfumerie) */
+.auth-ambient-glows {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ambient-glow-top {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
-  max-width: 400px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-gold);
-  border-radius: var(--radius-lg);
-  padding: 28px 22px;
+  max-width: 500px;
+  height: 320px;
+  background: radial-gradient(ellipse at top, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+}
+
+.ambient-glow-bottom {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(ellipse at bottom right, rgba(212, 175, 55, 0.05) 0%, transparent 60%);
+}
+
+/* Luxury Glassmorphic Card */
+.login-card.glass-luxury {
+  width: 100%;
+  max-width: 430px;
+  background: rgba(10, 12, 22, 0.88);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 28px;
+  padding: 34px 26px 28px;
   position: relative;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(212, 175, 55, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
   text-align: center;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.card-top-hairline {
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.55) 50%, transparent 100%);
 }
 
 .modal-close-btn.top-right {
   position: absolute;
-  top: 12px;
-  right: 12px;
-}
-
-.brand-crest {
-  width: 60px;
-  height: 60px;
-  margin: 0 auto 10px;
-  background: radial-gradient(circle at center, rgba(212, 163, 115, 0.25) 0%, rgba(20, 20, 24, 0.95) 100%);
-  border: 1.5px solid var(--border-gold);
+  top: 14px;
+  right: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), inset 0 0 8px rgba(212, 163, 115, 0.15);
+  cursor: pointer;
+  transition: all var(--transition-fast) ease;
+  z-index: 5;
 }
 
-.crest-icon {
-  font-size: 1.7rem;
-}
-
-.login-crown {
-  font-size: 2.2rem;
-  margin-bottom: 6px;
-}
-
-.login-card h2 {
-  font-family: var(--font-royal);
-  font-size: 1.5rem;
+.modal-close-btn.top-right:hover {
   color: #ffffff;
-  margin-bottom: 2px;
+  background: rgba(255, 255, 255, 0.12);
 }
 
-.login-sub {
-  font-size: 0.78rem;
-  color: var(--gold-secondary);
+.modal-back-btn.top-left {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  color: #f5e4ab;
+  font-family: var(--font-body);
+  font-size: 0.76rem;
   font-weight: 600;
-  margin-bottom: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast) ease;
+  z-index: 5;
 }
 
-.luxury-badge-pill {
-  display: inline-block;
-  font-size: 0.66rem;
+.modal-back-btn.top-left:hover {
+  background: rgba(212, 175, 55, 0.18);
+  color: var(--gold-primary);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.2);
+}
+
+/* Pulsing Crest Icon Box */
+.brand-icon-box {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  margin: 0 auto 12px;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.30);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.animate-gold-pulse {
+  animation: goldPulse 0.35s infinite ease-in-out;
+}
+
+@keyframes goldPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.22); }
+  50% { box-shadow: 0 0 22px 4px rgba(212, 175, 55, 0.35); }
+}
+
+/* Gold Badge Pill */
+.badge-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  color: #f5e4ab;
+  font-size: 0.65rem;
   font-weight: 700;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  margin-bottom: 10px;
+}
+
+.badge-sparkle {
+  color: var(--gold-primary);
+}
+
+.auth-card-title {
+  font-family: var(--font-royal);
+  font-size: 2.1rem;
+  font-weight: 400;
+  color: #ffffff;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--gold-secondary);
-  background: rgba(212, 163, 115, 0.1);
-  border: 1px solid rgba(212, 163, 115, 0.28);
-  padding: 3px 10px;
-  border-radius: 12px;
-  margin-bottom: 16px;
+  margin: 0 0 6px 0;
+  text-align: center;
 }
 
+.auth-card-desc {
+  font-size: 0.76rem;
+  color: #94a3b8;
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 320px;
+  margin: 0 auto 18px auto;
+  text-align: center;
+}
+
+/* VIP Perks Strip */
 .vip-perks-strip {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm);
-  padding: 8px 10px;
-  margin-bottom: 16px;
-  font-size: 0.72rem;
-  color: var(--text-muted);
+  background: rgba(212, 175, 55, 0.06);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 12px;
+  padding: 7px 12px;
+  margin: 0 auto 16px;
+  font-size: 0.70rem;
+  color: #cbd5e1;
+  max-width: 360px;
 }
 
 .vip-perks-strip .sep {
   color: var(--gold-primary);
 }
 
-.login-info-pill {
-  font-size: 0.72rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-sm);
-  padding: 6px 10px;
-  color: var(--text-muted);
-  margin-bottom: 18px;
-}
-
+/* Admin Form Elements */
 .admin-login-form {
   display: flex;
   flex-direction: column;
   gap: 12px;
   text-align: left;
+  width: 100%;
 }
 
-.admin-login-form input:focus {
-  outline: none;
-  border-color: var(--gold-primary);
-  box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.15);
+.input-luxury-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: left;
 }
 
-.password-wrapper {
+.section-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--gold-secondary);
+  display: block;
+}
+
+.input-with-icon {
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
-.password-wrapper input {
-  padding-right: 40px;
+.input-icon-left {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: #d4af37;
+  z-index: 2;
+}
+
+.input-luxury {
+  width: 100%;
+  background: rgba(6, 7, 14, 0.82);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 16px;
+  padding: 13px 14px 13px 44px;
+  font-size: 0.85rem;
+  color: #eef1f8;
+  font-family: var(--font-body);
+  transition: all var(--transition-fast) ease;
+}
+
+.input-luxury.pr-12 {
+  padding-right: 44px;
+}
+
+.input-luxury::placeholder {
+  color: rgba(148, 163, 184, 0.55);
+  font-size: 0.82rem;
+}
+
+.input-luxury:focus {
+  outline: none;
+  border-color: rgba(212, 175, 55, 0.75);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12), 0 0 20px rgba(212, 175, 55, 0.08);
+  background: rgba(8, 10, 18, 0.95);
 }
 
 .toggle-pw-btn {
   position: absolute;
-  right: 10px;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 0.95rem;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color var(--transition-fast) ease;
+  z-index: 2;
+}
+
+.toggle-pw-btn:hover {
+  color: #d4af37;
 }
 
 .helper-text {
@@ -3163,73 +3323,79 @@ body {
 }
 
 .login-error-msg {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.30);
   color: var(--accent-red);
   font-size: 0.75rem;
-  padding: 8px 10px;
-  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  border-radius: 12px;
+  text-align: left;
 }
 
-/* Modal Top-Left Back Button */
-.modal-back-btn.top-left {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-gold);
-  color: var(--gold-primary);
+/* Luxury Gold Button (Inspired by Likem .btn-gold-luxury) */
+.btn-gold-luxury {
+  width: 100%;
+  background: linear-gradient(135deg, #f0e09a 0%, #d4af37 40%, #b8902a 70%, #c49830 100%);
+  color: #07080b;
   font-family: var(--font-body);
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  padding: 14px 24px;
+  border: none;
+  border-radius: var(--radius-full);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 5px 10px;
-  border-radius: var(--radius-sm);
+  justify-content: center;
+  gap: 10px;
   transition: all var(--transition-fast) ease;
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.30), 0 1px 3px rgba(0, 0, 0, 0.5);
+  margin-top: 6px;
 }
 
-.modal-back-btn.top-left:hover {
-  background: rgba(212, 163, 115, 0.15);
-  color: var(--gold-secondary);
+.btn-gold-luxury:hover {
+  background: linear-gradient(135deg, #f8eeae 0%, #ddb93f 40%, #c49830 70%, #d4af37 100%);
+  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.50), 0 2px 8px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
 }
 
-.auth-section-title {
-  font-family: var(--font-royal);
-  font-size: 1.5rem;
-  color: #ffffff;
-  margin-bottom: 2px;
-}
-
-/* Auth Navigation Box (Separate Section Switcher) */
-.auth-nav-box {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border-light);
+/* Gold Divider Ornament */
+.gold-divider-wrap {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 14px;
+  margin: 18px 0;
 }
 
-.auth-nav-box p {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin: 0;
+.gold-divider {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.5) 50%, transparent 100%);
 }
 
-.btn-create-account {
+.divider-text {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* Luxury Outline Button (Continue as Guest) */
+.btn-outline-luxury {
   width: 100%;
-  padding: 11px 16px;
-  background: rgba(212, 163, 115, 0.08);
-  border: 1px solid var(--border-gold);
-  border-radius: var(--radius-md);
-  color: var(--gold-primary);
+  background: transparent;
+  border: 1px solid rgba(212, 175, 55, 0.40);
+  color: #f5e4ab;
   font-family: var(--font-body);
-  font-size: 0.86rem;
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 0.80rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 12px 20px;
+  border-radius: var(--radius-full);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -3238,80 +3404,39 @@ body {
   transition: all var(--transition-fast) ease;
 }
 
-.btn-create-account:hover {
-  background: var(--gold-primary);
-  color: #0b0c10;
-  border-color: var(--gold-primary);
-  box-shadow: 0 4px 12px rgba(212, 163, 115, 0.25);
+.btn-outline-luxury:hover {
+  background: rgba(212, 175, 55, 0.08);
+  border-color: rgba(212, 175, 55, 0.70);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.12);
 }
 
-/* Auth Divider ("or") */
-.auth-divider {
-  display: flex;
-  align-items: center;
-  margin: 14px 0;
+/* Auth Footer Prompts & Gold Links */
+.auth-footer-prompt {
+  margin-top: 18px;
+  font-size: 0.78rem;
+  color: #64748b;
   text-align: center;
-  color: var(--text-dim);
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.auth-divider::before,
-.auth-divider::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--border-light);
-}
-
-.auth-divider span {
-  padding: 0 10px;
-}
-
-/* Guest Continue Button */
-.guest-continue-btn {
-  border: 1px solid var(--border-gold);
-  color: var(--text-main);
-  background: rgba(255, 255, 255, 0.03);
-  font-weight: 600;
-  padding: 10px 16px;
-  font-size: 0.88rem;
-  transition: all var(--transition-fast) ease;
-}
-
-.guest-continue-btn:hover {
-  background: rgba(212, 163, 115, 0.12);
-  border-color: var(--gold-secondary);
-  color: var(--gold-primary);
-}
-
-/* Switch Prompt */
-.auth-switch-prompt {
-  margin-top: 14px;
-  font-size: 0.8rem;
-  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
 }
 
-.link-btn {
+.link-btn-gold {
   background: transparent;
   border: none;
-  color: var(--gold-primary);
+  color: #f5e4ab;
+  font-weight: 700;
+  font-size: 0.78rem;
   font-family: var(--font-body);
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-decoration: underline;
   cursor: pointer;
-  padding: 0;
   transition: color var(--transition-fast) ease;
+  padding: 0;
 }
 
-.link-btn:hover {
-  color: var(--gold-secondary);
+.link-btn-gold:hover {
+  color: #d4af37;
+  text-decoration: underline;
 }
 
 /* Customer Profile Card in Auth Modal */

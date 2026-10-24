@@ -496,6 +496,7 @@ const elements = {
   goToSignUpBtn: document.getElementById('goToSignUpBtn'),
   switchToSignInBtn: document.getElementById('switchToSignInBtn'),
   guestContinueBtn: document.getElementById('guestContinueBtn'),
+  signUpGuestContinueBtn: document.getElementById('signUpGuestContinueBtn'),
   adminLoginForm: document.getElementById('adminLoginForm'),
   adminUsername: document.getElementById('adminUsername'),
   adminPassword: document.getElementById('adminPassword'),
@@ -1650,7 +1651,7 @@ function closeWholesaleModal() {
 }
 
 // --- AUTHENTICATION & ADMIN PORTAL LOGIC ---
-function openAdminPortal(initialTab = 'signIn') {
+function openAdminPortal(initialSection = 'signIn') {
   closeCartDrawer();
   closeProductModal();
   closeReelModal();
@@ -2317,9 +2318,12 @@ function setupEventListeners() {
     elements.switchToSignInBtn.addEventListener('click', showSignInSection);
   }
 
-  // Continue as Guest (Exclusively in Sign In section)
+  // Continue as Guest (In both Sign In & Sign Up sections)
   if (elements.guestContinueBtn) {
     elements.guestContinueBtn.addEventListener('click', handleContinueAsGuest);
+  }
+  if (elements.signUpGuestContinueBtn) {
+    elements.signUpGuestContinueBtn.addEventListener('click', handleContinueAsGuest);
   }
 
   // Customer Sign Up Form Submission

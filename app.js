@@ -518,6 +518,7 @@ const elements = {
   footerAdminBtn: document.getElementById('footerAdminBtn'),
   adminPreviewStoreBtn: document.getElementById('adminPreviewStoreBtn'),
   adminLogoutBtn: document.getElementById('adminLogoutBtn'),
+  closeAdminDashboardBtn: document.getElementById('closeAdminDashboardBtn'),
   adminPriceSearch: document.getElementById('adminPriceSearch'),
   saveAllPricesBtn: document.getElementById('saveAllPricesBtn'),
   adminTotalCount: document.getElementById('adminTotalCount'),
@@ -564,6 +565,18 @@ export function formatPrice(price, includeSymbol = true) {
 
 export function isPriceSet(price) {
   return !(price === null || price === undefined || price === "" || isNaN(Number(price)));
+}
+
+// --- PRODUCT IMAGE PUBLIC URL RESOLVER (FOR WHATSAPP LINK PREVIEWS & RECEIPTS) ---
+export function getProductPublicImageUrl(imagePath) {
+  if (!imagePath) return '';
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  const cleanPath = imagePath.replace(/^\.\//, '').replace(/^\//, '');
+  const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  const baseDomain = isLocal ? 'https://wccba.vercel.app' : window.location.origin;
+  return `${baseDomain}/${cleanPath}`;
 }
 
 // --- TOAST NOTIFICATIONS ---
@@ -1150,8 +1163,10 @@ function openProductModal(productId) {
 
   // Direct WhatsApp Order
   elements.productModalContent.querySelector('#modalWhatsAppOrderBtn').addEventListener('click', () => {
+    const photoUrl = getProductPublicImageUrl(product.image);
+    const photoLine = photoUrl ? `\n*📸 Item Photo:* ${photoUrl}` : '';
     const text = encodeURIComponent(
-      `Hello Ohemaa’s Apparel! 👑\nI would like to order:\n\n*Product:* ${product.name}\n*Size:* ${selectedSize}\n*Color:* ${selectedColor}\n*Qty:* ${modalQty}\n*Price:* ${formattedPrice}\n\n*Delivery Policy Check:* I understand deliveries are on *Friday only*, or I can *pick up* at your store.\n\nPlease confirm availability and payment details!`
+      `Hello Ohemaa’s Apparel! 👑\nI would like to order:\n\n*Product:* ${product.name}\n*Size:* ${selectedSize}\n*Color:* ${selectedColor}\n*Qty:* ${modalQty}\n*Price:* ${formattedPrice}${photoLine}\n\n*Delivery Policy Check:* I understand deliveries are on *Friday only*, or I can *pick up* at your store.\n\nPlease confirm availability and payment details!`
     );
     window.open(`https://wa.me/${state.settings.whatsappNumber}?text=${text}`, '_blank');
   });
@@ -1276,6 +1291,9 @@ function initReelsEngine() {
         toggleReelPlayback();
       }
     }
+    if (e.key === 'Escape' && elements.adminModal && !elements.adminModal.classList.contains('hidden')) {
+      closeAdminPortal();
+    }
   });
 
   // Touch Swipe on mobile
@@ -1379,8 +1397,10 @@ function renderCurrentReel() {
 
   // "Order on WhatsApp" Button
   elements.reelWhatsAppOrderBtn.onclick = () => {
+    const photoUrl = getProductPublicImageUrl(reel.poster || reel.src);
+    const photoLine = photoUrl ? `\n*📸 Look Photo:* ${photoUrl}` : '';
     const text = encodeURIComponent(
-      `Hello Ohemaa’s Apparel! 👑\nI just watched your *${reel.title}* story reel and would love to order this look!\n\nPolicy Check: I understand deliveries are on Friday only, or store pick-up is available.\n\nPlease confirm availability!`
+      `Hello Ohemaa’s Apparel! 👑\nI just watched your *${reel.title}* story reel and would love to order this look!${photoLine}\n\nPolicy Check: I understand deliveries are on Friday only, or store pick-up is available.\n\nPlease confirm availability!`
     );
     window.open(`https://wa.me/${state.settings.whatsappNumber}?text=${text}`, '_blank');
   };
@@ -1540,7 +1560,9 @@ async function handleCheckout(isWhatsApp = true) {
     msg += `\n*BAG CONTENTS (${state.cart.length} unique styles):*\n`;
     state.cart.forEach((item, idx) => {
       const priceTxt = isPriceSet(item.price) ? `GH₵ ${(Number(item.price) * item.quantity).toFixed(2)}` : `GH₵ ___ (Price to confirm)`;
-      msg += `${idx + 1}. *${item.name}*\n   Size: ${item.size} | Color: ${item.color} | Qty: ${item.quantity}\n   Price: ${priceTxt}\n`;
+      const photoUrl = getProductPublicImageUrl(item.image);
+      const photoLine = photoUrl ? `\n   📸 Item Photo: ${photoUrl}` : '';
+      msg += `${idx + 1}. *${item.name}*\n   Size: ${item.size} | Color: ${item.color} | Qty: ${item.quantity}\n   Price: ${priceTxt}${photoLine}\n`;
     });
 
     if (pricedSum > 0) {
@@ -1624,10 +1646,14 @@ function openReceiptModal(order) {
   `;
 
   elements.shareReceiptWhatsappBtn.onclick = () => {
-    const receiptMsg = encodeURIComponent(
-      `Hello Ohemaa’s Apparel! 👑\nHere is my official receipt for *Order #${order.orderId}*.\nName: ${order.customer.name}\nFulfillment: ${order.deliveryMethod === 'friday-delivery' ? 'Friday Delivery' : 'Pick-Up'}\nPlease verify my order!`
-    );
-    window.open(`https://wa.me/${state.settings.whatsappNumber}?text=${receiptMsg}`, '_blank');
+    let receiptMsg = `Hello Ohemaa’s Apparel! 👑\nHere is my official receipt for *Order #${order.orderId}*.\nName: ${order.customer.name}\nFulfillment: ${order.deliveryMethod === 'friday-delivery' ? 'Friday Delivery' : 'Pick-Up'}\n\n*Ordered Items:*`;
+    order.items.forEach((item, idx) => {
+      const photoUrl = getProductPublicImageUrl(item.image);
+      const photoLine = photoUrl ? `\n   📸 Photo: ${photoUrl}` : '';
+      receiptMsg += `\n${idx + 1}. *${item.name}* (${item.size} / ${item.color}) x${item.quantity}${photoLine}`;
+    });
+    receiptMsg += `\n\nPlease verify my order!`;
+    window.open(`https://wa.me/${state.settings.whatsappNumber}?text=${encodeURIComponent(receiptMsg)}`, '_blank');
   };
 
   elements.receiptModalOverlay.classList.remove('hidden');
@@ -1771,6 +1797,8 @@ function prefillCustomerDetails(customer) {
 
 function showAdminDashboard() {
   elements.adminLoginScreen.classList.add('hidden');
+  elements.adminSignUpScreen.classList.add('hidden');
+  elements.adminProfileScreen.classList.add('hidden');
   elements.adminDashboardScreen.classList.remove('hidden');
   renderAdminPriceTable();
   renderAdminOrdersList();
@@ -1808,12 +1836,14 @@ function handleAdminLogin(username, password) {
 function handleAdminLogout() {
   state.setAdminSession(false);
   showSignInSection();
+  closeAdminPortal();
   showToast('Logged out of Admin Portal', '👋');
 }
 
 function handleCustomerLogout() {
   state.setCustomerSession(null);
   showSignInSection();
+  closeAdminPortal();
   showToast('Signed out of VIP account', '👋');
 }
 
@@ -2299,7 +2329,21 @@ function setupEventListeners() {
   elements.adminModalOverlay.addEventListener('click', (e) => {
     if (e.target === elements.adminModalOverlay) closeAdminPortal();
   });
-  elements.adminPreviewStoreBtn.addEventListener('click', closeAdminPortal);
+  elements.adminModal.addEventListener('click', (e) => {
+    if (e.target === elements.adminModal || e.target === elements.adminLoginScreen || e.target === elements.adminSignUpScreen || e.target === elements.adminProfileScreen) {
+      closeAdminPortal();
+    }
+  });
+  if (elements.adminPreviewStoreBtn) {
+    elements.adminPreviewStoreBtn.addEventListener('click', () => {
+      closeAdminPortal();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      showToast('Viewing live storefront 🛍️', '👁️');
+    });
+  }
+  if (elements.closeAdminDashboardBtn) {
+    elements.closeAdminDashboardBtn.addEventListener('click', closeAdminPortal);
+  }
   // Section Navigation & Close Triggers
   elements.closeAdminLoginBtn.addEventListener('click', closeAdminPortal);
   if (elements.closeSignUpBtn) {

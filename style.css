@@ -89,10 +89,20 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ==========================================================================
-   UTILITY CLASSES & BUTTONS
-   ========================================================================== */
-[hidden], .hidden { display: none; }
+[hidden],
+.hidden,
+div.hidden,
+section.hidden,
+aside.hidden,
+article.hidden,
+button.hidden,
+span.hidden,
+p.hidden,
+form.hidden,
+input.hidden {
+  display: none;
+}
+
 .text-right { text-align: right; }
 .full-width { width: 100%; }
 
@@ -3021,6 +3031,10 @@ body {
   flex-direction: column;
 }
 
+.admin-modal.hidden {
+  display: none;
+}
+
 /* Admin Login & Sign Up Screens */
 .admin-login-screen {
   flex: 1;
@@ -3031,6 +3045,10 @@ body {
   position: relative;
   overflow: hidden;
   width: 100%;
+}
+
+.admin-login-screen.hidden {
+  display: none;
 }
 
 /* Ambience Background Lighting (Inspired by Likem Haute Parfumerie) */
@@ -3554,6 +3572,10 @@ body {
   padding: 16px;
 }
 
+.admin-dashboard-screen.hidden {
+  display: none;
+}
+
 .admin-header {
   display: flex;
   align-items: center;
@@ -3587,7 +3609,14 @@ body {
 
 .admin-header-actions {
   display: flex;
+  align-items: center;
   gap: 8px;
+}
+
+.admin-close-btn {
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
 /* Admin Tabs */

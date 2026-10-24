@@ -445,26 +445,25 @@ const elements = {
   printReceiptBtn: document.getElementById('printReceiptBtn'),
   shareReceiptWhatsappBtn: document.getElementById('shareReceiptWhatsappBtn'),
 
-  // Admin & Account Modal
+  // Admin & Account Modal Sections
   adminModalOverlay: document.getElementById('adminModalOverlay'),
   adminModal: document.getElementById('adminModal'),
   adminLoginScreen: document.getElementById('adminLoginScreen'),
+  adminSignUpScreen: document.getElementById('adminSignUpScreen'),
+  adminProfileScreen: document.getElementById('adminProfileScreen'),
   adminDashboardScreen: document.getElementById('adminDashboardScreen'),
-  authTabsBar: document.getElementById('authTabsBar'),
-  authTabSignIn: document.getElementById('authTabSignIn'),
-  authTabSignUp: document.getElementById('authTabSignUp'),
-  signInPane: document.getElementById('signInPane'),
-  signUpPane: document.getElementById('signUpPane'),
-  customerProfilePane: document.getElementById('customerProfilePane'),
+  closeAdminLoginBtn: document.getElementById('closeAdminLoginBtn'),
+  closeSignUpBtn: document.getElementById('closeSignUpBtn'),
+  closeProfileBtn: document.getElementById('closeProfileBtn'),
+  backToSignInBtn: document.getElementById('backToSignInBtn'),
+  goToSignUpBtn: document.getElementById('goToSignUpBtn'),
+  switchToSignInBtn: document.getElementById('switchToSignInBtn'),
+  guestContinueBtn: document.getElementById('guestContinueBtn'),
   adminLoginForm: document.getElementById('adminLoginForm'),
   adminUsername: document.getElementById('adminUsername'),
   adminPassword: document.getElementById('adminPassword'),
   togglePwBtn: document.getElementById('togglePwBtn'),
   loginErrorMsg: document.getElementById('loginErrorMsg'),
-  guestContinueBtn: document.getElementById('guestContinueBtn'),
-  guestSignUpContinueBtn: document.getElementById('guestSignUpContinueBtn'),
-  switchToSignUpBtn: document.getElementById('switchToSignUpBtn'),
-  switchToSignInBtn: document.getElementById('switchToSignInBtn'),
   customerSignUpForm: document.getElementById('customerSignUpForm'),
   signUpFullName: document.getElementById('signUpFullName'),
   signUpPhone: document.getElementById('signUpPhone'),
@@ -478,7 +477,6 @@ const elements = {
   customerBrowseCatalogBtn: document.getElementById('customerBrowseCatalogBtn'),
   customerViewCartBtn: document.getElementById('customerViewCartBtn'),
   customerSignOutBtn: document.getElementById('customerSignOutBtn'),
-  closeAdminLoginBtn: document.getElementById('closeAdminLoginBtn'),
   footerAdminBtn: document.getElementById('footerAdminBtn'),
   adminPreviewStoreBtn: document.getElementById('adminPreviewStoreBtn'),
   adminLogoutBtn: document.getElementById('adminLogoutBtn'),
@@ -1629,8 +1627,10 @@ function openAdminPortal(initialTab = 'signIn') {
     showAdminDashboard();
   } else if (state.currentCustomer) {
     showCustomerProfile();
+  } else if (initialSection === 'signUp') {
+    showSignUpSection();
   } else {
-    showAuthLogin(initialTab);
+    showSignInSection();
   }
 }
 
@@ -1640,41 +1640,27 @@ function closeAdminPortal() {
   document.body.style.overflow = '';
 }
 
-function showAuthLogin(tab = 'signIn') {
+function showSignInSection() {
   elements.adminLoginScreen.classList.remove('hidden');
+  elements.adminSignUpScreen.classList.add('hidden');
+  elements.adminProfileScreen.classList.add('hidden');
   elements.adminDashboardScreen.classList.add('hidden');
-  elements.customerProfilePane.classList.add('hidden');
-  elements.authTabsBar.classList.remove('hidden');
   elements.loginErrorMsg.classList.add('hidden');
-  elements.signUpErrorMsg.classList.add('hidden');
-  switchAuthTab(tab);
 }
 
-function switchAuthTab(tabName) {
-  if (tabName === 'signUp') {
-    elements.authTabSignIn.classList.remove('active');
-    elements.authTabSignIn.setAttribute('aria-selected', 'false');
-    elements.authTabSignUp.classList.add('active');
-    elements.authTabSignUp.setAttribute('aria-selected', 'true');
-    elements.signInPane.classList.add('hidden');
-    elements.signUpPane.classList.remove('hidden');
-  } else {
-    elements.authTabSignUp.classList.remove('active');
-    elements.authTabSignUp.setAttribute('aria-selected', 'false');
-    elements.authTabSignIn.classList.add('active');
-    elements.authTabSignIn.setAttribute('aria-selected', 'true');
-    elements.signUpPane.classList.add('hidden');
-    elements.signInPane.classList.remove('hidden');
-  }
+function showSignUpSection() {
+  elements.adminLoginScreen.classList.add('hidden');
+  elements.adminSignUpScreen.classList.remove('hidden');
+  elements.adminProfileScreen.classList.add('hidden');
+  elements.adminDashboardScreen.classList.add('hidden');
+  elements.signUpErrorMsg.classList.add('hidden');
 }
 
 function showCustomerProfile() {
-  elements.adminLoginScreen.classList.remove('hidden');
+  elements.adminLoginScreen.classList.add('hidden');
+  elements.adminSignUpScreen.classList.add('hidden');
+  elements.adminProfileScreen.classList.remove('hidden');
   elements.adminDashboardScreen.classList.add('hidden');
-  elements.authTabsBar.classList.add('hidden');
-  elements.signInPane.classList.add('hidden');
-  elements.signUpPane.classList.add('hidden');
-  elements.customerProfilePane.classList.remove('hidden');
 
   if (state.currentCustomer) {
     elements.profileCustName.textContent = state.currentCustomer.name || 'VIP Member';
@@ -1712,7 +1698,7 @@ function handleCustomerSignUp(e) {
   const existing = state.customers.find(c => (c.phone || '').replace(/\s+/g, '') === cleanPhone);
   if (existing) {
     showToast('Account with this phone number already exists! Please sign in.', 'ℹ️');
-    switchAuthTab('signIn');
+    showSignInSection();
     elements.adminUsername.value = phone;
     return;
   }
@@ -1782,13 +1768,13 @@ function handleAdminLogin(username, password) {
 
 function handleAdminLogout() {
   state.setAdminSession(false);
-  showAuthLogin('signIn');
+  showSignInSection();
   showToast('Logged out of Admin Portal', '👋');
 }
 
 function handleCustomerLogout() {
   state.setCustomerSession(null);
-  showAuthLogin('signIn');
+  showSignInSection();
   showToast('Signed out of VIP account', '👋');
 }
 
@@ -2271,32 +2257,31 @@ function setupEventListeners() {
   }
   elements.dockAdminBtn.addEventListener('click', () => openAdminPortal('signIn'));
   elements.footerAdminBtn.addEventListener('click', () => openAdminPortal('signIn'));
-  elements.closeAdminLoginBtn.addEventListener('click', closeAdminPortal);
   elements.adminModalOverlay.addEventListener('click', (e) => {
     if (e.target === elements.adminModalOverlay) closeAdminPortal();
   });
   elements.adminPreviewStoreBtn.addEventListener('click', closeAdminPortal);
-
-  // Auth Mode Tabs & Switching
-  if (elements.authTabSignIn) {
-    elements.authTabSignIn.addEventListener('click', () => switchAuthTab('signIn'));
+  // Section Navigation & Close Triggers
+  elements.closeAdminLoginBtn.addEventListener('click', closeAdminPortal);
+  if (elements.closeSignUpBtn) {
+    elements.closeSignUpBtn.addEventListener('click', closeAdminPortal);
   }
-  if (elements.authTabSignUp) {
-    elements.authTabSignUp.addEventListener('click', () => switchAuthTab('signUp'));
+  if (elements.closeProfileBtn) {
+    elements.closeProfileBtn.addEventListener('click', closeAdminPortal);
   }
-  if (elements.switchToSignUpBtn) {
-    elements.switchToSignUpBtn.addEventListener('click', () => switchAuthTab('signUp'));
+  if (elements.backToSignInBtn) {
+    elements.backToSignInBtn.addEventListener('click', showSignInSection);
+  }
+  if (elements.goToSignUpBtn) {
+    elements.goToSignUpBtn.addEventListener('click', showSignUpSection);
   }
   if (elements.switchToSignInBtn) {
-    elements.switchToSignInBtn.addEventListener('click', () => switchAuthTab('signIn'));
+    elements.switchToSignInBtn.addEventListener('click', showSignInSection);
   }
 
-  // Continue as Guest (Available on both Sign In and Sign Up views)
+  // Continue as Guest (Exclusively in Sign In section)
   if (elements.guestContinueBtn) {
     elements.guestContinueBtn.addEventListener('click', handleContinueAsGuest);
-  }
-  if (elements.guestSignUpContinueBtn) {
-    elements.guestSignUpContinueBtn.addEventListener('click', handleContinueAsGuest);
   }
 
   // Customer Sign Up Form Submission

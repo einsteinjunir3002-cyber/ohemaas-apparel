@@ -50,6 +50,10 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         </button>
 
+        <button class="icon-btn account-btn" id="headerAuthBtn" aria-label="Sign In, Sign Up or Guest Account">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </button>
+
         <button class="icon-btn wishlist-btn" id="headerWishlistBtn" aria-label="Wishlist">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
           <span class="count-badge hidden" id="wishlistCount">0</span>
@@ -605,9 +609,9 @@
       <span>Cart</span>
     </button>
 
-    <button class="dock-item" id="dockAdminBtn" aria-label="Owner admin portal">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-      <span id="dockAdminLabel">Admin</span>
+    <button class="dock-item" id="dockAdminBtn" aria-label="Account, Sign In or Owner portal">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      <span id="dockAdminLabel">Account</span>
     </button>
   </nav>
 
@@ -946,42 +950,163 @@
 
   <!-- ==================== ADMIN PORTAL MODAL ==================== -->
   <div class="modal-overlay hidden" id="adminModalOverlay"></div>
-  <div class="admin-modal hidden" id="adminModal" role="dialog" aria-modal="true" aria-label="Owner Admin Portal" aria-labelledby="adminModalHeading">
+  <div class="admin-modal hidden" id="adminModal" role="dialog" aria-modal="true" aria-label="Account and Owner Portal" aria-labelledby="adminModalHeading">
     
-    <!-- Admin Login Screen (Shown when not authenticated) -->
+    <!-- Account & Authentication Screen (Sign In / Sign Up / Guest / Profile) -->
     <div class="admin-login-screen" id="adminLoginScreen">
       <div class="login-card">
-        <button class="modal-close-btn top-right" id="closeAdminLoginBtn" aria-label="Close Admin Modal">✕</button>
+        <button class="modal-close-btn top-right" id="closeAdminLoginBtn" aria-label="Close Account Modal">✕</button>
         <div class="login-crown">👑</div>
-        <h2 id="adminModalHeading">Owner Admin Portal</h2>
-        <p class="login-sub">Ohemaa's Apparel Management Suite</p>
-        <p class="login-info-pill">Enter your official credentials to update prices & manage orders</p>
+        <h2 id="adminModalHeading">Account &amp; Store Portal</h2>
+        <p class="login-sub">Ohemaa's Apparel Luxury Boutique</p>
 
-        <form id="adminLoginForm" class="admin-login-form">
-          <div class="input-group">
-            <label for="adminUsername">Username</label>
-            <input type="text" id="adminUsername" placeholder="Enter username" autocomplete="username" required>
-            <small class="helper-text">Hint: Big_Ohemaa</small>
-          </div>
-
-          <div class="input-group">
-            <label for="adminPassword">Password</label>
-            <div class="password-wrapper">
-              <input type="password" id="adminPassword" placeholder="Enter password" autocomplete="current-password" required>
-              <button type="button" class="toggle-pw-btn" id="togglePwBtn" aria-label="Toggle Password Visibility">👁️</button>
-            </div>
-            <small class="helper-text">Hint: Ohemaa12345</small>
-          </div>
-
-          <div class="login-error-msg hidden" id="loginErrorMsg">
-            ⚠️ Invalid username or password. Please check and try again.
-          </div>
-
-          <button type="submit" class="btn btn-gold full-width">
-            <span>Unlock Admin Dashboard</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <!-- Segmented Tab Switcher -->
+        <div class="auth-tabs" id="authTabsBar" role="tablist" aria-label="Authentication Options">
+          <button type="button" class="auth-tab-btn active" id="authTabSignIn" role="tab" aria-selected="true" aria-controls="signInPane">
+            Sign In
           </button>
-        </form>
+          <button type="button" class="auth-tab-btn" id="authTabSignUp" role="tab" aria-selected="false" aria-controls="signUpPane">
+            Sign Up
+          </button>
+        </div>
+
+        <!-- ================= PANE 1: SIGN IN ================= -->
+        <div class="auth-pane" id="signInPane">
+          <p class="login-info-pill">Enter your VIP customer phone or store owner credentials</p>
+
+          <form id="adminLoginForm" class="admin-login-form">
+            <div class="input-group">
+              <label for="adminUsername">Username or Phone Number</label>
+              <input type="text" id="adminUsername" placeholder="e.g. Big_Ohemaa or 0599959521" autocomplete="username" required>
+              <small class="helper-text">Owner: Big_Ohemaa • Customers: your registered phone</small>
+            </div>
+
+            <div class="input-group">
+              <label for="adminPassword">Password</label>
+              <div class="password-wrapper">
+                <input type="password" id="adminPassword" placeholder="Enter password" autocomplete="current-password" required>
+                <button type="button" class="toggle-pw-btn" id="togglePwBtn" aria-label="Toggle Password Visibility">👁️</button>
+              </div>
+              <small class="helper-text">Owner: Ohemaa12345 • Customers: your VIP password</small>
+            </div>
+
+            <div class="login-error-msg hidden" id="loginErrorMsg">
+              ⚠️ Invalid credentials. Please check your username/phone and password.
+            </div>
+
+            <button type="submit" class="btn btn-gold full-width" id="signInSubmitBtn">
+              <span>Sign In to Account</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+            </button>
+
+            <div class="auth-divider">
+              <span>or</span>
+            </div>
+
+            <button type="button" class="btn btn-outline full-width guest-continue-btn" id="guestContinueBtn">
+              🛍️ Continue as a Guest
+            </button>
+
+            <div class="auth-switch-prompt">
+              <span>Don’t have an account yet?</span>
+              <button type="button" class="link-btn" id="switchToSignUpBtn">Sign Up here</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ================= PANE 2: SIGN UP ================= -->
+        <div class="auth-pane hidden" id="signUpPane">
+          <p class="login-info-pill">Register for exclusive Friday delivery alerts &amp; faster checkout</p>
+
+          <form id="customerSignUpForm" class="admin-login-form">
+            <div class="input-group">
+              <label for="signUpFullName">Full Name *</label>
+              <input type="text" id="signUpFullName" placeholder="e.g. Nana Ama Mansa" autocomplete="name" required>
+            </div>
+
+            <div class="input-group">
+              <label for="signUpPhone">Phone / WhatsApp Number *</label>
+              <input type="tel" id="signUpPhone" placeholder="e.g. 0599959521" autocomplete="tel" required>
+              <small class="helper-text">Used for order receipts and Friday dispatch tracking</small>
+            </div>
+
+            <div class="input-group">
+              <label for="signUpLocation">City / Town in Ghana *</label>
+              <input type="text" id="signUpLocation" placeholder="e.g. Accra Central / Kumasi / Tema" required>
+            </div>
+
+            <div class="input-group">
+              <label for="signUpPassword">Create Password *</label>
+              <div class="password-wrapper">
+                <input type="password" id="signUpPassword" placeholder="Minimum 6 characters" autocomplete="new-password" minlength="6" required>
+                <button type="button" class="toggle-pw-btn" id="toggleSignUpPwBtn" aria-label="Toggle Sign Up Password Visibility">👁️</button>
+              </div>
+            </div>
+
+            <div class="login-error-msg hidden" id="signUpErrorMsg">
+              ⚠️ Please fill in all required fields (phone and 6+ character password).
+            </div>
+
+            <button type="submit" class="btn btn-gold full-width" id="signUpSubmitBtn">
+              <span>Sign Up &amp; Get Started</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+            </button>
+
+            <div class="auth-divider">
+              <span>or</span>
+            </div>
+
+            <button type="button" class="btn btn-outline full-width guest-continue-btn" id="guestSignUpContinueBtn">
+              🛍️ Continue as a Guest
+            </button>
+
+            <div class="auth-switch-prompt">
+              <span>Already registered with us?</span>
+              <button type="button" class="link-btn" id="switchToSignInBtn">Sign In</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ================= PANE 3: LOGGED-IN CUSTOMER PROFILE ================= -->
+        <div class="auth-pane hidden" id="customerProfilePane">
+          <div class="profile-card">
+            <div class="profile-avatar">👑</div>
+            <h3 class="profile-name" id="profileCustName">VIP Customer</h3>
+            <div class="vip-status-pill">⭐ VIP Boutique Member</div>
+            
+            <div class="profile-details-grid">
+              <div class="profile-detail-item">
+                <span class="detail-label">Phone / WhatsApp</span>
+                <strong id="profileCustPhone">0599959521</strong>
+              </div>
+              <div class="profile-detail-item">
+                <span class="detail-label">Delivery Town</span>
+                <strong id="profileCustCity">Accra Central</strong>
+              </div>
+              <div class="profile-detail-item">
+                <span class="detail-label">Weekly Dispatch</span>
+                <strong>Friday Delivery 🚚</strong>
+              </div>
+              <div class="profile-detail-item">
+                <span class="detail-label">Pick-Up Option</span>
+                <strong>Allowed Daily 🏬</strong>
+              </div>
+            </div>
+
+            <div class="profile-actions">
+              <button type="button" class="btn btn-gold full-width" id="customerBrowseCatalogBtn">
+                🛍️ Browse Full Catalog
+              </button>
+              <button type="button" class="btn btn-outline full-width" id="customerViewCartBtn">
+                🛒 View Shopping Bag
+              </button>
+              <button type="button" class="btn btn-danger-outline full-width" id="customerSignOutBtn">
+                🚪 Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 

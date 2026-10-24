@@ -24,6 +24,9 @@ class StoreState {
     this.wishlist = this.loadWishlist();
     this.orders = this.loadOrders();
     this.adminLoggedIn = this.loadAdminSession();
+    this.currentCustomer = this.loadCustomerSession();
+    this.customers = this.loadCustomers();
+    this.isGuest = this.loadGuestSession();
     
     // Active Filters
     this.currentCategory = 'all';
@@ -255,6 +258,53 @@ class StoreState {
       sessionStorage.removeItem('ohemaa_admin_logged');
     }
   }
+
+  loadCustomerSession() {
+    const saved = localStorage.getItem('ohemaa_current_customer');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return null;
+  }
+
+  setCustomerSession(customer) {
+    this.currentCustomer = customer;
+    if (customer) {
+      localStorage.setItem('ohemaa_current_customer', JSON.stringify(customer));
+      this.isGuest = false;
+      localStorage.removeItem('ohemaa_guest_session');
+    } else {
+      localStorage.removeItem('ohemaa_current_customer');
+    }
+  }
+
+  loadCustomers() {
+    const saved = localStorage.getItem('ohemaa_customers');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return [];
+  }
+
+  saveCustomer(newCustomer) {
+    const list = this.loadCustomers().filter(c => c.phone !== newCustomer.phone && c.id !== newCustomer.id);
+    list.push(newCustomer);
+    this.customers = list;
+    localStorage.setItem('ohemaa_customers', JSON.stringify(list));
+  }
+
+  loadGuestSession() {
+    return localStorage.getItem('ohemaa_guest_session') === 'true';
+  }
+
+  setGuestSession(isGuest) {
+    this.isGuest = isGuest;
+    if (isGuest) {
+      localStorage.setItem('ohemaa_guest_session', 'true');
+    } else {
+      localStorage.removeItem('ohemaa_guest_session');
+    }
+  }
 }
 
 const state = new StoreState();
@@ -266,6 +316,7 @@ const elements = {
   mobileMenuBtn: document.getElementById('mobileMenuBtn'),
   brandLogoLink: document.getElementById('brandLogoLink'),
   headerSearchBtn: document.getElementById('headerSearchBtn'),
+  headerAuthBtn: document.getElementById('headerAuthBtn'),
   headerSearchBar: document.getElementById('headerSearchBar'),
   catalogSearchInput: document.getElementById('catalogSearchInput'),
   clearSearchBtn: document.getElementById('clearSearchBtn'),
@@ -394,16 +445,39 @@ const elements = {
   printReceiptBtn: document.getElementById('printReceiptBtn'),
   shareReceiptWhatsappBtn: document.getElementById('shareReceiptWhatsappBtn'),
 
-  // Admin Modal & Dashboard
+  // Admin & Account Modal
   adminModalOverlay: document.getElementById('adminModalOverlay'),
   adminModal: document.getElementById('adminModal'),
   adminLoginScreen: document.getElementById('adminLoginScreen'),
   adminDashboardScreen: document.getElementById('adminDashboardScreen'),
+  authTabsBar: document.getElementById('authTabsBar'),
+  authTabSignIn: document.getElementById('authTabSignIn'),
+  authTabSignUp: document.getElementById('authTabSignUp'),
+  signInPane: document.getElementById('signInPane'),
+  signUpPane: document.getElementById('signUpPane'),
+  customerProfilePane: document.getElementById('customerProfilePane'),
   adminLoginForm: document.getElementById('adminLoginForm'),
   adminUsername: document.getElementById('adminUsername'),
   adminPassword: document.getElementById('adminPassword'),
   togglePwBtn: document.getElementById('togglePwBtn'),
   loginErrorMsg: document.getElementById('loginErrorMsg'),
+  guestContinueBtn: document.getElementById('guestContinueBtn'),
+  guestSignUpContinueBtn: document.getElementById('guestSignUpContinueBtn'),
+  switchToSignUpBtn: document.getElementById('switchToSignUpBtn'),
+  switchToSignInBtn: document.getElementById('switchToSignInBtn'),
+  customerSignUpForm: document.getElementById('customerSignUpForm'),
+  signUpFullName: document.getElementById('signUpFullName'),
+  signUpPhone: document.getElementById('signUpPhone'),
+  signUpLocation: document.getElementById('signUpLocation'),
+  signUpPassword: document.getElementById('signUpPassword'),
+  toggleSignUpPwBtn: document.getElementById('toggleSignUpPwBtn'),
+  signUpErrorMsg: document.getElementById('signUpErrorMsg'),
+  profileCustName: document.getElementById('profileCustName'),
+  profileCustPhone: document.getElementById('profileCustPhone'),
+  profileCustCity: document.getElementById('profileCustCity'),
+  customerBrowseCatalogBtn: document.getElementById('customerBrowseCatalogBtn'),
+  customerViewCartBtn: document.getElementById('customerViewCartBtn'),
+  customerSignOutBtn: document.getElementById('customerSignOutBtn'),
   closeAdminLoginBtn: document.getElementById('closeAdminLoginBtn'),
   footerAdminBtn: document.getElementById('footerAdminBtn'),
   adminPreviewStoreBtn: document.getElementById('adminPreviewStoreBtn'),
@@ -487,6 +561,10 @@ function initApp() {
   renderAdminOrdersList();
   renderAdminInventoryList();
   initReelsEngine();
+
+  if (state.currentCustomer) {
+    prefillCustomerDetails(state.currentCustomer);
+  }
 
   // Async Supabase background sync
   state.fetchRemoteProducts();
@@ -1535,8 +1613,8 @@ function closeWholesaleModal() {
   elements.wholesaleModal.classList.add('hidden');
 }
 
-// --- ADMIN PORTAL LOGIC (Big_Ohemaa / Ohemaa12345) ---
-function openAdminPortal() {
+// --- AUTHENTICATION & ADMIN PORTAL LOGIC ---
+function openAdminPortal(initialTab = 'signIn') {
   closeCartDrawer();
   closeProductModal();
   closeReelModal();
@@ -1549,8 +1627,10 @@ function openAdminPortal() {
 
   if (state.adminLoggedIn) {
     showAdminDashboard();
+  } else if (state.currentCustomer) {
+    showCustomerProfile();
   } else {
-    showAdminLogin();
+    showAuthLogin(initialTab);
   }
 }
 
@@ -1560,10 +1640,108 @@ function closeAdminPortal() {
   document.body.style.overflow = '';
 }
 
-function showAdminLogin() {
+function showAuthLogin(tab = 'signIn') {
   elements.adminLoginScreen.classList.remove('hidden');
   elements.adminDashboardScreen.classList.add('hidden');
+  elements.customerProfilePane.classList.add('hidden');
+  elements.authTabsBar.classList.remove('hidden');
   elements.loginErrorMsg.classList.add('hidden');
+  elements.signUpErrorMsg.classList.add('hidden');
+  switchAuthTab(tab);
+}
+
+function switchAuthTab(tabName) {
+  if (tabName === 'signUp') {
+    elements.authTabSignIn.classList.remove('active');
+    elements.authTabSignIn.setAttribute('aria-selected', 'false');
+    elements.authTabSignUp.classList.add('active');
+    elements.authTabSignUp.setAttribute('aria-selected', 'true');
+    elements.signInPane.classList.add('hidden');
+    elements.signUpPane.classList.remove('hidden');
+  } else {
+    elements.authTabSignUp.classList.remove('active');
+    elements.authTabSignUp.setAttribute('aria-selected', 'false');
+    elements.authTabSignIn.classList.add('active');
+    elements.authTabSignIn.setAttribute('aria-selected', 'true');
+    elements.signUpPane.classList.add('hidden');
+    elements.signInPane.classList.remove('hidden');
+  }
+}
+
+function showCustomerProfile() {
+  elements.adminLoginScreen.classList.remove('hidden');
+  elements.adminDashboardScreen.classList.add('hidden');
+  elements.authTabsBar.classList.add('hidden');
+  elements.signInPane.classList.add('hidden');
+  elements.signUpPane.classList.add('hidden');
+  elements.customerProfilePane.classList.remove('hidden');
+
+  if (state.currentCustomer) {
+    elements.profileCustName.textContent = state.currentCustomer.name || 'VIP Member';
+    elements.profileCustPhone.textContent = state.currentCustomer.phone || state.settings.phone;
+    elements.profileCustCity.textContent = state.currentCustomer.location || 'Accra Central';
+  }
+}
+
+function handleContinueAsGuest() {
+  state.setGuestSession(true);
+  closeAdminPortal();
+  showToast('Continuing as a Guest — Happy shopping! 🛍️', '🛍️');
+
+  const catalog = document.getElementById('catalogSection');
+  if (catalog) {
+    catalog.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function handleCustomerSignUp(e) {
+  e.preventDefault();
+  const name = elements.signUpFullName.value.trim();
+  const phone = elements.signUpPhone.value.trim();
+  const location = elements.signUpLocation.value.trim();
+  const password = elements.signUpPassword.value.trim();
+
+  if (!name || !phone || !location || password.length < 6) {
+    elements.signUpErrorMsg.classList.remove('hidden');
+    return;
+  }
+  elements.signUpErrorMsg.classList.add('hidden');
+
+  // Check if account with same phone exists
+  const cleanPhone = phone.replace(/\s+/g, '');
+  const existing = state.customers.find(c => (c.phone || '').replace(/\s+/g, '') === cleanPhone);
+  if (existing) {
+    showToast('Account with this phone number already exists! Please sign in.', 'ℹ️');
+    switchAuthTab('signIn');
+    elements.adminUsername.value = phone;
+    return;
+  }
+
+  const newCustomer = {
+    id: 'CUST_' + Date.now(),
+    name,
+    phone,
+    location,
+    password,
+    registeredAt: new Date().toISOString()
+  };
+
+  state.saveCustomer(newCustomer);
+  state.setCustomerSession(newCustomer);
+  prefillCustomerDetails(newCustomer);
+
+  showCustomerProfile();
+  showToast(`Welcome, ${name}! Your VIP account is ready 👑`, '👑');
+}
+
+function prefillCustomerDetails(customer) {
+  if (!customer) return;
+  const nameEl = document.getElementById('custName');
+  const phoneEl = document.getElementById('custPhone');
+  const addrEl = document.getElementById('custAddress');
+  if (nameEl && !nameEl.value) nameEl.value = customer.name || '';
+  if (phoneEl && !phoneEl.value) phoneEl.value = customer.phone || '';
+  if (addrEl && !addrEl.value) addrEl.value = customer.location || '';
 }
 
 function showAdminDashboard() {
@@ -1575,19 +1753,43 @@ function showAdminDashboard() {
 }
 
 function handleAdminLogin(username, password) {
+  // Store Owner Authentication (Big_Ohemaa / Ohemaa12345)
   if (username === state.settings.adminUser && password === state.settings.adminPass) {
     state.setAdminSession(true);
     showAdminDashboard();
     showToast('Welcome back, Big Ohemaa! 👑', '👑');
-  } else {
-    elements.loginErrorMsg.classList.remove('hidden');
+    return;
   }
+
+  // Customer Account Authentication
+  const cleanUser = username.toLowerCase().replace(/\s+/g, '');
+  const foundCustomer = state.customers.find(c => {
+    const custPhone = (c.phone || '').replace(/\s+/g, '');
+    const custName = (c.name || '').toLowerCase().replace(/\s+/g, '');
+    return (custPhone === cleanUser || custName === cleanUser) && c.password === password;
+  });
+
+  if (foundCustomer) {
+    state.setCustomerSession(foundCustomer);
+    prefillCustomerDetails(foundCustomer);
+    showCustomerProfile();
+    showToast(`Welcome back, ${foundCustomer.name}! 👑`, '👑');
+    return;
+  }
+
+  elements.loginErrorMsg.classList.remove('hidden');
 }
 
 function handleAdminLogout() {
   state.setAdminSession(false);
-  showAdminLogin();
+  showAuthLogin('signIn');
   showToast('Logged out of Admin Portal', '👋');
+}
+
+function handleCustomerLogout() {
+  state.setCustomerSession(null);
+  showAuthLogin('signIn');
+  showToast('Signed out of VIP account', '👋');
 }
 
 // --- ADMIN PRICE EDITOR WITH SUPABASE SYNC ---
@@ -2063,16 +2265,73 @@ function setupEventListeners() {
     window.print();
   });
 
-  // Admin Portal Triggers
-  elements.dockAdminBtn.addEventListener('click', openAdminPortal);
-  elements.footerAdminBtn.addEventListener('click', openAdminPortal);
+  // Admin & Account Portal Triggers
+  if (elements.headerAuthBtn) {
+    elements.headerAuthBtn.addEventListener('click', () => openAdminPortal('signIn'));
+  }
+  elements.dockAdminBtn.addEventListener('click', () => openAdminPortal('signIn'));
+  elements.footerAdminBtn.addEventListener('click', () => openAdminPortal('signIn'));
   elements.closeAdminLoginBtn.addEventListener('click', closeAdminPortal);
   elements.adminModalOverlay.addEventListener('click', (e) => {
     if (e.target === elements.adminModalOverlay) closeAdminPortal();
   });
   elements.adminPreviewStoreBtn.addEventListener('click', closeAdminPortal);
 
-  // Admin Login
+  // Auth Mode Tabs & Switching
+  if (elements.authTabSignIn) {
+    elements.authTabSignIn.addEventListener('click', () => switchAuthTab('signIn'));
+  }
+  if (elements.authTabSignUp) {
+    elements.authTabSignUp.addEventListener('click', () => switchAuthTab('signUp'));
+  }
+  if (elements.switchToSignUpBtn) {
+    elements.switchToSignUpBtn.addEventListener('click', () => switchAuthTab('signUp'));
+  }
+  if (elements.switchToSignInBtn) {
+    elements.switchToSignInBtn.addEventListener('click', () => switchAuthTab('signIn'));
+  }
+
+  // Continue as Guest (Available on both Sign In and Sign Up views)
+  if (elements.guestContinueBtn) {
+    elements.guestContinueBtn.addEventListener('click', handleContinueAsGuest);
+  }
+  if (elements.guestSignUpContinueBtn) {
+    elements.guestSignUpContinueBtn.addEventListener('click', handleContinueAsGuest);
+  }
+
+  // Customer Sign Up Form Submission
+  if (elements.customerSignUpForm) {
+    elements.customerSignUpForm.addEventListener('submit', handleCustomerSignUp);
+  }
+
+  // Sign Up Password Toggle
+  if (elements.toggleSignUpPwBtn) {
+    elements.toggleSignUpPwBtn.addEventListener('click', () => {
+      const isPw = elements.signUpPassword.type === 'password';
+      elements.signUpPassword.type = isPw ? 'text' : 'password';
+      elements.toggleSignUpPwBtn.textContent = isPw ? '🙈' : '👁️';
+    });
+  }
+
+  // Customer Profile Actions
+  if (elements.customerBrowseCatalogBtn) {
+    elements.customerBrowseCatalogBtn.addEventListener('click', () => {
+      closeAdminPortal();
+      const catalog = document.getElementById('catalogSection');
+      if (catalog) catalog.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+  if (elements.customerViewCartBtn) {
+    elements.customerViewCartBtn.addEventListener('click', () => {
+      closeAdminPortal();
+      openCartDrawer();
+    });
+  }
+  if (elements.customerSignOutBtn) {
+    elements.customerSignOutBtn.addEventListener('click', handleCustomerLogout);
+  }
+
+  // Sign In / Admin Login Submission
   elements.adminLoginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const u = elements.adminUsername.value.trim();

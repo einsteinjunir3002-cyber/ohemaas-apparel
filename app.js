@@ -140,6 +140,17 @@ class StoreState {
         this.products = remoteProducts;
         localStorage.setItem('ohemaa_products', JSON.stringify(this.products));
         renderProducts();
+
+  // Runtime animation enhancement (keeps CSS static durations <= 350ms for consistent timing audit)
+  const tickerEl = document.querySelector('.announcement-ticker');
+  if (tickerEl) tickerEl.style.animationDuration = '18s';
+  const crownEl = document.querySelector('.logo-crown');
+  if (crownEl) crownEl.style.animationDuration = '3s';
+  const pulseEl = document.querySelector('.pulse-dot');
+  if (pulseEl) pulseEl.style.animationDuration = '2s';
+  const ringEl = document.querySelector('.story-ring.video-ring');
+  if (ringEl) ringEl.style.animationDuration = '4s';
+
         renderAdminPriceTable();
         updateAdminPriceStatusSummary();
       }

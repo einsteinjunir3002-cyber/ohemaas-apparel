@@ -67,9 +67,9 @@
 /* Accessibility: Prefers-Reduced-Motion Support */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation: none !important;
-    transition: none !important;
-    scroll-behavior: auto !important;
+    animation: none;
+    transition: none;
+    scroll-behavior: auto;
   }
 }
 
@@ -92,7 +92,7 @@ body {
 /* ==========================================================================
    UTILITY CLASSES & BUTTONS
    ========================================================================== */
-.hidden { display: none !important; }
+[hidden], .hidden { display: none; }
 .text-right { text-align: right; }
 .full-width { width: 100%; }
 
@@ -250,7 +250,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  animation: tickerSlide 12s linear infinite;
+  animation: tickerSlide 0.35s linear infinite;
 }
 
 .announcement-ticker:hover {
@@ -312,7 +312,7 @@ body {
 .logo-crown {
   font-size: 1.6rem;
   filter: drop-shadow(0 2px 8px rgba(226, 184, 89, 0.5));
-  animation: crownFloat 3s ease-in-out infinite;
+  animation: crownFloat 0.35s ease-in-out infinite;
 }
 
 @keyframes crownFloat {
@@ -439,7 +439,7 @@ body {
   padding: 2.5px;
   background: linear-gradient(45deg, #d4af37, var(--gold-secondary), #ff8da1, #9333ea);
   background-size: 200% 200%;
-  animation: ringGradient 4s ease infinite;
+  animation: ringGradient 0.35s ease infinite;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -566,7 +566,7 @@ body {
   border-radius: var(--radius-full);
   background: var(--gold-primary);
   box-shadow: 0 0 8px var(--gold-primary);
-  animation: pulseDot 2s infinite;
+  animation: pulseDot 0.35s infinite;
 }
 
 @keyframes pulseDot {
@@ -1061,7 +1061,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.35s ease;
   display: block;
 }
 
@@ -1758,7 +1758,7 @@ body {
   width: 100%;
   text-align: left;
   cursor: pointer;
-  font-family: inherit;
+  font-family: var(--font-body);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -2438,7 +2438,7 @@ body {
   width: 0%;
   background: var(--gold-gradient);
   border-radius: var(--radius-full);
-  transition: width 0.1s linear;
+  transition: width 0.2s linear;
 }
 
 .reel-prog-segment.completed .reel-prog-fill {

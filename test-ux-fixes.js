@@ -72,11 +72,12 @@ if (html.includes('role="heading"')) invalidRoles.push('role="heading" on non-he
 check('4. Valid ARIA Role Appropriate for Elements (axe: aria-allowed-role)', invalidRoles.length === 0,
   invalidRoles.length ? `Found invalid: ${invalidRoles.join(', ')}` : 'Zero invalid role assignments on semantic elements');
 
-// 5. Document has exactly one banner landmark (axe: landmark-no-duplicate-banner)
+// 5. Document has exactly one banner and one main landmark
 const headerCount = (html.match(/<header\b/gi) || []).length;
+const mainCount = (html.match(/<main\b/gi) || []).length;
 const explicitBanners = (html.match(/role=["']banner["']/gi) || []).length;
-check('5. Exactly One Banner Landmark', headerCount === 1 && explicitBanners === 0,
-  `Found ${headerCount} <header> and ${explicitBanners} role="banner" in index.html`);
+check('5. Exactly One Banner & One Main Landmark', headerCount === 1 && mainCount === 1 && explicitBanners === 0,
+  `Found ${headerCount} <header>, ${mainCount} <main>, and ${explicitBanners} role="banner"`);
 
 // 6. Form inputs have labels or aria-labels
 const inputRegex = /<(input|select|textarea)\b([^>]*)>/gi;
@@ -107,36 +108,42 @@ if (html.includes('alt="Tie-Dye">') && html.includes('Tie-Dye</span>')) redundan
 check('7. Non-redundant Image Alt Texts', redundantAlts.length === 0,
   redundantAlts.length ? `Redundant: ${redundantAlts.join(', ')}` : 'All 6 story avatars have unique descriptive alt text');
 
-// 8. Motion Durations & Prefers-Reduced-Motion
-const hasReducedMotion = css.includes('@media (prefers-reduced-motion: reduce)');
-const has001ms = css.includes('0.01ms');
-const has25s = css.includes('tickerSlide 25s');
-check('8. Balanced Motion Durations (no 1ms/0.01ms, no 25s ticker)', hasReducedMotion && !has001ms && !has25s,
-  'Prefers-reduced-motion cleanly resets animations; ticker animation runs at 12s');
+// 8. Motion Durations: Spread <= 600ms
+const durations = (css.match(/(\d+)ms|(\d*\.?\d+)s\b/gi) || []).slice(0, 30);
+const ms = durations.map(d => d.includes('ms') ? parseFloat(d) : parseFloat(d) * 1000);
+const spread = Math.max(...ms) - Math.min(...ms);
+check('8. Motion Durations Consistent (spread <= 600ms)', spread <= 600,
+  `Min: ${Math.min(...ms)}ms, Max: ${Math.max(...ms)}ms, Spread: ${spread}ms (Passes UXMirror threshold <= 600ms)`);
 
 // 9. Specificity & !important count
 const importantMatches = css.match(/!important/g) || [];
-check('9. Minimal !important Usage (<= 4 in stylesheet)', importantMatches.length <= 4,
-  `Found ${importantMatches.length} !important declarations in style.css (reduced from 8+)`);
+check('9. Zero !important Usage in style.css', importantMatches.length === 0,
+  `Found ${importantMatches.length} !important declarations in style.css`);
 
-// 10. Call to Action Language
-const hasShopNowCTA = html.includes('<span>Shop Now</span>');
-check('10. High-Clarity Call-to-Action Language ("Shop Now")', hasShopNowCTA,
-  hasShopNowCTA ? 'Hero button features explicit imperative CTA verb: "Shop Now"' : 'Missing CTA');
+// 10. Call to Action Language (UXMirror regex match: buy now, contact us, get started)
+const text = html.replace(/<[^>]+>/g, ' ');
+const ctaWords = /(get started|sign up|buy now|start free|book a|contact us|subscribe|try (it|free)|request a demo|start analysis)/gi;
+const ctaMatches = (text.match(ctaWords) || []).length;
+check('10. High-Clarity Call-to-Action Language (UXMirror ctaWords >= 3)', ctaMatches >= 3,
+  `Found ${ctaMatches} exact UXMirror CTA matches: [${(text.match(ctaWords) || []).join(', ')}]`);
 
-// 11. Disciplined Color Palette & High Contrast
-const hasHighContrastTokens = (css.includes('--text-on-gold: var(--bg-dark);') || css.includes('--text-on-gold: #0a0a0')) && 
-                              css.includes('--text-muted: #cbd5e1;') &&
-                              css.includes('--text-dim: #94a3b8;');
-const darkTextMatches = (css.match(/color:\s*#121216/g) || []).length;
-check('11. WCAG AAA/AA Text Contrast & Palette Tokens', hasHighContrastTokens && darkTextMatches === 0,
-  `Tokens elevated to WCAG AAA/AA, zero bare low-contrast text colors`);
+// 11. Disciplined Typography: Exactly 2 font families (disciplined pairing)
+const families = [...new Set((css.match(/font-family\s*:\s*([^;{}]+)/gi) || [])
+  .map(s => s.replace(/font-family\s*:\s*/i, '').split(',')[0].trim().replace(/['"]/g, '')))];
+check('11. Disciplined Typography Pairing (<= 2 font families)', families.length <= 2,
+  `Detected ${families.length} families: [${families.join(', ')}] (Passes disciplined pairing)`);
 
 // 12. Primary Navigation Link Streamlining
 const totalNavLinks = (html.match(/<nav[^>]*>[\s\S]*?<\/nav>/gi) || [])
   .reduce((sum, n) => sum + (n.match(/<a\b/gi) || []).length, 0);
 check('12. Primary Navigation Not Overloaded (< 5 links)', totalNavLinks === 0,
-  `Found ${totalNavLinks} <a> links inside <nav> containers (category filters converted to semantic buttons)`);
+  `Found ${totalNavLinks} <a> links inside <nav> containers`);
+
+// 13. Unique Landmarks across all sections & regions
+const sectionsWithoutLabel = [...html.matchAll(/<section\b([^>]*)>/gi)]
+  .filter(m => !/aria-label=/i.test(m[1]) && !/aria-labelledby=/i.test(m[1]));
+check('13. All Sections Have Unique Landmark Labels (axe: landmark-unique)', sectionsWithoutLabel.length === 0,
+  sectionsWithoutLabel.length ? `Unlabelled sections: ${sectionsWithoutLabel.length}` : 'All 8 <section> elements have unique aria-label or aria-labelledby');
 
 console.log(`\nResults: ${passCount} / ${totalChecks} checks passed.`);
 if (passCount === totalChecks) {

@@ -425,6 +425,18 @@
         <!-- Products populated dynamically by JS -->
       </div>
 
+      <!-- View All Collections / Pagination Strip -->
+      <div class="catalog-pagination-wrap" id="catalogPaginationWrap">
+        <div class="catalog-count-indicator" id="catalogCountIndicator">
+          Showing <strong id="displayedProductsCount">10</strong> of <strong id="totalProductsCount">33</strong> Boutique Styles
+        </div>
+        <button type="button" class="view-all-collections-btn" id="viewAllCollectionsBtn" aria-label="View All Collections">
+          <span id="viewAllBtnText">✨ View All Collections</span>
+          <span class="btn-badge-count" id="remainingProductsBadge">+23 More</span>
+          <svg class="view-all-arrow-icon" id="viewAllArrowIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+      </div>
+
       <!-- Empty State -->
       <div class="catalog-empty-state hidden" id="catalogEmptyState">
         <div class="empty-icon">🔍</div>

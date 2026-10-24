@@ -33,6 +33,7 @@ class StoreState {
     this.searchQuery = '';
     this.priceFilter = 'all';
     this.sortBy = 'featured';
+    this.showAllProducts = false;
 
     // Reels Carousel State
     this.currentReelIndex = 0;
@@ -401,6 +402,14 @@ const elements = {
   activeFilterChips: document.getElementById('activeFilterChips'),
   productsGrid: document.getElementById('productsGrid'),
   catalogEmptyState: document.getElementById('catalogEmptyState'),
+  catalogPaginationWrap: document.getElementById('catalogPaginationWrap'),
+  catalogCountIndicator: document.getElementById('catalogCountIndicator'),
+  displayedProductsCount: document.getElementById('displayedProductsCount'),
+  totalProductsCount: document.getElementById('totalProductsCount'),
+  viewAllCollectionsBtn: document.getElementById('viewAllCollectionsBtn'),
+  viewAllBtnText: document.getElementById('viewAllBtnText'),
+  remainingProductsBadge: document.getElementById('remainingProductsBadge'),
+  viewAllArrowIcon: document.getElementById('viewAllArrowIcon'),
   resetFiltersBtn: document.getElementById('resetFiltersBtn'),
   priceStatusSummary: document.getElementById('priceStatusSummary'),
 
@@ -643,6 +652,7 @@ function renderCategoryNav() {
 
     pill.addEventListener('click', () => {
       state.currentCategory = cat.id;
+      state.showAllProducts = false;
       document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
       pill.classList.add('active');
       renderProducts();
@@ -708,22 +718,58 @@ function getFilteredProducts() {
 
 // --- RENDER PRODUCTS GRID ---
 function renderProducts() {
-  const filtered = getFilteredProducts();
+  const allFiltered = getFilteredProducts();
   elements.productsGrid.innerHTML = '';
 
-  if (filtered.length === 0) {
+  if (allFiltered.length === 0) {
     elements.catalogEmptyState.classList.remove('hidden');
+    if (elements.catalogPaginationWrap) elements.catalogPaginationWrap.classList.add('hidden');
   } else {
     elements.catalogEmptyState.classList.add('hidden');
     
-    filtered.forEach(product => {
+    // Upfront display: limit to 10 products unless "View All Collections" is toggled
+    const shouldShowAll = state.showAllProducts;
+    const itemsToDisplay = shouldShowAll ? allFiltered : allFiltered.slice(0, 10);
+    
+    itemsToDisplay.forEach(product => {
       const card = createProductCard(product);
       elements.productsGrid.appendChild(card);
     });
+
+    updateCatalogPagination(allFiltered.length, itemsToDisplay.length);
   }
 
   renderActiveFilterChips();
   updateAdminPriceStatusSummary();
+}
+
+function updateCatalogPagination(totalCount, displayedCount) {
+  if (!elements.catalogPaginationWrap || !elements.viewAllCollectionsBtn) return;
+
+  if (totalCount <= 10) {
+    elements.catalogPaginationWrap.classList.add('hidden');
+    return;
+  }
+
+  elements.catalogPaginationWrap.classList.remove('hidden');
+  if (elements.displayedProductsCount) elements.displayedProductsCount.textContent = displayedCount;
+  if (elements.totalProductsCount) elements.totalProductsCount.textContent = totalCount;
+
+  const isExpanded = state.showAllProducts;
+  if (isExpanded) {
+    elements.viewAllCollectionsBtn.classList.add('expanded');
+    elements.viewAllCollectionsBtn.setAttribute('aria-expanded', 'true');
+    if (elements.viewAllBtnText) elements.viewAllBtnText.textContent = '▲ Show Top 10 Picks';
+    if (elements.remainingProductsBadge) elements.remainingProductsBadge.textContent = 'Full Collection';
+    if (elements.viewAllArrowIcon) elements.viewAllArrowIcon.innerHTML = '<polyline points="18 15 12 9 6 15"></polyline>';
+  } else {
+    elements.viewAllCollectionsBtn.classList.remove('expanded');
+    elements.viewAllCollectionsBtn.setAttribute('aria-expanded', 'false');
+    const remaining = totalCount - displayedCount;
+    if (elements.viewAllBtnText) elements.viewAllBtnText.textContent = '✨ View All Collections';
+    if (elements.remainingProductsBadge) elements.remainingProductsBadge.textContent = `+${remaining} More`;
+    if (elements.viewAllArrowIcon) elements.viewAllArrowIcon.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
+  }
 }
 
 function createProductCard(product) {
@@ -2124,6 +2170,7 @@ function setupEventListeners() {
   elements.catalogSearchInput.addEventListener('input', (e) => {
     state.searchQuery = e.target.value;
     elements.inlineSearchInput.value = state.searchQuery;
+    state.showAllProducts = false;
     renderProducts();
     if (state.searchQuery.length > 0) {
       elements.clearSearchBtn.classList.remove('hidden');
@@ -2135,6 +2182,7 @@ function setupEventListeners() {
   elements.inlineSearchInput.addEventListener('input', (e) => {
     state.searchQuery = e.target.value;
     elements.catalogSearchInput.value = state.searchQuery;
+    state.showAllProducts = false;
     renderProducts();
   });
 
@@ -2143,12 +2191,14 @@ function setupEventListeners() {
     elements.catalogSearchInput.value = '';
     elements.inlineSearchInput.value = '';
     elements.clearSearchBtn.classList.add('hidden');
+    state.showAllProducts = false;
     renderProducts();
   });
 
   // Price & Sort dropdowns
   elements.priceFilterSelect.addEventListener('change', (e) => {
     state.priceFilter = e.target.value;
+    state.showAllProducts = false;
     renderProducts();
   });
 
@@ -2161,12 +2211,27 @@ function setupEventListeners() {
     state.currentCategory = 'all';
     state.searchQuery = '';
     state.priceFilter = 'all';
+    state.showAllProducts = false;
     elements.catalogSearchInput.value = '';
     elements.inlineSearchInput.value = '';
     elements.priceFilterSelect.value = 'all';
     renderCategoryNav();
     renderProducts();
   });
+
+  // View All Collections Button Toggle
+  if (elements.viewAllCollectionsBtn) {
+    elements.viewAllCollectionsBtn.addEventListener('click', () => {
+      state.showAllProducts = !state.showAllProducts;
+      renderProducts();
+      if (!state.showAllProducts) {
+        const catalog = document.getElementById('catalogSection');
+        if (catalog) catalog.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        showToast(`Showing all ${state.products.length} boutique styles! ✨`, '👗');
+      }
+    });
+  }
 
   // Dock Navigation Buttons
   if (elements.dockHomeBtn) {
@@ -2388,6 +2453,8 @@ function setupEventListeners() {
   if (elements.customerBrowseCatalogBtn) {
     elements.customerBrowseCatalogBtn.addEventListener('click', () => {
       closeAdminPortal();
+      state.showAllProducts = true;
+      renderProducts();
       const catalog = document.getElementById('catalogSection');
       if (catalog) catalog.scrollIntoView({ behavior: 'smooth' });
     });

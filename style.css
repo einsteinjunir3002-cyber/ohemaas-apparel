@@ -1574,6 +1574,41 @@ input.hidden {
 .tiktok-pill:hover { border-color: #fe2c55; }
 .whatsapp-pill:hover { border-color: var(--emerald-green); }
 
+.social-badge-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  display: block;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.social-contact-img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.btn-icon-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  margin-right: 6px;
+}
+
+.policy-img-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
+}
+
 /* ==========================================================================
    SITE FOOTER
    ========================================================================== */

@@ -16,8 +16,8 @@ Built specifically for smartphones as the primary browsing device:
 ## 🏬 Business Details & Operational Rules
 - **Business Name:** Ohemaa’s Apparel
 - **Direct Phone / WhatsApp:** `0599959521` (`+233599959521`)
-- **Snapchat:** `mummy’s _fav`
-- **TikTok:** `@obaa`
+- **Snapchat:** `wicked_girl26` (Display: `Mummy's_fav`)
+- **TikTok:** `@wickedgirl086` (Display: `🫀 𝒪𝐵𝒜𝒜 🥺💕`)
 - **🚚 Delivery Policy:** **DELIVERIES ARE ONLY ON FRIDAYS** (prominently shown on top marquee, product cards, cart drawer, and order receipts).
 - **🏬 Pick-Up:** Allowed daily at the studio upon order confirmation.
 - **📦 Wholesale:** Available with low MOQ (10+ pieces), tiered pricing, and direct wholesale rate card generator.

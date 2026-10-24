@@ -54,6 +54,9 @@ class StoreState {
     this.settings = { ...this.settings, ...newSettings };
     localStorage.setItem('ohemaa_settings', JSON.stringify(this.settings));
     this.syncSettingsToSupabase(this.settings);
+    if (typeof applySettingsToUI === 'function') {
+      applySettingsToUI(this.settings);
+    }
   }
 
   async syncSettingsToSupabase(settings) {
@@ -64,6 +67,25 @@ class StoreState {
       });
     } catch (e) {
       console.warn('Supabase settings sync error:', e);
+    }
+  }
+
+  async fetchRemoteSettings() {
+    try {
+      const { data, error } = await supabase
+        .from('ohemaa_settings')
+        .select('value')
+        .eq('key', 'store_settings')
+        .single();
+      if (data && data.value) {
+        this.settings = { ...this.settings, ...data.value };
+        localStorage.setItem('ohemaa_settings', JSON.stringify(this.settings));
+        if (typeof applySettingsToUI === 'function') {
+          applySettingsToUI(this.settings);
+        }
+      }
+    } catch (e) {
+      console.warn('Supabase settings fetch error:', e);
     }
   }
 
@@ -607,6 +629,72 @@ export function showToast(message, icon = "👑") {
   }, 2800);
 }
 
+// --- DYNAMIC STORE SETTINGS SYNCHRONIZER ---
+function applySettingsToUI(settings = state.settings) {
+  if (!settings) return;
+  const snapHandle = settings.snapchat || 'wicked_girl26';
+  const tiktokHandle = (settings.tiktok || 'wickedgirl086').replace(/^@/, '');
+  const phone = settings.phone || '0599959521';
+  const waNumber = settings.whatsappNumber || phone.replace(/\D/g, '');
+
+  // 1. Drawer Socials
+  const drawer = document.getElementById('navDrawer');
+  if (drawer) {
+    const snapLink = drawer.querySelector('a[href*="snapchat.com"]');
+    if (snapLink) {
+      snapLink.href = `https://www.snapchat.com/add/${encodeURIComponent(snapHandle)}`;
+      const strong = snapLink.querySelector('strong');
+      if (strong) strong.textContent = snapHandle;
+    }
+    const tiktokLink = drawer.querySelector('a[href*="tiktok.com"]');
+    if (tiktokLink) {
+      tiktokLink.href = `https://www.tiktok.com/@${encodeURIComponent(tiktokHandle)}`;
+      const strong = tiktokLink.querySelector('strong');
+      if (strong) strong.textContent = `@${tiktokHandle}`;
+    }
+    const waLink = drawer.querySelector('a[href*="wa.me"]');
+    if (waLink) {
+      waLink.href = `https://wa.me/${waNumber}`;
+      const strong = waLink.querySelector('strong');
+      if (strong) strong.textContent = phone;
+    }
+  }
+
+  // 2. VIP Social Badges
+  const snapPill = document.querySelector('.social-pill.snap-pill');
+  if (snapPill) {
+    snapPill.href = `https://www.snapchat.com/add/${encodeURIComponent(snapHandle)}`;
+    const strong = snapPill.querySelector('strong');
+    if (strong) strong.textContent = snapHandle;
+  }
+  const tiktokPill = document.querySelector('.social-pill.tiktok-pill');
+  if (tiktokPill) {
+    tiktokPill.href = `https://www.tiktok.com/@${encodeURIComponent(tiktokHandle)}`;
+    const strong = tiktokPill.querySelector('strong');
+    if (strong) strong.textContent = `@${tiktokHandle}`;
+  }
+  const waPill = document.querySelector('.social-pill.whatsapp-pill');
+  if (waPill) {
+    waPill.href = `https://wa.me/${waNumber}`;
+    const strong = waPill.querySelector('strong');
+    if (strong) strong.textContent = phone;
+  }
+
+  // 3. Receipt Contact
+  const receiptContact = document.querySelector('.receipt-contact');
+  if (receiptContact) {
+    receiptContact.textContent = `Phone: ${phone} | Snapchat: ${snapHandle} | TikTok: @${tiktokHandle}`;
+  }
+
+  // 4. Admin Settings Inputs
+  const setPhone = document.getElementById('setPhone');
+  if (setPhone) setPhone.value = phone;
+  const setSnap = document.getElementById('setSnapchat');
+  if (setSnap) setSnap.value = snapHandle;
+  const setTik = document.getElementById('setTiktok');
+  if (setTik) setTik.value = tiktokHandle;
+}
+
 // --- INITIALIZATION ---
 function initApp() {
   renderCategoryNav();
@@ -624,7 +712,10 @@ function initApp() {
     prefillCustomerDetails(state.currentCustomer);
   }
 
+  applySettingsToUI(state.settings);
+
   // Async Supabase background sync
+  state.fetchRemoteSettings();
   state.fetchRemoteProducts();
   state.fetchRemoteOrders();
   state.fetchRemoteCustomers();
@@ -1164,7 +1255,7 @@ function openProductModal(productId) {
           🛍️ Add to Shopping Bag
         </button>
         <button class="btn btn-whatsapp full-width" id="modalWhatsAppOrderBtn">
-          💬 Order This on WhatsApp (0599959521)
+          <img src="./pics/whatsapp.png" alt="" class="btn-icon-img" width="20" height="20"> <span>Order This on WhatsApp (${state.settings.phone || '0599959521'})</span>
         </button>
       </div>
     </div>
@@ -2048,7 +2139,7 @@ function renderAdminOrdersList(filter = 'all') {
 
       <div class="admin-order-actions">
         <button class="btn btn-whatsapp btn-sm whatsapp-order-reply-btn" data-phone="${escapeHtml(order.customer.phone)}" data-id="${escapeHtml(order.orderId)}" data-name="${escapeHtml(order.customer.name)}">
-          💬 WhatsApp Customer
+          <img src="./pics/whatsapp.png" alt="" class="btn-icon-img" width="16" height="16"> <span>WhatsApp Customer</span>
         </button>
         <button class="btn btn-outline btn-sm delete-order-btn" data-id="${escapeHtml(order.orderId)}">
           🗑️ Archive Order

@@ -99,7 +99,14 @@ button.hidden,
 span.hidden,
 p.hidden,
 form.hidden,
-input.hidden {
+input.hidden,
+video.hidden,
+img.hidden,
+.reel-modal.hidden,
+#reelModal.hidden,
+.reel-media-element.hidden,
+#reelModalVideo.hidden,
+#reelModalImage.hidden {
   display: none;
 }
 
@@ -2530,10 +2537,58 @@ input.hidden {
 .reel-modal {
   position: fixed;
   inset: 0;
-  background: #0a0a0e;
+  background: rgba(6, 6, 10, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   z-index: 230;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.reel-modal.hidden,
+#reelModal.hidden {
+  display: none;
+}
+
+/* Reel Stage Wrapper (Houses centered card + exterior arrows on desktop) */
+.reel-stage-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+@media (min-width: 640px) {
+  .reel-stage-wrapper {
+    width: auto;
+    height: auto;
+  }
+}
+
+/* Smartphone vertical stage for reel on mobile & desktop */
+.reel-modal-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
   flex-direction: column;
+  overflow: hidden;
+  background: #000000;
+}
+
+@media (min-width: 640px) {
+  .reel-modal-stage {
+    width: 430px;
+    max-width: 92vw;
+    height: 94vh;
+    max-height: 840px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(226, 184, 89, 0.3);
+  }
 }
 
 /* Segmented Story Progress Bars at Top */
@@ -2542,7 +2597,7 @@ input.hidden {
   top: 10px;
   left: 12px;
   right: 12px;
-  z-index: 20;
+  z-index: 30;
   display: flex;
   gap: 5px;
 }
@@ -2574,9 +2629,9 @@ input.hidden {
 .reel-top-bar {
   position: absolute;
   top: 22px;
-  left: 14px;
-  right: 14px;
-  z-index: 15;
+  left: 12px;
+  right: 12px;
+  z-index: 25;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2586,7 +2641,7 @@ input.hidden {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(8px);
   padding: 6px 12px;
   border-radius: var(--radius-full);
@@ -2603,6 +2658,12 @@ input.hidden {
   background: rgba(0, 0, 0, 0.4);
   padding: 2px 6px;
   border-radius: var(--radius-full);
+}
+
+.reel-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .reel-close-btn {
@@ -2624,6 +2685,12 @@ input.hidden {
   transform: scale(0.9);
 }
 
+.reel-mute-btn {
+  width: 38px;
+  height: 38px;
+  font-size: 1rem;
+}
+
 .reel-video-container {
   width: 100%;
   height: 100%;
@@ -2631,25 +2698,34 @@ input.hidden {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-dark);
+  background: #000000;
   overflow: hidden;
 }
 
 .reel-media-element {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  max-width: 500px;
   object-fit: cover;
   display: block;
+}
+
+.reel-media-element.hidden,
+video.reel-media-element.hidden,
+img.reel-media-element.hidden,
+#reelModalVideo.hidden,
+#reelModalImage.hidden {
+  display: none;
 }
 
 /* Back and Forward Navigation Arrows */
 .reel-nav-arrow {
   position: absolute;
-  top: 50%;
+  top: 40%;
   transform: translateY(-50%);
-  width: 48px;
-  height: 48px;
+  width: 38px;
+  height: 38px;
   border-radius: var(--radius-full);
   background: rgba(18, 18, 24, 0.75);
   backdrop-filter: blur(10px);
@@ -2666,11 +2742,26 @@ input.hidden {
 }
 
 .reel-prev-arrow {
-  left: 12px;
+  left: 10px;
 }
 
 .reel-next-arrow {
-  right: 12px;
+  right: 10px;
+}
+
+@media (min-width: 640px) {
+  .reel-nav-arrow {
+    top: 50%;
+    width: 48px;
+    height: 48px;
+    z-index: 35;
+  }
+  .reel-prev-arrow {
+    left: -68px;
+  }
+  .reel-next-arrow {
+    right: -68px;
+  }
 }
 
 .reel-nav-arrow:hover {
@@ -2678,7 +2769,7 @@ input.hidden {
   background: var(--gold-gradient);
   color: var(--text-on-gold);
   border-color: transparent;
-  transform: translateY(-50%) scale(1.1);
+  transform: translateY(-50%) scale(1.08);
 }
 
 .reel-nav-arrow:active {
@@ -2689,7 +2780,7 @@ input.hidden {
 .reel-tap-zone {
   position: absolute;
   top: 60px;
-  bottom: 120px;
+  bottom: 220px;
   z-index: 5;
 }
 
@@ -2714,7 +2805,7 @@ input.hidden {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 70px 16px calc(24px + var(--safe-bottom));
+  padding: 70px 14px calc(16px + var(--safe-bottom));
   pointer-events: none;
   z-index: 10;
 }
@@ -2744,22 +2835,27 @@ input.hidden {
   opacity: 1;
 }
 
+/* Floating Actions on the right (Share, Wishlist) positioned above caption */
 .reel-floating-actions {
-  align-self: flex-end;
+  position: absolute;
+  right: 14px;
+  bottom: 165px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  z-index: 20;
 }
 
 .reel-action-bubble {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: var(--radius-full);
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #ffffff;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2772,9 +2868,10 @@ input.hidden {
 }
 
 .reel-bottom-info {
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.6) 70%, transparent 100%);
-  padding: 24px 14px 8px;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.7) 65%, transparent 100%);
+  padding: 20px 12px 10px;
   border-radius: var(--radius-md);
+  margin-top: auto;
 }
 
 .reel-tag-row {
@@ -2807,11 +2904,13 @@ input.hidden {
   border-radius: var(--radius-sm);
 }
 
+.reel-bottom-info h3,
 .reel-bottom-info h4 {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: #ffffff;
   margin: 2px 0 4px;
   font-weight: 700;
+  line-height: 1.3;
 }
 
 .reel-bottom-info p {
@@ -2824,10 +2923,25 @@ input.hidden {
 .reel-cta-bar {
   display: flex;
   gap: 8px;
+  width: 100%;
 }
 
 .reel-cta-bar .btn {
   flex: 1;
+  font-size: 0.8rem;
+  padding: 10px 12px;
+  white-space: nowrap;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 360px) {
+  .reel-cta-bar {
+    flex-direction: column;
+    gap: 6px;
+  }
 }
 
 /* ==========================================================================

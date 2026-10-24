@@ -1460,6 +1460,7 @@ function openReelModal(startIndex = 0) {
   state.isReelPaused = false;
   elements.reelModalOverlay.classList.remove('hidden');
   elements.reelModal.classList.remove('hidden');
+  elements.reelModal.style.display = 'flex';
   document.body.style.overflow = 'hidden';
 
   renderCurrentReel();
@@ -1470,6 +1471,7 @@ function closeReelModal() {
   elements.reelModalVideo.pause();
   elements.reelModalOverlay.classList.add('hidden');
   elements.reelModal.classList.add('hidden');
+  elements.reelModal.style.display = 'none';
   document.body.style.overflow = '';
 }
 
@@ -1498,7 +1500,9 @@ function renderCurrentReel() {
 
   // Media Render: Video vs Image
   if (reel.type === 'video') {
+    elements.reelModalImage.style.display = 'none';
     elements.reelModalImage.classList.add('hidden');
+    elements.reelModalVideo.style.display = 'block';
     elements.reelModalVideo.classList.remove('hidden');
     elements.reelModalVideo.currentTime = 0;
     elements.reelModalVideo.muted = false;
@@ -1509,9 +1513,12 @@ function renderCurrentReel() {
     elements.reelSoundIcon.textContent = elements.reelModalVideo.muted ? '🔇' : '🔊';
   } else {
     elements.reelModalVideo.pause();
+    elements.reelModalVideo.style.display = 'none';
     elements.reelModalVideo.classList.add('hidden');
+    elements.reelModalImage.style.display = 'block';
     elements.reelModalImage.classList.remove('hidden');
     elements.reelModalImage.src = reel.src;
+    elements.reelModalImage.alt = reel.title || 'Reel Outfit';
 
     // Start 5-second automatic progression for photo reel
     startPhotoReelTimer(5000);
@@ -2396,6 +2403,9 @@ function setupEventListeners() {
   elements.dockVideoBtn.addEventListener('click', () => openReelModal(0));
   elements.closeReelModalBtn.addEventListener('click', closeReelModal);
   elements.reelModalOverlay.addEventListener('click', closeReelModal);
+  elements.reelModal.addEventListener('click', (e) => {
+    if (e.target === elements.reelModal || e.target.classList.contains('reel-stage-wrapper')) closeReelModal();
+  });
 
   // In-line video banner play / pause
   elements.inlineVideoPlayBtn.addEventListener('click', () => {

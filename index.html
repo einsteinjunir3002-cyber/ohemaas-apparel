@@ -956,10 +956,12 @@
     <div class="admin-login-screen" id="adminLoginScreen">
       <div class="login-card">
         <button class="modal-close-btn top-right" id="closeAdminLoginBtn" aria-label="Close Sign In Modal">✕</button>
-        <div class="login-crown">👑</div>
+        <div class="brand-crest">
+          <span class="crest-icon">👑</span>
+        </div>
         <h2 id="adminModalHeading">Sign In</h2>
-        <p class="login-sub">Ohemaa's Apparel Luxury Boutique</p>
-        <p class="login-info-pill">Enter your VIP customer phone or store owner credentials to continue</p>
+        <p class="login-sub">Ohemaa's Luxury Wardrobe &amp; Co-ords</p>
+        <div class="luxury-badge-pill">ACCRA • DELIVERIES ONLY ON FRIDAYS</div>
 
         <form id="adminLoginForm" class="admin-login-form">
           <div class="input-group">
@@ -987,15 +989,15 @@
           </button>
 
           <div class="auth-divider">
-            <span>or</span>
+            <span>or continue as</span>
           </div>
 
           <button type="button" class="btn btn-outline full-width guest-continue-btn" id="guestContinueBtn">
-            🛍️ Continue as a Guest
+            🛍️ Continue Shopping as Guest →
           </button>
 
           <div class="auth-nav-box">
-            <p>New to Ohemaa’s Apparel?</p>
+            <p>New customer without an account?</p>
             <button type="button" class="btn-create-account" id="goToSignUpBtn">
               <span>Create an Account / Sign Up</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
@@ -1014,10 +1016,19 @@
         </button>
         <button class="modal-close-btn top-right" id="closeSignUpBtn" aria-label="Close Sign Up Modal">✕</button>
         
-        <div class="login-crown">✨</div>
-        <h2 class="auth-section-title">Create Account</h2>
-        <p class="login-sub">Join Ohemaa’s VIP Shopping Club</p>
-        <p class="login-info-pill">Register for exclusive Friday delivery alerts &amp; faster checkout</p>
+        <div class="brand-crest">
+          <span class="crest-icon">✨</span>
+        </div>
+        <h2 class="auth-section-title">Create VIP Account</h2>
+        <p class="login-sub">Join Ohemaa’s Elite Member Community</p>
+        
+        <div class="vip-perks-strip">
+          <span>🚚 Friday Delivery</span>
+          <span class="sep">•</span>
+          <span>🏬 Store Pick-Up</span>
+          <span class="sep">•</span>
+          <span>📦 Wholesale Bulk</span>
+        </div>
 
         <form id="customerSignUpForm" class="admin-login-form">
           <div class="input-group">
@@ -1066,9 +1077,15 @@
       <div class="login-card">
         <button class="modal-close-btn top-right" id="closeProfileBtn" aria-label="Close Profile Modal">✕</button>
         <div class="profile-card">
-          <div class="profile-avatar">👑</div>
+          <div class="vip-membership-header">
+            <span class="vip-badge-tag">👑 ROYAL VIP MEMBER</span>
+            <span class="vip-card-id">OHEMAA CLUB</span>
+          </div>
+          <div class="brand-crest">
+            <span class="crest-icon">👑</span>
+          </div>
           <h2 class="profile-name" id="profileCustName">VIP Customer</h2>
-          <div class="vip-status-pill">⭐ VIP Boutique Member</div>
+          <div class="vip-status-pill">⭐ Active Boutique Member</div>
           
           <div class="profile-details-grid">
             <div class="profile-detail-item">

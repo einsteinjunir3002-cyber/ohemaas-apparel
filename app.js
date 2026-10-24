@@ -291,6 +291,43 @@ class StoreState {
     list.push(newCustomer);
     this.customers = list;
     localStorage.setItem('ohemaa_customers', JSON.stringify(list));
+    this.syncCustomersToSupabase();
+  }
+
+  async syncCustomersToSupabase() {
+    try {
+      await supabase.from('ohemaa_settings').upsert({
+        key: 'store_customers',
+        value: this.customers,
+        updated_at: new Date().toISOString()
+      });
+    } catch (e) {
+      console.warn('Error syncing customers to Supabase:', e);
+    }
+  }
+
+  async fetchRemoteCustomers() {
+    try {
+      const { data, error } = await supabase
+        .from('ohemaa_settings')
+        .select('value')
+        .eq('key', 'store_customers')
+        .maybeSingle();
+
+      if (!error && data && Array.isArray(data.value)) {
+        const local = this.loadCustomers();
+        const merged = [...local];
+        data.value.forEach(rc => {
+          if (!merged.some(c => (c.phone || '').replace(/\s+/g, '') === (rc.phone || '').replace(/\s+/g, ''))) {
+            merged.push(rc);
+          }
+        });
+        this.customers = merged;
+        localStorage.setItem('ohemaa_customers', JSON.stringify(merged));
+      }
+    } catch (e) {
+      console.warn('Error fetching remote customers from Supabase:', e);
+    }
   }
 
   loadGuestSession() {
@@ -567,6 +604,7 @@ function initApp() {
   // Async Supabase background sync
   state.fetchRemoteProducts();
   state.fetchRemoteOrders();
+  state.fetchRemoteCustomers();
 }
 
 // --- RENDER CATEGORY NAVIGATION PILLS ---

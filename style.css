@@ -3048,6 +3048,23 @@ body {
   right: 12px;
 }
 
+.brand-crest {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 10px;
+  background: radial-gradient(circle at center, rgba(212, 163, 115, 0.25) 0%, rgba(20, 20, 24, 0.95) 100%);
+  border: 1.5px solid var(--border-gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), inset 0 0 8px rgba(212, 163, 115, 0.15);
+}
+
+.crest-icon {
+  font-size: 1.7rem;
+}
+
 .login-crown {
   font-size: 2.2rem;
   margin-bottom: 6px;
@@ -3064,7 +3081,39 @@ body {
   font-size: 0.78rem;
   color: var(--gold-secondary);
   font-weight: 600;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+}
+
+.luxury-badge-pill {
+  display: inline-block;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-secondary);
+  background: rgba(212, 163, 115, 0.1);
+  border: 1px solid rgba(212, 163, 115, 0.28);
+  padding: 3px 10px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.vip-perks-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  margin-bottom: 16px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.vip-perks-strip .sep {
+  color: var(--gold-primary);
 }
 
 .login-info-pill {
@@ -3081,6 +3130,12 @@ body {
   flex-direction: column;
   gap: 12px;
   text-align: left;
+}
+
+.admin-login-form input:focus {
+  outline: none;
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.15);
 }
 
 .password-wrapper {
@@ -3266,6 +3321,31 @@ body {
   align-items: center;
   gap: 12px;
   text-align: center;
+}
+
+.vip-membership-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 4px;
+}
+
+.vip-badge-tag {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--gold-primary);
+  text-transform: uppercase;
+}
+
+.vip-card-id {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  text-transform: uppercase;
 }
 
 .profile-avatar {

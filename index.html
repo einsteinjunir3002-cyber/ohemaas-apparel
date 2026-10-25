@@ -111,7 +111,7 @@
       <nav class="drawer-nav" aria-label="Product Categories Navigation">
         <button type="button" class="drawer-link" data-category="all">
           <span class="nav-icon">🛍️</span>
-          <span>Get Started — All Collection (33 Items)</span>
+          <span>Get Started — All Collection (<span id="drawerTotalItemsCount">44</span> Items)</span>
         </button>
         <button type="button" class="drawer-link" data-category="co-ords">
           <span class="nav-icon">✨</span>
@@ -366,8 +366,8 @@
             <button class="btn btn-outline btn-sm" id="openFullscreenReelBtn">
               📱 Open Vertical Reel Mode
             </button>
-            <a href="#catalogSection" class="btn btn-gold btn-sm">
-              Shop Outfits (33)
+            <a href="#catalogSection" class="btn btn-gold btn-sm" id="heroShopOutfitsBtn">
+              Shop Outfits (<span id="heroTotalItemsCount">44</span>)
             </a>
           </div>
         </div>
@@ -398,7 +398,7 @@
       <div class="catalog-toolbar">
         <div class="toolbar-search">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <input type="text" id="inlineSearchInput" placeholder="Search by color, pants, shorts..." aria-label="Search clothing items by keyword">
+          <input type="text" id="inlineSearchInput" placeholder="Search dresses, pants, shorts, co-ords..." aria-label="Search clothing items by keyword">
         </div>
 
         <div class="toolbar-filters">
@@ -430,7 +430,7 @@
       <!-- View All Collections / Pagination Strip -->
       <div class="catalog-pagination-wrap" id="catalogPaginationWrap">
         <div class="catalog-count-indicator" id="catalogCountIndicator">
-          Showing <strong id="displayedProductsCount">10</strong> of <strong id="totalProductsCount">33</strong> Boutique Styles
+          Showing <strong id="displayedProductsCount">10</strong> of <strong id="totalProductsCount">44</strong> Boutique Styles
         </div>
         <button type="button" class="view-all-collections-btn" id="viewAllCollectionsBtn" aria-label="View All Collections">
           <span id="viewAllBtnText">✨ View All Collections</span>
@@ -1286,10 +1286,10 @@
 
         <div class="quick-price-stats">
           <div class="stat-pill">
-            <span>Total Catalog:</span> <strong id="adminTotalCount">33</strong>
+            <span>Total Catalog:</span> <strong id="adminTotalCount">44</strong>
           </div>
           <div class="stat-pill unpriced">
-            <span>Needs Price (GH₵ ___):</span> <strong id="adminUnpricedCount">33</strong>
+            <span>Needs Price (GH₵ ___):</span> <strong id="adminUnpricedCount">44</strong>
           </div>
           <div class="stat-pill priced">
             <span>Prices Set:</span> <strong id="adminPricedCount">0</strong>
@@ -1394,7 +1394,7 @@
 
           <!-- Right: Current Inventory Quick List -->
           <div class="admin-card">
-            <h4>📦 Current Inventory (<span id="inventoryCount">33</span>)</h4>
+            <h4>📦 Current Inventory (<span id="inventoryCount">44</span>)</h4>
             <div class="admin-inventory-list" id="adminInventoryList">
               <!-- Rendered by JS -->
             </div>
@@ -1440,15 +1440,15 @@
           </div>
 
           <div class="admin-card">
-            <h4>💾 Database Backup & Reset</h4>
-            <p>Export all products and prices to a backup file, or reset to original gallery.</p>
+            <h4>💾 Save & Restore Store Copy</h4>
+            <p>Download a copy of your products and prices to your computer, or restore them anytime.</p>
             <div class="backup-actions">
               <button class="btn btn-outline full-width" id="exportDataBtn">
-                📥 Export Store Data (JSON)
+                📥 Download Store Backup
               </button>
               <label class="btn btn-outline full-width file-upload-btn">
-                📤 Import Store Data (JSON)
-                <input type="file" id="importDataFile" accept=".json" class="hidden" aria-label="Upload JSON backup file to import catalog">
+                📤 Restore From Backup
+                <input type="file" id="importDataFile" accept=".json" class="hidden" aria-label="Upload backup file to restore store">
               </label>
               <button class="btn btn-danger-outline full-width" id="resetCatalogBtn">
                 ⚠️ Reset All Prices to GH₵ ___

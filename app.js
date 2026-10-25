@@ -832,6 +832,46 @@ function renderProducts() {
 
   renderActiveFilterChips();
   updateAdminPriceStatusSummary();
+  updateStoreItemCounters();
+}
+
+export function updateStoreItemCounters() {
+  const total = state.products ? state.products.length : 0;
+  
+  const heroBtn = document.getElementById('heroShopOutfitsBtn');
+  if (heroBtn) {
+    heroBtn.textContent = `Shop Outfits (${total})`;
+  }
+  
+  const heroCountSpan = document.getElementById('heroTotalItemsCount');
+  if (heroCountSpan) {
+    heroCountSpan.textContent = total;
+  }
+
+  const drawerCount = document.getElementById('drawerTotalItemsCount');
+  if (drawerCount) {
+    drawerCount.textContent = total;
+  }
+  
+  const totalProductsCount = document.getElementById('totalProductsCount');
+  if (totalProductsCount) {
+    totalProductsCount.textContent = total;
+  }
+  
+  const adminTotalCount = document.getElementById('adminTotalCount');
+  if (adminTotalCount) {
+    adminTotalCount.textContent = total;
+  }
+  
+  const inventoryCount = document.getElementById('inventoryCount');
+  if (inventoryCount) {
+    inventoryCount.textContent = total;
+  }
+
+  const allCatPill = document.querySelector('.cat-pill[data-category="all"] .count');
+  if (allCatPill) {
+    allCatPill.textContent = total;
+  }
 }
 
 function updateCatalogPagination(totalCount, displayedCount) {
@@ -892,12 +932,12 @@ function createProductCard(product) {
       
       <div class="product-price-row">
         <span class="price-tag ${isPriced ? '' : 'unpriced'}">${escapeHtml(formattedPrice)}</span>
-        ${!isPriced ? `<span class="suggested-hint">(Pending setup)</span>` : ''}
+        ${!isPriced ? `<span class="suggested-hint">(Price on Request)</span>` : ''}
       </div>
 
       <div class="product-meta-row">
-        <span>${escapeHtml(product.colors ? product.colors.length + ' Colors' : 'Multi-color')}</span>
-        <span class="size-pill-tag">${escapeHtml(product.sizes ? product.sizes[0] + ' - ' + product.sizes[product.sizes.length - 1] : 'Free Size')}</span>
+        <span class="stock-status-tag">Ready to Wear</span>
+        <span class="size-pill-tag">Sizes: ${escapeHtml(product.sizes ? product.sizes[0] + ' - ' + product.sizes[product.sizes.length - 1] : 'Free Size')}</span>
       </div>
 
       <div class="product-card-actions">
@@ -1023,17 +1063,23 @@ function quickAddToCart(productId) {
   if (!product) return;
 
   const defaultSize = product.sizes ? product.sizes[0] : "Free Size";
-  const defaultColor = product.colors ? product.colors[0] : "As Pictured";
-
-  addToCart(product, defaultSize, defaultColor, 1);
+  addToCart(product, defaultSize, 1);
 }
 
-export function addToCart(product, size, color, quantity = 1) {
-  const cartItemId = `${product.id}-${size}-${color}`;
+export function addToCart(product, size, colorOrQty = 1, quantity = 1) {
+  let qty = 1;
+  if (typeof colorOrQty === 'number') {
+    qty = colorOrQty;
+  } else if (typeof quantity === 'number') {
+    qty = quantity;
+  }
+
+  const chosenSize = size || (product.sizes ? product.sizes[0] : "Free Size");
+  const cartItemId = `${product.id}-${chosenSize}`;
   const existing = state.cart.find(item => item.cartItemId === cartItemId);
 
   if (existing) {
-    existing.quantity += quantity;
+    existing.quantity += qty;
   } else {
     state.cart.push({
       cartItemId,
@@ -1041,16 +1087,15 @@ export function addToCart(product, size, color, quantity = 1) {
       name: product.name,
       image: product.image,
       price: product.price,
-      size,
-      color,
-      quantity
+      size: chosenSize,
+      quantity: qty
     });
   }
 
   state.saveCart();
   renderCartDrawer();
   openCartDrawer();
-  showToast(`Added to bag: ${product.name}`, '🛍️');
+  showToast(`Added to bag: ${product.name} (Size: ${chosenSize})`, '🛍️');
 }
 
 function updateCartBadges() {
@@ -1114,7 +1159,7 @@ function renderCartDrawer() {
       <div class="cart-item-details">
         <div>
           <h4>${escapeHtml(item.name)}</h4>
-          <p class="cart-item-variant">Size: <strong>${escapeHtml(item.size)}</strong> • Color: <strong>${escapeHtml(item.color)}</strong></p>
+          <p class="cart-item-variant">Size: <strong>${escapeHtml(item.size)}</strong></p>
         </div>
         <div class="cart-item-price-stepper">
           <span class="cart-price ${isPriced ? '' : 'unpriced'}">
@@ -1189,10 +1234,8 @@ function openProductModal(productId) {
   const isPriced = isPriceSet(product.price);
   const formattedPrice = formatPrice(product.price);
   const sizes = product.sizes || ["S", "M", "L", "XL", "Free Size"];
-  const colors = product.colors || ["As Pictured"];
 
   let selectedSize = sizes[0];
-  let selectedColor = colors[0];
   let modalQty = 1;
 
   elements.productModalContent.innerHTML = `
@@ -1210,7 +1253,7 @@ function openProductModal(productId) {
       
       <div class="modal-price-box">
         <span class="modal-price-val ${isPriced ? '' : 'unpriced'}">${escapeHtml(formattedPrice)}</span>
-        ${!isPriced ? `<small style="color:var(--text-muted);">(Pending Client Pricing)</small>` : ''}
+        ${!isPriced ? `<small style="color:var(--text-muted);">(Chat with us on WhatsApp for price)</small>` : ''}
       </div>
 
       <p class="modal-desc">${escapeHtml(product.description || 'Premium luxury garment.')}</p>
@@ -1222,20 +1265,10 @@ function openProductModal(productId) {
 
       <!-- Size Selection -->
       <div class="modal-selector-group">
-        <label>Select Size:</label>
+        <label>Select Your Size:</label>
         <div class="pills-select-row" id="modalSizePills">
           ${sizes.map((s, idx) => `
             <button class="choice-pill ${idx === 0 ? 'active' : ''}" data-val="${escapeHtml(s)}">${escapeHtml(s)}</button>
-          `).join('')}
-        </div>
-      </div>
-
-      <!-- Color Selection -->
-      <div class="modal-selector-group">
-        <label>Select Color / Shade:</label>
-        <div class="pills-select-row" id="modalColorPills">
-          ${colors.map((c, idx) => `
-            <button class="choice-pill ${idx === 0 ? 'active' : ''}" data-val="${escapeHtml(c)}">${escapeHtml(c)}</button>
           `).join('')}
         </div>
       </div>
@@ -1261,22 +1294,13 @@ function openProductModal(productId) {
     </div>
   `;
 
-  // Attach dynamic selection events
+  // Attach dynamic size selection events
   const sizePills = elements.productModalContent.querySelectorAll('#modalSizePills .choice-pill');
   sizePills.forEach(pill => {
     pill.addEventListener('click', () => {
       sizePills.forEach(p => p.classList.remove('active'));
       pill.classList.add('active');
       selectedSize = pill.dataset.val;
-    });
-  });
-
-  const colorPills = elements.productModalContent.querySelectorAll('#modalColorPills .choice-pill');
-  colorPills.forEach(pill => {
-    pill.addEventListener('click', () => {
-      colorPills.forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-      selectedColor = pill.dataset.val;
     });
   });
 
@@ -1292,9 +1316,9 @@ function openProductModal(productId) {
     qtyInput.value = modalQty;
   });
 
-  // Add to Cart
+  // Add to Cart with selected size
   elements.productModalContent.querySelector('#modalAddToCartBtn').addEventListener('click', () => {
-    addToCart(product, selectedSize, selectedColor, modalQty);
+    addToCart(product, selectedSize, modalQty);
     closeProductModal();
   });
 
@@ -1303,7 +1327,7 @@ function openProductModal(productId) {
     const photoUrl = getProductPublicImageUrl(product.image);
     const photoLine = photoUrl ? `\n*📸 Item Photo:* ${photoUrl}` : '';
     const text = encodeURIComponent(
-      `Hello Ohemaa’s Apparel! 👑\nI would like to order:\n\n*Product:* ${product.name}\n*Size:* ${selectedSize}\n*Color:* ${selectedColor}\n*Qty:* ${modalQty}\n*Price:* ${formattedPrice}${photoLine}\n\n*Delivery Policy Check:* I understand deliveries are on *Friday only*, or I can *pick up* at your store.\n\nPlease confirm availability and payment details!`
+      `Hello Ohemaa’s Apparel! 👑\nI would like to order:\n\n*Product:* ${product.name}\n*Size:* ${selectedSize}\n*Qty:* ${modalQty}\n*Price:* ${formattedPrice}${photoLine}\n\n*Delivery & Pick-Up Notice:* Deliveries are sent out every *Friday*, or I can *pick up* at your store.\n\nPlease confirm availability and payment details!`
     );
     window.open(`https://wa.me/${state.settings.whatsappNumber}?text=${text}`, '_blank');
   });
@@ -1706,7 +1730,7 @@ async function handleCheckout(isWhatsApp = true) {
       const priceTxt = isPriceSet(item.price) ? `GH₵ ${(Number(item.price) * item.quantity).toFixed(2)}` : `GH₵ ___ (Price to confirm)`;
       const photoUrl = getProductPublicImageUrl(item.image);
       const photoLine = photoUrl ? `\n   📸 Item Photo: ${photoUrl}` : '';
-      msg += `${idx + 1}. *${item.name}*\n   Size: ${item.size} | Color: ${item.color} | Qty: ${item.quantity}\n   Price: ${priceTxt}${photoLine}\n`;
+      msg += `${idx + 1}. *${item.name}*\n   Size: ${item.size} | Qty: ${item.quantity}\n   Price: ${priceTxt}${photoLine}\n`;
     });
 
     if (pricedSum > 0) {
@@ -1761,7 +1785,7 @@ function openReceiptModal(order) {
     <tr>
       <td>
         <strong>${escapeHtml(item.name)}</strong><br>
-        <small style="color:#64748b;">${escapeHtml(item.size)} • ${escapeHtml(item.color)}</small>
+        <small style="color:#64748b;">Size: ${escapeHtml(item.size)}</small>
       </td>
       <td>${escapeHtml(item.quantity)}</td>
       <td class="text-right">
@@ -1794,7 +1818,7 @@ function openReceiptModal(order) {
     order.items.forEach((item, idx) => {
       const photoUrl = getProductPublicImageUrl(item.image);
       const photoLine = photoUrl ? `\n   📸 Photo: ${photoUrl}` : '';
-      receiptMsg += `\n${idx + 1}. *${item.name}* (${item.size} / ${item.color}) x${item.quantity}${photoLine}`;
+      receiptMsg += `\n${idx + 1}. *${item.name}* (Size: ${item.size}) x${item.quantity}${photoLine}`;
     });
     receiptMsg += `\n\nPlease verify my order!`;
     window.open(`https://wa.me/${state.settings.whatsappNumber}?text=${encodeURIComponent(receiptMsg)}`, '_blank');
@@ -2141,7 +2165,7 @@ function renderAdminOrdersList(filter = 'all') {
 
       <div class="admin-order-items">
         <strong>Items (${order.items.reduce((s, i) => s + i.quantity, 0)} pcs):</strong><br>
-        ${order.items.map(i => `• ${escapeHtml(i.name)} (${escapeHtml(i.size)}, ${escapeHtml(i.color)}) x${escapeHtml(i.quantity)}`).join('<br>')}
+        ${order.items.map(i => `• ${escapeHtml(i.name)} (Size: ${escapeHtml(i.size)}) x${escapeHtml(i.quantity)}`).join('<br>')}
       </div>
 
       <div class="admin-order-actions">
@@ -2202,13 +2226,19 @@ function renderAdminInventoryList() {
   elements.adminInventoryList.querySelectorAll('.remove-product-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = btn.dataset.id;
-      if (confirm('Are you sure you want to remove this product from the catalog?')) {
+      if (confirm('Are you sure you want to remove this outfit from the store?')) {
         state.products = state.products.filter(p => p.id !== id);
         state.saveProducts(state.products);
+        try {
+          supabase.from('ohemaa_products').delete().eq('id', id);
+        } catch (err) {
+          console.warn('Supabase product delete error:', err);
+        }
         renderProducts();
         renderAdminPriceTable();
         renderAdminInventoryList();
-        showToast('Product removed from catalog', '🗑️');
+        updateStoreItemCounters();
+        showToast('Outfit removed from store', '🗑️');
       }
     });
   });
@@ -2728,7 +2758,7 @@ function setupEventListeners() {
     dl.setAttribute("href", dataStr);
     dl.setAttribute("download", `ohemaas_apparel_backup_${Date.now()}.json`);
     dl.click();
-    showToast('Database exported as JSON', '📥');
+    showToast('Store backup file saved to your device', '📥');
   });
 
   // Import JSON Backup
@@ -2750,9 +2780,10 @@ function setupEventListeners() {
         renderAdminPriceTable();
         renderAdminOrdersList();
         renderAdminInventoryList();
+        updateStoreItemCounters();
         showToast('Store data restored successfully!', '✅');
       } catch (err) {
-        alert('Invalid JSON file format.');
+        alert('Please choose a valid store backup file.');
       }
     };
     reader.readAsText(file);

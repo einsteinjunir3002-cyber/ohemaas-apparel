@@ -7,7 +7,6 @@ import { createClient } from '@supabase/supabase-js';
 import { 
   DEFAULT_SETTINGS, 
   INITIAL_PRODUCTS, 
-  CATEGORIES, 
   REELS_COLLECTION, 
   SUPABASE_CONFIG 
 } from './data.js';
@@ -29,7 +28,6 @@ class StoreState {
     this.isGuest = this.loadGuestSession();
     
     // Active Filters
-    this.currentCategory = 'all';
     this.searchQuery = '';
     this.priceFilter = 'all';
     this.sortBy = 'featured';
@@ -421,7 +419,6 @@ const elements = {
   reelsTotalCount: document.getElementById('reelsTotalCount'),
 
   // Catalog Section
-  categoryNav: document.getElementById('categoryNav'),
   inlineSearchInput: document.getElementById('inlineSearchInput'),
   priceFilterSelect: document.getElementById('priceFilterSelect'),
   sortSelect: document.getElementById('sortSelect'),
@@ -701,7 +698,6 @@ function applySettingsToUI(settings = state.settings) {
 
 // --- INITIALIZATION ---
 function initApp() {
-  renderCategoryNav();
   renderProducts();
   updateCartBadges();
   updateWishlistBadge();
@@ -725,50 +721,9 @@ function initApp() {
   state.fetchRemoteCustomers();
 }
 
-// --- RENDER CATEGORY NAVIGATION PILLS ---
-function renderCategoryNav() {
-  elements.categoryNav.innerHTML = '';
-  CATEGORIES.forEach(cat => {
-    const pill = document.createElement('button');
-    pill.className = `cat-pill ${cat.id === state.currentCategory ? 'active' : ''}`;
-    pill.dataset.category = cat.id;
-
-    const iconSpan = document.createElement('span');
-    iconSpan.textContent = cat.icon;
-    const nameSpan = document.createElement('span');
-    nameSpan.textContent = cat.name;
-    const countSpan = document.createElement('span');
-    countSpan.className = 'count';
-    countSpan.textContent = getCategoryCount(cat.id);
-
-    pill.appendChild(iconSpan);
-    pill.appendChild(nameSpan);
-    pill.appendChild(countSpan);
-
-    pill.addEventListener('click', () => {
-      state.currentCategory = cat.id;
-      state.showAllProducts = false;
-      document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-      renderProducts();
-    });
-    elements.categoryNav.appendChild(pill);
-  });
-}
-
-function getCategoryCount(catId) {
-  if (catId === 'all') return state.products.length;
-  return state.products.filter(p => p.category === catId).length;
-}
-
 // --- FILTER & SORT PRODUCTS ---
 function getFilteredProducts() {
   let list = [...state.products];
-
-  // Category Filter
-  if (state.currentCategory !== 'all') {
-    list = list.filter(p => p.category === state.currentCategory);
-  }
 
   // Search Filter
   if (state.searchQuery.trim() !== '') {
@@ -776,7 +731,6 @@ function getFilteredProducts() {
     list = list.filter(p => 
       p.name.toLowerCase().includes(q) ||
       (p.description && p.description.toLowerCase().includes(q)) ||
-      p.category.toLowerCase().includes(q) ||
       (p.colors && p.colors.some(c => c.toLowerCase().includes(q)))
     );
   }
@@ -871,11 +825,6 @@ export function updateStoreItemCounters() {
   if (inventoryCount) {
     inventoryCount.textContent = total;
   }
-
-  const allCatPill = document.querySelector('.cat-pill[data-category="all"] .count');
-  if (allCatPill) {
-    allCatPill.textContent = total;
-  }
 }
 
 function updateCatalogPagination(totalCount, displayedCount) {
@@ -931,7 +880,6 @@ function createProductCard(product) {
     </div>
 
     <div class="product-info">
-      <span class="product-category-tag">${escapeHtml(product.category)}</span>
       <h3 class="product-title" title="${escapeHtml(product.name)}">${escapeHtml(product.name)}</h3>
       
       <div class="product-price-row">
@@ -978,10 +926,6 @@ function createProductCard(product) {
 
 function renderActiveFilterChips() {
   const chips = [];
-  if (state.currentCategory !== 'all') {
-    const cat = CATEGORIES.find(c => c.id === state.currentCategory);
-    chips.push({ type: 'category', label: `Category: ${cat ? cat.name : state.currentCategory}` });
-  }
   if (state.searchQuery.trim() !== '') {
     chips.push({ type: 'search', label: `Search: "${state.searchQuery}"` });
   }
@@ -1001,7 +945,6 @@ function renderActiveFilterChips() {
     elements.activeFilterChips.querySelectorAll('.chip-remove, [data-chip="clear-all"]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const type = e.currentTarget.dataset.chip;
-        if (type === 'category' || type === 'clear-all') state.currentCategory = 'all';
         if (type === 'search' || type === 'clear-all') {
           state.searchQuery = '';
           elements.inlineSearchInput.value = '';
@@ -1011,7 +954,6 @@ function renderActiveFilterChips() {
           state.priceFilter = 'all';
           elements.priceFilterSelect.value = 'all';
         }
-        renderCategoryNav();
         renderProducts();
       });
     });
@@ -1252,7 +1194,6 @@ function openProductModal(productId) {
     </div>
 
     <div class="modal-product-details">
-      <span class="modal-category">${escapeHtml(product.category)}</span>
       <h2 class="modal-title" id="productModalTitle">${escapeHtml(product.name)}</h2>
       
       <div class="modal-price-box">
@@ -1612,13 +1553,28 @@ function renderCurrentReel() {
     elements.reelModalImage.classList.add('hidden');
     elements.reelModalVideo.style.display = 'block';
     elements.reelModalVideo.classList.remove('hidden');
-    elements.reelModalVideo.currentTime = 0;
-    elements.reelModalVideo.muted = false;
-    elements.reelModalVideo.play().catch(() => {
-      elements.reelModalVideo.muted = true;
-      elements.reelModalVideo.play();
-    });
-    elements.reelSoundIcon.textContent = elements.reelModalVideo.muted ? '🔇' : '🔊';
+
+    // Load THIS reel's own video file (previously the same file was replayed for every reel)
+    const videoEl = elements.reelModalVideo;
+    if (videoEl.dataset.reelId !== reel.id) {
+      videoEl.pause();
+      videoEl.dataset.reelId = reel.id;
+      videoEl.poster = reel.poster || '';
+      videoEl.src = reel.src;
+      videoEl.load();
+    }
+    videoEl.currentTime = 0;
+    videoEl.muted = false;
+    const playAttempt = videoEl.play();
+    if (playAttempt && typeof playAttempt.catch === 'function') {
+      playAttempt.catch(() => {
+        // Browsers may block sound until the first tap - fall back to silent playback
+        videoEl.muted = true;
+        elements.reelSoundIcon.textContent = '🔇';
+        videoEl.play().catch(() => {});
+      });
+    }
+    elements.reelSoundIcon.textContent = videoEl.muted ? '🔇' : '🔊';
   } else {
     elements.reelModalVideo.pause();
     elements.reelModalVideo.style.display = 'none';
@@ -2104,7 +2060,7 @@ function renderAdminPriceTable(searchFilter = '') {
   let list = [...state.products];
   if (searchFilter.trim() !== '') {
     const q = searchFilter.toLowerCase();
-    list = list.filter(p => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
+    list = list.filter(p => p.name.toLowerCase().includes(q));
   }
 
   elements.adminPriceTableBody.innerHTML = '';
@@ -2123,7 +2079,6 @@ function renderAdminPriceTable(searchFilter = '') {
           </div>
         </div>
       </td>
-      <td><span class="product-category-tag">${escapeHtml(product.category)}</span></td>
       <td>
         <span class="price-tag ${isPriced ? '' : 'unpriced'}" id="tableDisplay-${escapeHtml(product.id)}">
           ${escapeHtml(formatPrice(product.price))}
@@ -2298,7 +2253,7 @@ function renderAdminInventoryList() {
         <img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}">
         <div>
           <strong>${escapeHtml(p.name)}</strong><br>
-          <small style="color:var(--text-muted);">${escapeHtml(p.category)} • ${escapeHtml(formatPrice(p.price))}</small>
+          <small style="color:var(--text-muted);">${escapeHtml(formatPrice(p.price))}</small>
         </div>
       </div>
       <button class="btn btn-danger-outline btn-sm remove-product-btn" data-id="${escapeHtml(p.id)}">
@@ -2345,14 +2300,10 @@ function setupEventListeners() {
   elements.mobileDrawerOverlay.addEventListener('click', closeDrawer);
 
   document.querySelectorAll('.drawer-link').forEach(link => {
-    link.addEventListener('click', (e) => {
-      const cat = link.dataset.category;
-      if (cat) {
-        state.currentCategory = cat;
-        renderCategoryNav();
-        renderProducts();
-      }
+    link.addEventListener('click', () => {
       closeDrawer();
+      const catalog = document.getElementById('catalogSection');
+      if (catalog) catalog.scrollIntoView({ behavior: 'smooth' });
     });
   });
 
@@ -2420,14 +2371,12 @@ function setupEventListeners() {
   });
 
   elements.resetFiltersBtn.addEventListener('click', () => {
-    state.currentCategory = 'all';
     state.searchQuery = '';
     state.priceFilter = 'all';
     state.showAllProducts = false;
     elements.catalogSearchInput.value = '';
     elements.inlineSearchInput.value = '';
     elements.priceFilterSelect.value = 'all';
-    renderCategoryNav();
     renderProducts();
   });
 
@@ -2760,7 +2709,7 @@ function setupEventListeners() {
   elements.addNewProductForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const title = document.getElementById('newProdName').value.trim();
-    const category = document.getElementById('newProdCategory').value;
+    const category = 'general'; // kept only because the database requires a value
     const priceVal = document.getElementById('newProdPrice').value.trim();
     const sizes = document.getElementById('newProdSizes').value.split(',').map(s => s.trim()).filter(Boolean);
     const colors = document.getElementById('newProdColors').value.split(',').map(c => c.trim()).filter(Boolean);
@@ -2880,7 +2829,6 @@ function setupEventListeners() {
           state.orders = imported.orders;
           state.saveOrders();
         }
-        renderCategoryNav();
         renderProducts();
         renderAdminPriceTable();
         renderAdminOrdersList();

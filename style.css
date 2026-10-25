@@ -1072,60 +1072,6 @@ img.hidden,
   font-weight: 700;
 }
 
-/* Category Filter Tabs (Swipeable Pills) */
-.category-nav-wrapper {
-  margin: 0 -16px 14px;
-  padding: 0 16px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.category-nav-wrapper::-webkit-scrollbar { display: none; }
-
-.category-nav {
-  display: flex;
-  gap: 8px;
-  min-width: max-content;
-  padding-bottom: 4px;
-}
-
-.cat-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 9px 16px;
-  border-radius: var(--radius-full);
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  color: var(--text-muted);
-  font-size: 0.82rem;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all var(--transition-fast);
-}
-
-.cat-pill.active {
-  background-color: var(--gold-primary);
-  background: var(--gold-gradient);
-  color: var(--text-on-gold);
-  border-color: transparent;
-  font-weight: 700;
-  box-shadow: var(--gold-glow);
-}
-
-.cat-pill .count {
-  font-size: 0.72rem;
-  opacity: 0.8;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 1px 6px;
-  border-radius: var(--radius-full);
-}
-
-.cat-pill.active .count {
-  background: rgba(0, 0, 0, 0.25);
-  color: #ffffff;
-}
-
 /* Toolbar & Sorting */
 .catalog-toolbar {
   display: flex;
@@ -1321,15 +1267,6 @@ img.hidden,
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-}
-
-.product-category-tag {
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--gold-primary);
-  margin-bottom: 2px;
 }
 
 .product-title {

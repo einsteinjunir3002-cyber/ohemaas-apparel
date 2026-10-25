@@ -795,12 +795,3 @@ export const VIDEO_SHOWCASE = {
   tag: "Exclusive Reel",
   description: "Experience the premium fabric textures, drape, and vibrant colorway quality up close in our studio video showcase!"
 };
-
-export const CATEGORIES = [
-  { id: "all", name: "All Pieces", count: 44, icon: "👑" },
-  { id: "co-ords", name: "Co-ord Sets", count: 17, icon: "✨" },
-  { id: "palazzo", name: "Palazzo Pants", count: 14, icon: "👗" },
-  { id: "shorts", name: "Lounge Shorts", count: 11, icon: "🩳" },
-  { id: "crown", name: "Crown Edition", count: 2, icon: "👑" },
-  { id: "tie-dye", name: "Tie-Dye Swirl", count: 3, icon: "🎨" }
-];

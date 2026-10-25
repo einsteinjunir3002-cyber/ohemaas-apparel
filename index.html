@@ -340,37 +340,31 @@
       </div>
     </section>
 
-    <!-- Video Showcase Reel Banner -->
-    <section class="video-showcase-section" aria-label="Studio Video Showcase">
-      <div class="video-banner-card">
-        <div class="video-preview-wrapper" id="videoBannerPlayerWrapper">
-          <video id="featuredInlineVideo" playsinline loop muted preload="metadata" poster="./pics/Gh100.jpg.jpeg">
-            <source src="./pics/VID-20261022-WA0108.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-          <div class="video-overlay" id="videoBannerOverlay">
-            <button class="video-play-center-btn" id="inlineVideoPlayBtn" aria-label="Play Video Reel">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-            </button>
-            <div class="video-tag-pill">🎬 LIVE STUDIO REEL</div>
-            <div class="video-sound-pill" id="inlineVideoSoundToggle">
-              <span id="soundIcon">🔇 Unmute</span>
-            </div>
-          </div>
+    <!-- Video Showcase Reel Section -->
+    <section class="video-showcase-section" id="reelsSection" aria-label="Studio Video Showcase">
+      <div class="reels-section-header">
+        <div class="reels-header-text">
+          <div class="badge-tag">🎬 Live Studio Reels</div>
+          <h2 class="section-title">See All Outfits In Motion (<span id="reelsTotalCount">13</span> Reels)</h2>
+          <p>Real studio video recordings showing each outfit's fit, drape, and comfortable elastic waistbands. Tap any reel to watch in fullscreen mode.</p>
         </div>
-        <div class="video-card-body">
-          <div class="badge-tag">Boutique Lookbook</div>
-          <h2 class="section-title">See The Fabric & Quality In Motion</h2>
-          <p>Real-life studio recording showcasing fit, vibrant tones, and elastic comfort waistbands.</p>
-          <div class="video-actions">
-            <button class="btn btn-outline btn-sm" id="openFullscreenReelBtn">
-              📱 Open Vertical Reel Mode
-            </button>
-            <a href="#catalogSection" class="btn btn-gold btn-sm" id="heroShopOutfitsBtn">
-              Shop Outfits (<span id="heroTotalItemsCount">44</span>)
-            </a>
-          </div>
+        <div class="reels-header-actions">
+          <button class="btn btn-outline btn-sm" id="openFullscreenReelBtn">
+            📱 Open Fullscreen Reel Mode
+          </button>
+          <a href="#catalogSection" class="btn btn-gold btn-sm" id="heroShopOutfitsBtn">
+            Shop Outfits (<span id="heroTotalItemsCount">44</span>)
+          </a>
         </div>
+      </div>
+
+      <!-- Reels Showcase Rail with All 13 Videos -->
+      <div class="reels-carousel-wrapper">
+        <button class="reels-nav-btn prev" id="reelsRailPrevBtn" aria-label="Scroll reels backward">‹</button>
+        <div class="reels-carousel-track" id="reelsShowcaseTrack">
+          <!-- Dynamically populated with all 13 video cards -->
+        </div>
+        <button class="reels-nav-btn next" id="reelsRailNextBtn" aria-label="Scroll reels forward">›</button>
       </div>
     </section>
 
@@ -773,7 +767,7 @@
           <div class="reel-brand">
             <span>👑</span>
             <h2 id="reelHeaderBrand" class="reel-brand-title">Ohemaa’s Studio Reel</h2>
-            <span class="reel-counter-badge" id="reelCounterBadge">1 / 10</span>
+            <span class="reel-counter-badge" id="reelCounterBadge">1 / 13</span>
           </div>
           <div class="reel-top-actions">
             <button class="reel-action-bubble reel-mute-btn" id="reelMuteToggle" aria-label="Mute/Unmute">

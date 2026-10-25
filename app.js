@@ -415,6 +415,10 @@ const elements = {
   soundIcon: document.getElementById('soundIcon'),
   videoBannerOverlay: document.getElementById('videoBannerOverlay'),
   openFullscreenReelBtn: document.getElementById('openFullscreenReelBtn'),
+  reelsShowcaseTrack: document.getElementById('reelsShowcaseTrack'),
+  reelsRailPrevBtn: document.getElementById('reelsRailPrevBtn'),
+  reelsRailNextBtn: document.getElementById('reelsRailNextBtn'),
+  reelsTotalCount: document.getElementById('reelsTotalCount'),
 
   // Catalog Section
   categoryNav: document.getElementById('categoryNav'),
@@ -1472,6 +1476,86 @@ function initReelsEngine() {
       prevReel(); // Swipe Right -> Previous
     }
   }, { passive: true });
+
+  // Render on-page showcase rail with all 13 videos
+  renderReelsShowcaseTrack();
+}
+
+function renderReelsShowcaseTrack() {
+  if (!elements.reelsShowcaseTrack) return;
+  if (elements.reelsTotalCount) {
+    elements.reelsTotalCount.textContent = REELS_COLLECTION.length;
+  }
+  elements.reelsShowcaseTrack.innerHTML = '';
+
+  REELS_COLLECTION.forEach((reel, idx) => {
+    const card = document.createElement('div');
+    card.className = 'reel-showcase-card';
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', `Play reel ${idx + 1} of ${REELS_COLLECTION.length}: ${reel.title}`);
+
+    card.innerHTML = `
+      <video class="reel-card-video" playsinline loop muted preload="metadata" poster="${escapeHtml(reel.poster)}">
+        <source src="${escapeHtml(reel.src)}" type="video/mp4">
+      </video>
+      <div class="reel-card-overlay">
+        <div class="reel-card-top">
+          <span class="reel-card-tag">${escapeHtml(reel.tag || 'Live Reel')}</span>
+          <span class="reel-card-num">${idx + 1} / ${REELS_COLLECTION.length}</span>
+        </div>
+        <div class="reel-card-play-center" aria-hidden="true">▶</div>
+        <div class="reel-card-bottom">
+          <h3 class="reel-card-title">${escapeHtml(reel.title)}</h3>
+          <p class="reel-card-desc">${escapeHtml(reel.description)}</p>
+          <div class="reel-card-actions">
+            <button type="button" class="reel-card-action-btn primary" data-action="watch" data-index="${idx}">
+              ▶ Watch Reel
+            </button>
+            ${reel.productId ? `
+              <button type="button" class="reel-card-action-btn" data-action="shop" data-product-id="${escapeHtml(reel.productId)}">
+                🛍️ View Outfit
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Click handler: if clicking shop button, view outfit modal; otherwise open reel modal
+    card.addEventListener('click', (e) => {
+      const shopBtn = e.target.closest('[data-action="shop"]');
+      if (shopBtn) {
+        e.stopPropagation();
+        const pId = shopBtn.getAttribute('data-product-id');
+        openProductModal(pId);
+        return;
+      }
+      openReelModal(idx);
+    });
+
+    // Keyboard accessibility
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openReelModal(idx);
+      }
+    });
+
+    // Video hover preview on desktop
+    const videoEl = card.querySelector('video');
+    if (videoEl) {
+      card.addEventListener('mouseenter', () => {
+        videoEl.play().catch(() => {});
+      });
+      card.addEventListener('mouseleave', () => {
+        videoEl.pause();
+        videoEl.currentTime = 0;
+      });
+    }
+
+    elements.reelsShowcaseTrack.appendChild(card);
+  });
 }
 
 function openReelModal(startIndex = 0) {
@@ -2437,36 +2521,57 @@ function setupEventListeners() {
     if (e.target === elements.reelModal || e.target.classList.contains('reel-stage-wrapper')) closeReelModal();
   });
 
-  // In-line video banner play / pause
-  elements.inlineVideoPlayBtn.addEventListener('click', () => {
-    if (elements.featuredInlineVideo.paused) {
-      elements.featuredInlineVideo.play();
-      elements.videoBannerOverlay.style.background = 'transparent';
-      elements.inlineVideoPlayBtn.style.opacity = '0';
-    } else {
-      elements.featuredInlineVideo.pause();
-      elements.videoBannerOverlay.style.background = 'rgba(0,0,0,0.5)';
-      elements.inlineVideoPlayBtn.style.opacity = '1';
-    }
-  });
+  // In-line video banner play / pause (guarded if present)
+  if (elements.inlineVideoPlayBtn && elements.featuredInlineVideo) {
+    elements.inlineVideoPlayBtn.addEventListener('click', () => {
+      if (elements.featuredInlineVideo.paused) {
+        elements.featuredInlineVideo.play();
+        if (elements.videoBannerOverlay) elements.videoBannerOverlay.style.background = 'transparent';
+        elements.inlineVideoPlayBtn.style.opacity = '0';
+      } else {
+        elements.featuredInlineVideo.pause();
+        if (elements.videoBannerOverlay) elements.videoBannerOverlay.style.background = 'rgba(0,0,0,0.5)';
+        elements.inlineVideoPlayBtn.style.opacity = '1';
+      }
+    });
+  }
 
-  elements.videoBannerOverlay.addEventListener('click', (e) => {
-    if (e.target.closest('#inlineVideoSoundToggle') || e.target.closest('#openFullscreenReelBtn')) return;
-    if (elements.featuredInlineVideo.paused) {
-      elements.featuredInlineVideo.play();
-      elements.inlineVideoPlayBtn.style.opacity = '0';
-    } else {
-      elements.featuredInlineVideo.pause();
-      elements.inlineVideoPlayBtn.style.opacity = '1';
-    }
-  });
+  if (elements.videoBannerOverlay && elements.featuredInlineVideo) {
+    elements.videoBannerOverlay.addEventListener('click', (e) => {
+      if (e.target.closest('#inlineVideoSoundToggle') || e.target.closest('#openFullscreenReelBtn')) return;
+      if (elements.featuredInlineVideo.paused) {
+        elements.featuredInlineVideo.play();
+        if (elements.inlineVideoPlayBtn) elements.inlineVideoPlayBtn.style.opacity = '0';
+      } else {
+        elements.featuredInlineVideo.pause();
+        if (elements.inlineVideoPlayBtn) elements.inlineVideoPlayBtn.style.opacity = '1';
+      }
+    });
+  }
 
-  // In-line video sound toggle
-  elements.inlineVideoSoundToggle.addEventListener('click', (e) => {
-    e.stopPropagation();
-    elements.featuredInlineVideo.muted = !elements.featuredInlineVideo.muted;
-    elements.soundIcon.textContent = elements.featuredInlineVideo.muted ? '🔇 Unmute' : '🔊 Sound On';
-  });
+  // In-line video sound toggle (guarded if present)
+  if (elements.inlineVideoSoundToggle && elements.featuredInlineVideo) {
+    elements.inlineVideoSoundToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      elements.featuredInlineVideo.muted = !elements.featuredInlineVideo.muted;
+      if (elements.soundIcon) {
+        elements.soundIcon.textContent = elements.featuredInlineVideo.muted ? '🔇 Unmute' : '🔊 Sound On';
+      }
+    });
+  }
+
+  // Reels Horizontal Carousel Track Nav Buttons
+  if (elements.reelsRailPrevBtn && elements.reelsShowcaseTrack) {
+    elements.reelsRailPrevBtn.addEventListener('click', () => {
+      elements.reelsShowcaseTrack.scrollBy({ left: -270, behavior: 'smooth' });
+    });
+  }
+
+  if (elements.reelsRailNextBtn && elements.reelsShowcaseTrack) {
+    elements.reelsRailNextBtn.addEventListener('click', () => {
+      elements.reelsShowcaseTrack.scrollBy({ left: 270, behavior: 'smooth' });
+    });
+  }
 
   // Wholesale Buttons & Form
   elements.openWholesaleModalBtn.addEventListener('click', openWholesaleModal);

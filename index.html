@@ -1221,6 +1221,9 @@
         <button class="admin-tab-btn" data-tab="productsTab">
           👗 Inventory & Add Item
         </button>
+        <button class="admin-tab-btn" data-tab="reelsTab">
+          🎬 Video Reels (<span id="adminReelsBadge">13</span>)
+        </button>
         <button class="admin-tab-btn" data-tab="settingsTab">
           ⚙️ Store Settings
         </button>
@@ -1351,7 +1354,106 @@
         </div>
       </div>
 
-      <!-- Tab 4: Settings & Backup -->
+      <!-- Tab 4: Video Reels Management (Only Videos in Any Format) -->
+      <div class="admin-tab-content" id="reelsTab">
+        <div class="admin-notice-box" style="margin-bottom: 16px;">
+          <div class="ico">🎬</div>
+          <div>
+            <strong>Video Reels Studio (Strictly for Videos in Any Format):</strong>
+            <p>Upload videos in <strong>any format (.mp4, .mov, .webm, .mkv, .avi, etc.)</strong> or enter a video URL. Reels are strictly for video media and display across the boutique reels track and mobile story player.</p>
+          </div>
+        </div>
+
+        <div class="tab-two-col">
+          <!-- Left: Add New Reel Form -->
+          <div class="admin-card add-reel-card">
+            <h4>➕ Add New Video Reel</h4>
+            <form id="addNewReelForm">
+              <div class="input-group">
+                <label for="newReelTitle">Reel Title *</label>
+                <input type="text" id="newReelTitle" placeholder="e.g. Crimson Red Pocket Culottes In Motion" required>
+              </div>
+
+              <div class="input-group">
+                <label for="newReelSubtitle">Subtitle / Style Note</label>
+                <input type="text" id="newReelSubtitle" placeholder="e.g. Bold & Bright Studio Edition">
+              </div>
+
+              <div class="grid-2-col">
+                <div class="input-group">
+                  <label for="newReelTag">Tag Badge</label>
+                  <select id="newReelTag">
+                    <option value="Live Reel">👑 Live Reel</option>
+                    <option value="Hot Drop">🔥 Hot Drop</option>
+                    <option value="New Drops">✨ New Drops</option>
+                    <option value="Bestseller">⭐ Bestseller</option>
+                    <option value="Trending">📈 Trending</option>
+                    <option value="Pastel">🌸 Pastel</option>
+                    <option value="Essential">💎 Essential</option>
+                    <option value="Showstopper">🌟 Showstopper</option>
+                    <option value="Friday Drop">🚚 Friday Drop</option>
+                  </select>
+                </div>
+
+                <div class="input-group">
+                  <label for="newReelProduct">Link to Outfit / Item</label>
+                  <select id="newReelProduct">
+                    <option value="">-- No linked outfit --</option>
+                    <!-- Dynamically populated with all products -->
+                  </select>
+                </div>
+              </div>
+
+              <!-- Video Source: File Upload (Any format) OR URL -->
+              <div class="input-group">
+                <label for="newReelVideoFile">Choose Video File (Any Format: MP4, MOV, WebM, MKV, AVI, etc.)</label>
+                <input type="file" id="newReelVideoFile" accept="video/*,.mp4,.mov,.webm,.mkv,.avi,.m4v,.3gp" aria-label="Upload video file for reel">
+                <small class="helper-text" style="color:var(--text-muted); font-size:0.75rem; display:block; margin-top:4px;">
+                  Accepts all mobile & camera video formats. Poster thumbnail is auto-extracted!
+                </small>
+              </div>
+
+              <div class="input-group">
+                <label for="newReelVideoUrl">Or Video Link / URL</label>
+                <input type="url" id="newReelVideoUrl" placeholder="https://... or ./pics/WhatsApp-Video-..." aria-label="Direct video link or URL">
+              </div>
+
+              <!-- Live Video Preview -->
+              <div class="input-group hidden" id="reelVideoPreviewGroup">
+                <label for="newReelVideoPreview">Video Preview</label>
+                <video id="newReelVideoPreview" controls playsinline muted style="width:100%; max-height:220px; border-radius:var(--radius-sm); background:#000;"></video>
+              </div>
+
+              <div class="input-group">
+                <label for="newReelDesc">Reel Description</label>
+                <textarea id="newReelDesc" rows="2" placeholder="Brief lookbook details, fit description, and styling notes..."></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-gold full-width" id="addReelSubmitBtn">
+                🎬 Publish Video Reel
+              </button>
+            </form>
+          </div>
+
+          <!-- Right: Existing Reels List -->
+          <div class="admin-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px;">
+              <h4>🎬 Active Reels (<span id="adminReelsCount">13</span>)</h4>
+              <button type="button" class="btn btn-outline btn-sm" id="resetReelsDefaultBtn" title="Reset to original 13 reels">
+                ↺ Restore Default
+              </button>
+            </div>
+            <p style="color:var(--text-muted); font-size:0.75rem; margin-bottom:12px;">
+              Reels play in the customer video carousel and story player. Click preview to watch or delete to remove.
+            </p>
+            <div class="admin-reels-list" id="adminReelsList">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 5: Settings & Backup -->
       <div class="admin-tab-content" id="settingsTab">
         <div class="tab-two-col">
           <div class="admin-card">

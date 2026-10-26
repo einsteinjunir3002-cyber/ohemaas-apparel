@@ -86,3 +86,24 @@ CREATE POLICY "Users can only delete their own orders" ON public.ohemaa_orders
 
 DROP POLICY IF EXISTS "Public full access to ohemaa_settings" ON public.ohemaa_settings;
 CREATE POLICY "Public full access to ohemaa_settings" ON public.ohemaa_settings FOR ALL USING (true) WITH CHECK (true);
+
+-- 4. Video Reels Table (Strictly for Videos in Any Format)
+CREATE TABLE IF NOT EXISTS public.ohemaa_reels (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  subtitle TEXT,
+  tag TEXT DEFAULT 'Live Reel',
+  product_id TEXT,
+  type TEXT DEFAULT 'video',
+  video_url TEXT NOT NULL,
+  poster TEXT,
+  description TEXT,
+  views BIGINT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE public.ohemaa_reels ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Public full access to ohemaa_reels" ON public.ohemaa_reels;
+CREATE POLICY "Public full access to ohemaa_reels" ON public.ohemaa_reels FOR ALL USING (true) WITH CHECK (true);

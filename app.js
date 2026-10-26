@@ -19,6 +19,7 @@ class StoreState {
   constructor() {
     this.settings = this.loadSettings();
     this.products = this.loadProducts();
+    this.reels = this.loadReels();
     this.cart = this.loadCart();
     this.wishlist = this.loadWishlist();
     this.orders = this.loadOrders();
@@ -39,6 +40,67 @@ class StoreState {
     this.reelSlideTimer = null;
     this.reelSlideProgress = 0;
     this.isReelPaused = false;
+  }
+
+  loadReels() {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem) {
+      const saved = localStorage.getItem('ohemaa_reels');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
+      }
+    }
+    return [...REELS_COLLECTION];
+  }
+
+  saveReels(newReels) {
+    this.reels = newReels;
+    if (typeof localStorage !== 'undefined' && localStorage.setItem) {
+      try {
+        localStorage.setItem('ohemaa_reels', JSON.stringify(this.reels));
+      } catch (e) {
+        console.warn('Could not save reels to localStorage:', e);
+      }
+    }
+    this.syncReelsToSupabase();
+    if (elements.adminReelsBadge) elements.adminReelsBadge.textContent = this.reels.length;
+    if (elements.adminReelsCount) elements.adminReelsCount.textContent = this.reels.length;
+  }
+
+  async syncReelsToSupabase() {
+    try {
+      await supabase.from('ohemaa_settings').upsert({
+        key: 'store_reels',
+        value: this.reels
+      });
+    } catch (e) {
+      console.warn('Supabase reels sync error:', e);
+    }
+  }
+
+  async fetchRemoteReels() {
+    try {
+      const { data, error } = await supabase
+        .from('ohemaa_settings')
+        .select('value')
+        .eq('key', 'store_reels')
+        .single();
+      if (data && Array.isArray(data.value) && data.value.length > 0) {
+        this.reels = data.value;
+        if (typeof localStorage !== 'undefined' && localStorage.setItem) {
+          localStorage.setItem('ohemaa_reels', JSON.stringify(this.reels));
+        }
+        renderReelsShowcaseTrack();
+        initReelsEngine();
+        renderAdminReelsList();
+        if (elements.adminReelsBadge) elements.adminReelsBadge.textContent = this.reels.length;
+        if (elements.adminReelsCount) elements.adminReelsCount.textContent = this.reels.length;
+      }
+    } catch (e) {
+      console.warn('Supabase reels fetch error:', e);
+    }
   }
 
   loadSettings() {
@@ -582,6 +644,20 @@ const elements = {
   addNewProductForm: document.getElementById('addNewProductForm'),
   inventoryCount: document.getElementById('inventoryCount'),
   adminInventoryList: document.getElementById('adminInventoryList'),
+  adminReelsBadge: document.getElementById('adminReelsBadge'),
+  adminReelsCount: document.getElementById('adminReelsCount'),
+  addNewReelForm: document.getElementById('addNewReelForm'),
+  newReelTitle: document.getElementById('newReelTitle'),
+  newReelSubtitle: document.getElementById('newReelSubtitle'),
+  newReelTag: document.getElementById('newReelTag'),
+  newReelProduct: document.getElementById('newReelProduct'),
+  newReelVideoFile: document.getElementById('newReelVideoFile'),
+  newReelVideoUrl: document.getElementById('newReelVideoUrl'),
+  newReelVideoPreview: document.getElementById('newReelVideoPreview'),
+  reelVideoPreviewGroup: document.getElementById('reelVideoPreviewGroup'),
+  newReelDesc: document.getElementById('newReelDesc'),
+  adminReelsList: document.getElementById('adminReelsList'),
+  resetReelsDefaultBtn: document.getElementById('resetReelsDefaultBtn'),
   storeSettingsForm: document.getElementById('storeSettingsForm'),
   exportDataBtn: document.getElementById('exportDataBtn'),
   importDataFile: document.getElementById('importDataFile'),
@@ -739,6 +815,8 @@ function initApp() {
   renderAdminPriceTable();
   renderAdminOrdersList();
   renderAdminInventoryList();
+  renderAdminReelsList();
+  populateReelProductDropdown();
   initReelsEngine();
 
   if (state.currentCustomer) {
@@ -752,6 +830,7 @@ function initApp() {
   state.fetchRemoteProducts();
   state.fetchRemoteOrders();
   state.fetchRemoteCustomers();
+  state.fetchRemoteReels();
 }
 
 // --- FILTER & SORT PRODUCTS ---
@@ -1414,7 +1493,7 @@ function closeProductModal() {
 function initReelsEngine() {
   // Render Progress Bars for every reel
   elements.reelProgressBarWrap.innerHTML = '';
-  REELS_COLLECTION.forEach((_, idx) => {
+  state.reels.forEach((_, idx) => {
     const segment = document.createElement('div');
     segment.className = 'reel-prog-segment';
     segment.dataset.index = idx;
@@ -1468,7 +1547,7 @@ function initReelsEngine() {
   // Favorite Outfit in Reel
   elements.reelWishlistBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    const current = REELS_COLLECTION[state.currentReelIndex];
+    const current = state.reels[state.currentReelIndex];
     if (current && current.productId) {
       toggleWishlist(current.productId, null);
       updateReelWishlistState();
@@ -1492,7 +1571,7 @@ function initReelsEngine() {
 
   // Video timeupdate sync for progress bar
   elements.reelModalVideo.addEventListener('timeupdate', () => {
-    const current = REELS_COLLECTION[state.currentReelIndex];
+    const current = state.reels[state.currentReelIndex];
     if (current && current.type === 'video' && elements.reelModalVideo.duration) {
       const pct = (elements.reelModalVideo.currentTime / elements.reelModalVideo.duration) * 100;
       const fillEl = document.getElementById(`reelFill-${state.currentReelIndex}`);
@@ -1537,23 +1616,23 @@ function initReelsEngine() {
     }
   }, { passive: true });
 
-  // Render on-page showcase rail with all 13 videos
+  // Render on-page showcase rail with all videos
   renderReelsShowcaseTrack();
 }
 
 function renderReelsShowcaseTrack() {
   if (!elements.reelsShowcaseTrack) return;
   if (elements.reelsTotalCount) {
-    elements.reelsTotalCount.textContent = REELS_COLLECTION.length;
+    elements.reelsTotalCount.textContent = state.reels.length;
   }
   elements.reelsShowcaseTrack.innerHTML = '';
 
-  REELS_COLLECTION.forEach((reel, idx) => {
+  state.reels.forEach((reel, idx) => {
     const card = document.createElement('div');
     card.className = 'reel-showcase-card';
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
-    card.setAttribute('aria-label', `Play reel ${idx + 1} of ${REELS_COLLECTION.length}: ${reel.title}`);
+    card.setAttribute('aria-label', `Play reel ${idx + 1} of ${state.reels.length}: ${reel.title}`);
 
     card.innerHTML = `
       <video class="reel-card-video" playsinline loop muted preload="metadata" poster="${escapeHtml(reel.poster)}">
@@ -1562,7 +1641,7 @@ function renderReelsShowcaseTrack() {
       <div class="reel-card-overlay">
         <div class="reel-card-top">
           <span class="reel-card-tag">${escapeHtml(reel.tag || 'Live Reel')}</span>
-          <span class="reel-card-num">${idx + 1} / ${REELS_COLLECTION.length}</span>
+          <span class="reel-card-num">${idx + 1} / ${state.reels.length}</span>
         </div>
         <div class="reel-card-play-center" aria-hidden="true">▶</div>
         <div class="reel-card-bottom">
@@ -1645,11 +1724,11 @@ function closeReelModal() {
 
 function renderCurrentReel() {
   clearReelTimer();
-  const reel = REELS_COLLECTION[state.currentReelIndex];
+  const reel = state.reels[state.currentReelIndex];
   if (!reel) return;
 
   // Update Counter Badge (e.g. "1 / 10")
-  elements.reelCounterBadge.textContent = `${state.currentReelIndex + 1} / ${REELS_COLLECTION.length}`;
+  elements.reelCounterBadge.textContent = `${state.currentReelIndex + 1} / ${state.reels.length}`;
 
   // Update Progress Bars
   document.querySelectorAll('.reel-prog-segment').forEach((seg, idx) => {
@@ -1673,7 +1752,7 @@ function renderCurrentReel() {
     elements.reelModalVideo.style.display = 'block';
     elements.reelModalVideo.classList.remove('hidden');
 
-    // Load THIS reel's own video file (previously the same file was replayed for every reel)
+    // Load THIS reel's own video file
     const videoEl = elements.reelModalVideo;
     if (videoEl.dataset.reelId !== reel.id) {
       videoEl.pause();
@@ -1736,7 +1815,7 @@ function renderCurrentReel() {
 }
 
 function updateReelWishlistState() {
-  const current = REELS_COLLECTION[state.currentReelIndex];
+  const current = state.reels[state.currentReelIndex];
   if (current && current.productId && state.wishlist.includes(current.productId)) {
     elements.reelWishlistIcon.style.color = '#ff4757';
   } else {
@@ -1745,12 +1824,14 @@ function updateReelWishlistState() {
 }
 
 function nextReel() {
-  state.currentReelIndex = (state.currentReelIndex + 1) % REELS_COLLECTION.length;
+  if (!state.reels.length) return;
+  state.currentReelIndex = (state.currentReelIndex + 1) % state.reels.length;
   renderCurrentReel();
 }
 
 function prevReel() {
-  state.currentReelIndex = (state.currentReelIndex - 1 + REELS_COLLECTION.length) % REELS_COLLECTION.length;
+  if (!state.reels.length) return;
+  state.currentReelIndex = (state.currentReelIndex - 1 + state.reels.length) % state.reels.length;
   renderCurrentReel();
 }
 
@@ -1781,7 +1862,7 @@ function clearReelTimer() {
 }
 
 function toggleReelPlayback() {
-  const current = REELS_COLLECTION[state.currentReelIndex];
+  const current = state.reels[state.currentReelIndex];
   if (current && current.type === 'video') {
     if (elements.reelModalVideo.paused) {
       elements.reelModalVideo.play();
@@ -2132,6 +2213,8 @@ function showAdminDashboard() {
   renderAdminPriceTable();
   renderAdminOrdersList();
   renderAdminInventoryList();
+  renderAdminReelsList();
+  populateReelProductDropdown();
 }
 
 function handleAdminLogin(username, password) {
@@ -2397,8 +2480,155 @@ function renderAdminInventoryList() {
         renderProducts();
         renderAdminPriceTable();
         renderAdminInventoryList();
+        populateReelProductDropdown();
         updateStoreItemCounters();
         showToast('Outfit removed from store', '🗑️');
+      }
+    });
+  });
+}
+
+// --- VIDEO REELS HELPERS ---
+function captureVideoPoster(videoSrc) {
+  return new Promise((resolve) => {
+    if (!videoSrc) {
+      resolve('./pics/Gh100.jpg.jpeg');
+      return;
+    }
+    try {
+      const video = document.createElement('video');
+      video.crossOrigin = 'anonymous';
+      video.muted = true;
+      video.playsInline = true;
+      video.preload = 'metadata';
+
+      let resolved = false;
+      const timeout = setTimeout(() => {
+        if (!resolved) {
+          resolved = true;
+          resolve('./pics/Gh100.jpg.jpeg');
+        }
+      }, 4000);
+
+      const doCapture = () => {
+        if (resolved) return;
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth || 540;
+          canvas.height = video.videoHeight || 960;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+          resolved = true;
+          clearTimeout(timeout);
+          resolve(dataUrl);
+        } catch (e) {
+          console.warn('Poster snapshot error:', e);
+          resolved = true;
+          clearTimeout(timeout);
+          resolve('./pics/Gh100.jpg.jpeg');
+        }
+      };
+
+      video.addEventListener('seeked', doCapture, { once: true });
+      video.addEventListener('loadeddata', () => {
+        try {
+          video.currentTime = Math.min(1.0, (video.duration || 2) / 2);
+        } catch (seekErr) {
+          doCapture();
+        }
+      }, { once: true });
+
+      video.addEventListener('error', () => {
+        if (!resolved) {
+          resolved = true;
+          clearTimeout(timeout);
+          resolve('./pics/Gh100.jpg.jpeg');
+        }
+      }, { once: true });
+
+      video.src = videoSrc;
+      video.load();
+    } catch (err) {
+      console.warn('captureVideoPoster init error:', err);
+      resolve('./pics/Gh100.jpg.jpeg');
+    }
+  });
+}
+
+function populateReelProductDropdown() {
+  if (!elements.newReelProduct) return;
+  const currentVal = elements.newReelProduct.value;
+  elements.newReelProduct.innerHTML = '<option value="">-- No linked outfit --</option>' +
+    state.products.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.name)} (${escapeHtml(formatPrice(p.price))})</option>`).join('');
+  if (currentVal) elements.newReelProduct.value = currentVal;
+}
+
+function renderAdminReelsList() {
+  if (!elements.adminReelsList) return;
+  const count = state.reels.length;
+  if (elements.adminReelsBadge) elements.adminReelsBadge.textContent = count;
+  if (elements.adminReelsCount) elements.adminReelsCount.textContent = count;
+
+  if (count === 0) {
+    elements.adminReelsList.innerHTML = `
+      <div style="text-align:center; padding:30px; color:var(--text-muted); background:var(--bg-card); border-radius:var(--radius-md);">
+        <p>No video reels in store yet.</p>
+        <small>Upload a video reel on the left to show it off on your storefront!</small>
+      </div>
+    `;
+    return;
+  }
+
+  elements.adminReelsList.innerHTML = state.reels.map((reel, idx) => {
+    const linkedProd = reel.productId ? state.products.find(p => p.id === reel.productId) : null;
+    return `
+      <div class="reel-admin-row" data-id="${escapeHtml(reel.id)}">
+        <div class="reel-admin-media">
+          ${reel.poster ? `<img src="${escapeHtml(reel.poster)}" alt="${escapeHtml(reel.title)}">` : `<video src="${escapeHtml(reel.videoUrl || reel.src || '')}" preload="metadata" muted playsinline></video>`}
+          <span class="reel-admin-play-badge">▶</span>
+        </div>
+        <div class="reel-admin-details">
+          <div class="title">${escapeHtml(reel.title || 'Untitled Reel')}</div>
+          <div class="subtitle">${escapeHtml(reel.subtitle || '')}</div>
+          <div class="meta-tags">
+            <span class="badge-pill gold" style="font-size:0.65rem; padding:1px 6px;">${escapeHtml(reel.tag || 'Reel')}</span>
+            ${linkedProd ? `<span style="color:var(--text-dim); font-size:0.68rem;">👗 ${escapeHtml(linkedProd.name)}</span>` : '<span style="color:var(--text-dim); font-size:0.68rem;">No outfit linked</span>'}
+          </div>
+        </div>
+        <div class="reel-admin-actions">
+          <button type="button" class="btn btn-outline btn-sm admin-watch-reel-btn" data-index="${idx}" aria-label="Watch ${escapeHtml(reel.title)}">
+            ▶ Watch
+          </button>
+          <button type="button" class="btn btn-danger-outline btn-sm admin-delete-reel-btn" data-id="${escapeHtml(reel.id)}" aria-label="Delete ${escapeHtml(reel.title)}">
+            ✕
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Attach Watch action
+  elements.adminReelsList.querySelectorAll('.admin-watch-reel-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.index, 10);
+      closeAdminPortal();
+      openReelModal(idx);
+    });
+  });
+
+  // Attach Delete action
+  elements.adminReelsList.querySelectorAll('.admin-delete-reel-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const targetReel = state.reels.find(r => r.id === id);
+      if (confirm(`Are you sure you want to delete reel "${targetReel ? targetReel.title : id}"?`)) {
+        state.reels = state.reels.filter(r => r.id !== id);
+        state.saveReels(state.reels);
+        renderAdminReelsList();
+        renderReelsShowcaseTrack();
+        initReelsEngine();
+        showToast('Video reel deleted', '🗑️');
       }
     });
   });
@@ -3049,12 +3279,170 @@ function setupEventListeners() {
     showToast('Store settings saved successfully!', '⚙️');
   });
 
+  // --- ADMIN VIDEO REELS (STRICTLY FOR VIDEOS IN ANY FORMAT) ---
+  if (elements.newReelVideoFile) {
+    elements.newReelVideoFile.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      // Strict video validation: Only video formats allowed
+      const isVideoType = file.type && file.type.startsWith('video/');
+      const isVideoExt = /\.(mp4|mov|webm|mkv|avi|m4v|3gp|flv|wmv|ogv)$/i.test(file.name);
+      if (!isVideoType && !isVideoExt) {
+        showToast('Reels are strictly for videos! Please select a valid video file (.mp4, .mov, .webm, etc.).', '⚠️');
+        elements.newReelVideoFile.value = '';
+        if (elements.reelVideoPreviewGroup) elements.reelVideoPreviewGroup.classList.add('hidden');
+        return;
+      }
+
+      const videoUrl = URL.createObjectURL(file);
+      if (elements.newReelVideoPreview) {
+        elements.newReelVideoPreview.src = videoUrl;
+        elements.newReelVideoPreview.load();
+      }
+      if (elements.reelVideoPreviewGroup) {
+        elements.reelVideoPreviewGroup.classList.remove('hidden');
+      }
+      showToast(`Video selected: ${file.name} 🎬`, '🎥');
+    });
+  }
+
+  if (elements.newReelVideoUrl) {
+    elements.newReelVideoUrl.addEventListener('input', (e) => {
+      const url = e.target.value.trim();
+      if (url && (!elements.newReelVideoFile || !elements.newReelVideoFile.files.length)) {
+        if (elements.newReelVideoPreview) {
+          elements.newReelVideoPreview.src = url;
+          elements.newReelVideoPreview.load();
+        }
+        if (elements.reelVideoPreviewGroup) {
+          elements.reelVideoPreviewGroup.classList.remove('hidden');
+        }
+      }
+    });
+  }
+
+  if (elements.addNewReelForm) {
+    elements.addNewReelForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const submitBtn = elements.addNewReelForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn ? submitBtn.innerHTML : '🎬 Publish Video Reel';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>⏳ Processing Video...</span>';
+      }
+
+      try {
+        const title = elements.newReelTitle.value.trim();
+        const subtitle = elements.newReelSubtitle ? elements.newReelSubtitle.value.trim() : '';
+        const tag = elements.newReelTag ? elements.newReelTag.value : 'Live Reel';
+        const productId = elements.newReelProduct ? elements.newReelProduct.value : '';
+        const desc = elements.newReelDesc ? elements.newReelDesc.value.trim() : '';
+
+        const file = elements.newReelVideoFile && elements.newReelVideoFile.files ? elements.newReelVideoFile.files[0] : null;
+        const directUrl = elements.newReelVideoUrl ? elements.newReelVideoUrl.value.trim() : '';
+
+        if (!file && !directUrl) {
+          showToast('Please provide a video file or video URL for the reel!', '⚠️');
+          return;
+        }
+
+        if (file) {
+          const isVideoType = file.type && file.type.startsWith('video/');
+          const isVideoExt = /\.(mp4|mov|webm|mkv|avi|m4v|3gp|flv|wmv|ogv)$/i.test(file.name);
+          if (!isVideoType && !isVideoExt) {
+            showToast('Reels are strictly for videos! Please select a valid video file.', '⚠️');
+            return;
+          }
+        }
+
+        let videoSource = directUrl;
+        let posterSource = '';
+
+        if (file) {
+          // Keep object URL or convert small video for persistence
+          if (file.size <= 15 * 1024 * 1024) {
+            videoSource = await new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onload = (ev) => resolve(ev.target.result);
+              reader.onerror = () => resolve(URL.createObjectURL(file));
+              reader.readAsDataURL(file);
+            });
+          } else {
+            videoSource = URL.createObjectURL(file);
+          }
+        }
+
+        // Auto-extract video thumbnail poster
+        try {
+          posterSource = await captureVideoPoster(videoSource);
+        } catch (posterErr) {
+          console.warn('Video poster extraction error:', posterErr);
+          posterSource = './pics/Gh100.jpg.jpeg';
+        }
+
+        const newReel = {
+          id: `reel-${Date.now()}`,
+          title,
+          subtitle: subtitle || 'New Studio Edition',
+          tag: tag || 'Live Reel',
+          productId: productId || null,
+          description: desc || 'Exclusive motion look from Ohemaa’s Apparel collection.',
+          type: 'video',
+          videoUrl: videoSource,
+          poster: posterSource || './pics/Gh100.jpg.jpeg',
+          views: 0
+        };
+
+        state.reels.unshift(newReel);
+        state.saveReels(state.reels);
+
+        renderAdminReelsList();
+        renderReelsShowcaseTrack();
+        initReelsEngine();
+
+        elements.addNewReelForm.reset();
+        if (elements.reelVideoPreviewGroup) {
+          elements.reelVideoPreviewGroup.classList.add('hidden');
+        }
+        if (elements.newReelVideoPreview) {
+          elements.newReelVideoPreview.src = '';
+        }
+
+        showToast(`Published reel "${title}"! 🎬✨`, '🎉');
+      } catch (err) {
+        console.error('Error adding video reel:', err);
+        showToast('Error publishing reel. Please try again.', '⚠️');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      }
+    });
+  }
+
+  if (elements.resetReelsDefaultBtn) {
+    elements.resetReelsDefaultBtn.addEventListener('click', () => {
+      if (confirm('Restore the default 13 boutique video reels?')) {
+        state.reels = [...REELS_COLLECTION];
+        state.saveReels(state.reels);
+        renderAdminReelsList();
+        renderReelsShowcaseTrack();
+        initReelsEngine();
+        showToast('Restored default 13 video reels! 🎬', '↺');
+      }
+    });
+  }
+
   // Export JSON Backup
   elements.exportDataBtn.addEventListener('click', () => {
     const backup = {
       settings: state.settings,
       products: state.products,
-      orders: state.orders
+      orders: state.orders,
+      reels: state.reels
     };
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup, null, 2));
     const dl = document.createElement('a');
@@ -3078,10 +3466,17 @@ function setupEventListeners() {
           state.orders = imported.orders;
           state.saveOrders();
         }
+        if (imported.reels && Array.isArray(imported.reels)) {
+          state.saveReels(imported.reels);
+        }
         renderProducts();
         renderAdminPriceTable();
         renderAdminOrdersList();
         renderAdminInventoryList();
+        renderAdminReelsList();
+        populateReelProductDropdown();
+        renderReelsShowcaseTrack();
+        initReelsEngine();
         updateStoreItemCounters();
         showToast('Store data restored successfully!', '✅');
       } catch (err) {

@@ -619,12 +619,29 @@ export function isPriceSet(price) {
 export function getProductPublicImageUrl(imagePath) {
   if (!imagePath) return '';
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-    return imagePath;
+    try {
+      const url = new URL(imagePath);
+      url.pathname = url.pathname
+        .split('/')
+        .map(seg => encodeURIComponent(decodeURIComponent(seg)).replace(/\(/g, '%28').replace(/\)/g, '%29'))
+        .join('/');
+      return url.toString();
+    } catch {
+      return encodeURI(imagePath).replace(/\(/g, '%28').replace(/\)/g, '%29');
+    }
   }
   const cleanPath = imagePath.replace(/^\.\//, '').replace(/^\//, '');
-  const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-  const baseDomain = isLocal ? 'https://wccba.vercel.app' : window.location.origin;
-  return `${baseDomain}/${cleanPath}`;
+  const isLocal = typeof window !== 'undefined' && window.location && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  const baseDomain = isLocal 
+    ? 'https://wccba.vercel.app' 
+    : (typeof window !== 'undefined' && window.location && window.location.origin ? window.location.origin : 'https://wccba.vercel.app');
+  
+  const encodedPath = cleanPath
+    .split('/')
+    .map(seg => encodeURIComponent(decodeURIComponent(seg)).replace(/\(/g, '%28').replace(/\)/g, '%29'))
+    .join('/');
+
+  return `${baseDomain}/${encodedPath}`;
 }
 
 // --- TOAST NOTIFICATIONS ---
@@ -1370,8 +1387,11 @@ function openProductModal(productId) {
   elements.productModalContent.querySelector('#modalWhatsAppOrderBtn').addEventListener('click', () => {
     const photoUrl = getProductPublicImageUrl(product.image);
     const photoLine = photoUrl ? `\n*📸 Item Photo:* ${photoUrl}` : '';
+    const priceDisplay = isPriceSet(product.price)
+      ? formattedPrice
+      : (product.suggestedPrice ? `GH₵ ${product.suggestedPrice.toFixed(2)} (To confirm)` : 'Pending confirmation');
     const text = encodeURIComponent(
-      `Hello Ohemaa’s Apparel! 👑\nI would like to order:\n\n*Product:* ${product.name}\n*Size:* ${selectedSize}\n*Qty:* ${modalQty}\n*Price:* ${formattedPrice}${photoLine}\n\n*Delivery & Pick-Up Notice:* Deliveries are sent out every *Friday*, or I can *pick up* at your store.\n\nPlease confirm availability and payment details!`
+      `Hello Ohemaa’s Apparel! 👑\nI would like to order:\n\n*Product:* ${product.name}\n*Size:* ${selectedSize}\n*Qty:* ${modalQty}\n*Price:* ${priceDisplay}${photoLine}\n\n*Delivery & Pick-Up Notice:* Deliveries are sent out every *Friday*, or I can *pick up* at your store.\n\nPlease confirm availability and payment details!`
     );
     window.open(`https://wa.me/${state.settings.whatsappNumber}?text=${text}`, '_blank');
   });
@@ -1866,7 +1886,9 @@ async function handleCheckout(isWhatsApp = true) {
 
     msg += `\n*BAG CONTENTS (${state.cart.length} unique styles):*\n`;
     state.cart.forEach((item, idx) => {
-      const priceTxt = isPriceSet(item.price) ? `GH₵ ${(Number(item.price) * item.quantity).toFixed(2)}` : `GH₵ ___ (Price to confirm)`;
+      const priceTxt = isPriceSet(item.price) 
+        ? `GH₵ ${(Number(item.price) * item.quantity).toFixed(2)}` 
+        : (item.suggestedPrice ? `GH₵ ${(Number(item.suggestedPrice) * item.quantity).toFixed(2)} (To confirm)` : `GH₵ Pending (To confirm)`);
       const photoUrl = getProductPublicImageUrl(item.image);
       const photoLine = photoUrl ? `\n   📸 Item Photo: ${photoUrl}` : '';
       msg += `${idx + 1}. *${item.name}*\n   Size: ${item.size} | Qty: ${item.quantity}\n   Price: ${priceTxt}${photoLine}\n`;
@@ -1875,7 +1897,7 @@ async function handleCheckout(isWhatsApp = true) {
     if (pricedSum > 0) {
       msg += `\n*Subtotal:* GH₵ ${pricedSum.toFixed(2)}`;
     } else {
-      msg += `\n*Subtotal:* GH₵ ___ (Awaiting Big Ohemaa's pricing)`;
+      msg += `\n*Subtotal:* GH₵ Pending confirmation (Awaiting Big Ohemaa's pricing)`;
     }
 
     msg += `\n\n*Policy Acknowledgement:*`;

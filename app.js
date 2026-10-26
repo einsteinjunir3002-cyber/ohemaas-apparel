@@ -101,7 +101,22 @@ class StoreState {
 
   saveProducts(newProducts) {
     this.products = newProducts;
-    localStorage.setItem('ohemaa_products', JSON.stringify(this.products));
+    try {
+      localStorage.setItem('ohemaa_products', JSON.stringify(this.products));
+    } catch (e) {
+      console.warn('Could not save full products to localStorage (quota exceeded):', e);
+      try {
+        const lightweight = this.products.map(p => {
+          if (p.image && p.image.length > 50000) {
+            return { ...p, image: './pics/Gh100.jpg.jpeg' };
+          }
+          return p;
+        });
+        localStorage.setItem('ohemaa_products', JSON.stringify(lightweight));
+      } catch (e2) {
+        console.warn('Could not save even lightweight products to localStorage:', e2);
+      }
+    }
   }
 
   async syncProductPriceToSupabase(productId, newPrice) {
@@ -2826,71 +2841,162 @@ function setupEventListeners() {
     }
   });
 
-  // Add New Product
-  elements.addNewProductForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const title = document.getElementById('newProdName').value.trim();
-    const category = 'general'; // kept only because the database requires a value
-    const priceVal = document.getElementById('newProdPrice').value.trim();
-    const sizes = document.getElementById('newProdSizes').value.split(',').map(s => s.trim()).filter(Boolean);
-    const colors = document.getElementById('newProdColors').value.split(',').map(c => c.trim()).filter(Boolean);
-    const badge = document.getElementById('newProdBadge').value.trim();
-    const desc = document.getElementById('newProdDesc').value.trim();
-    const fileInput = document.getElementById('newProdImageFile');
-    const urlInput = document.getElementById('newProdImageUrl');
-
-    const handleCreate = async (imgSrc) => {
-      const newProd = {
-        id: `ohem-${Date.now().toString().slice(-4)}`,
-        name: title,
-        category,
-        image: imgSrc || './pics/Gh100.jpg.jpeg',
-        price: priceVal !== '' ? parseFloat(priceVal) : null,
-        sizes: sizes.length ? sizes : ["S", "M", "L", "Free Size"],
-        colors: colors.length ? colors : ["As Pictured"],
-        badge: badge || "New Drop",
-        description: desc || "Exclusive addition to Ohemaa's Apparel collection.",
-        inStock: true,
-        isFeatured: true
-      };
-
-      state.products.unshift(newProd);
-      state.saveProducts(state.products);
-      
-      // Sync to Supabase
+  // Helper function to compress large camera/phone uploads into lightweight JPEGs
+  function compressImageFile(file, maxDimension = 800, quality = 0.75) {
+    return new Promise((resolve) => {
       try {
-        await supabase.from('ohemaa_products').insert([{
-          id: newProd.id,
-          name: newProd.name,
-          category: newProd.category,
-          image: newProd.image,
-          price: newProd.price,
-          sizes: newProd.sizes,
-          colors: newProd.colors,
-          badge: newProd.badge,
-          description: newProd.description,
-          in_stock: true,
-          is_featured: true
-        }]);
+        const reader = new FileReader();
+        reader.onerror = () => resolve('./pics/Gh100.jpg.jpeg');
+        reader.onload = (e) => {
+          try {
+            const img = new Image();
+            img.onerror = () => resolve('./pics/Gh100.jpg.jpeg');
+            img.onload = () => {
+              try {
+                let { width, height } = img;
+                if (width > maxDimension || height > maxDimension) {
+                  if (width > height) {
+                    height = Math.round((height * maxDimension) / width);
+                    width = maxDimension;
+                  } else {
+                    width = Math.round((width * maxDimension) / height);
+                    height = maxDimension;
+                  }
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                const compressed = canvas.toDataURL('image/jpeg', quality);
+                resolve(compressed);
+              } catch (canvasErr) {
+                console.warn('Canvas compression error, using raw source:', canvasErr);
+                resolve(e.target.result);
+              }
+            };
+            img.src = e.target.result;
+          } catch (imgErr) {
+            console.warn('Image processing error:', imgErr);
+            resolve(e.target.result);
+          }
+        };
+        reader.readAsDataURL(file);
       } catch (err) {
-        console.warn('Supabase product insert error:', err);
+        console.warn('FileReader error:', err);
+        resolve('./pics/Gh100.jpg.jpeg');
+      }
+    });
+  }
+
+  // Add New Product
+  if (elements.addNewProductForm) {
+    elements.addNewProductForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const submitBtn = elements.addNewProductForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn ? submitBtn.innerHTML : 'Add Product to Store';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>⏳ Adding Product...</span>';
       }
 
-      renderProducts();
-      renderAdminPriceTable();
-      renderAdminInventoryList();
-      elements.addNewProductForm.reset();
-      showToast(`Added ${title} to store & Supabase!`, '🎉');
-    };
+      try {
+        const titleInput = document.getElementById('newProdName');
+        const title = titleInput ? titleInput.value.trim() : '';
+        if (!title) {
+          showToast('Please enter a product title', '⚠️');
+          return;
+        }
 
-    if (fileInput.files && fileInput.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (re) => handleCreate(re.target.result);
-      reader.readAsDataURL(fileInput.files[0]);
-    } else {
-      handleCreate(urlInput.value.trim() || './pics/Gh100.jpg.jpeg');
-    }
-  });
+        const category = 'general'; // kept only because the database requires a value
+        const priceInput = document.getElementById('newProdPrice');
+        const priceVal = priceInput ? priceInput.value.trim() : '';
+
+        const sizesInput = document.getElementById('newProdSizes');
+        const sizesVal = sizesInput ? sizesInput.value : '';
+        const sizes = sizesVal ? sizesVal.split(',').map(s => s.trim()).filter(Boolean) : ["S", "M", "L", "Free Size"];
+
+        const colorsInput = document.getElementById('newProdColors');
+        const colorsVal = colorsInput ? colorsInput.value : '';
+        const colors = colorsVal ? colorsVal.split(',').map(c => c.trim()).filter(Boolean) : ["As Pictured"];
+
+        const badgeInput = document.getElementById('newProdBadge');
+        const badge = badgeInput ? badgeInput.value.trim() : '';
+
+        const descInput = document.getElementById('newProdDesc');
+        const desc = descInput ? descInput.value.trim() : '';
+
+        const fileInput = document.getElementById('newProdImageFile');
+        const urlInput = document.getElementById('newProdImageUrl');
+
+        let finalImage = './pics/Gh100.jpg.jpeg';
+        if (fileInput && fileInput.files && fileInput.files[0]) {
+          finalImage = await compressImageFile(fileInput.files[0], 800, 0.75);
+        } else if (urlInput && urlInput.value.trim()) {
+          finalImage = urlInput.value.trim();
+        }
+
+        const newProd = {
+          id: `ohem-${Date.now().toString().slice(-6)}`,
+          name: title,
+          category,
+          image: finalImage,
+          price: priceVal !== '' ? parseFloat(priceVal) : null,
+          sizes: sizes.length ? sizes : ["S", "M", "L", "Free Size"],
+          colors: colors.length ? colors : ["As Pictured"],
+          badge: badge || "New Drop",
+          description: desc || "Exclusive addition to Ohemaa's Apparel collection.",
+          inStock: true,
+          isFeatured: true
+        };
+
+        // 1. Immediately update local state
+        state.products.unshift(newProd);
+        state.saveProducts(state.products);
+
+        // 2. Immediately render all UI components
+        renderProducts();
+        renderAdminPriceTable();
+        renderAdminInventoryList();
+        updateStoreItemCounters();
+
+        // 3. Reset form and notify admin
+        elements.addNewProductForm.reset();
+        showToast(`Added "${title}" to store catalog! ✨`, '🎉');
+
+        // 4. Background sync to Supabase (resilient to offline or network delays)
+        try {
+          const { error } = await supabase.from('ohemaa_products').upsert([{
+            id: newProd.id,
+            name: newProd.name,
+            category: newProd.category,
+            image: newProd.image,
+            price: newProd.price,
+            sizes: newProd.sizes,
+            colors: newProd.colors,
+            badge: newProd.badge,
+            description: newProd.description,
+            in_stock: true,
+            is_featured: true
+          }]);
+          if (error) {
+            console.warn('Supabase product upsert notice:', error.message || error);
+          }
+        } catch (syncErr) {
+          console.warn('Supabase product upsert network error:', syncErr);
+        }
+      } catch (err) {
+        console.error('Error adding product:', err);
+        showToast('Error adding product. Please try again.', '⚠️');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
+      }
+    });
+  }
 
   // Store Settings Form
   elements.storeSettingsForm.addEventListener('submit', (e) => {

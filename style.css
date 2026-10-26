@@ -228,6 +228,42 @@ img.hidden,
   transform: scale(0.92);
 }
 
+/* Wishlist / Favorites Header Button */
+.wishlist-btn {
+  transition: all var(--transition-fast);
+}
+
+.wishlist-btn:hover {
+  background: rgba(255, 71, 87, 0.12);
+  color: #ff4757;
+  border-color: rgba(255, 71, 87, 0.35);
+}
+
+.wishlist-btn:hover svg {
+  stroke: #ff4757;
+}
+
+.wishlist-btn.active {
+  background: rgba(255, 71, 87, 0.22);
+  border-color: #ff4757;
+  color: #ff4757;
+  box-shadow: 0 0 12px rgba(255, 71, 87, 0.35);
+}
+
+.wishlist-btn.active svg {
+  fill: #ff4757;
+  stroke: #ff4757;
+}
+
+.wishlist-btn .count-badge {
+  background: #ff4757;
+  color: #ffffff;
+}
+
+.drawer-wishlist-link .nav-icon {
+  color: #ff4757;
+}
+
 .count-badge {
   position: absolute;
   top: -4px;
@@ -1152,6 +1188,12 @@ img.hidden,
 .chip-remove {
   cursor: pointer;
   font-weight: 800;
+}
+
+.chip.chip-favorite {
+  background: rgba(255, 71, 87, 0.18);
+  border-color: rgba(255, 71, 87, 0.4);
+  color: #ff7588;
 }
 
 /* ==========================================================================

@@ -32,6 +32,7 @@ class StoreState {
     this.priceFilter = 'all';
     this.sortBy = 'featured';
     this.showAllProducts = false;
+    this.favoritesOnly = false;
 
     // Reels Carousel State
     this.currentReelIndex = 0;
@@ -725,6 +726,11 @@ function initApp() {
 function getFilteredProducts() {
   let list = [...state.products];
 
+  // Favorites / Wishlist Filter
+  if (state.favoritesOnly) {
+    list = list.filter(p => state.wishlist.includes(p.id));
+  }
+
   // Search Filter
   if (state.searchQuery.trim() !== '') {
     const q = state.searchQuery.toLowerCase();
@@ -773,11 +779,28 @@ function renderProducts() {
   if (allFiltered.length === 0) {
     elements.catalogEmptyState.classList.remove('hidden');
     if (elements.catalogPaginationWrap) elements.catalogPaginationWrap.classList.add('hidden');
+
+    const emptyIcon = elements.catalogEmptyState.querySelector('.empty-icon');
+    const emptyTitle = elements.catalogEmptyState.querySelector('.empty-state-title');
+    const emptyDesc = elements.catalogEmptyState.querySelector('p');
+    const resetBtn = elements.catalogEmptyState.querySelector('#resetFiltersBtn');
+
+    if (state.favoritesOnly) {
+      if (emptyIcon) emptyIcon.textContent = '💔';
+      if (emptyTitle) emptyTitle.textContent = 'No Favorited Outfits';
+      if (emptyDesc) emptyDesc.textContent = 'You haven’t saved any favorites yet. Tap the ♥ on any outfit or video reel to add it to your favorites!';
+      if (resetBtn) resetBtn.textContent = 'Browse All Outfits';
+    } else {
+      if (emptyIcon) emptyIcon.textContent = '🔍';
+      if (emptyTitle) emptyTitle.textContent = 'No products found';
+      if (emptyDesc) emptyDesc.textContent = 'Try searching with another keyword or reset the filters.';
+      if (resetBtn) resetBtn.textContent = 'Reset All Filters';
+    }
   } else {
     elements.catalogEmptyState.classList.add('hidden');
     
-    // Upfront display: limit to 10 products unless "View All Collections" is toggled
-    const shouldShowAll = state.showAllProducts;
+    // Upfront display: limit to 10 products unless "View All Collections" is toggled or viewing favorites
+    const shouldShowAll = state.showAllProducts || state.favoritesOnly;
     const itemsToDisplay = shouldShowAll ? allFiltered : allFiltered.slice(0, 10);
     
     itemsToDisplay.forEach(product => {
@@ -829,6 +852,20 @@ export function updateStoreItemCounters() {
 
 function updateCatalogPagination(totalCount, displayedCount) {
   if (!elements.catalogPaginationWrap || !elements.viewAllCollectionsBtn) return;
+
+  if (state.favoritesOnly) {
+    elements.catalogPaginationWrap.classList.remove('hidden');
+    elements.viewAllCollectionsBtn.classList.add('hidden');
+    if (elements.catalogCountIndicator) {
+      elements.catalogCountIndicator.innerHTML = `Showing <strong id="displayedProductsCount">${displayedCount}</strong> of <strong id="totalProductsCount">${totalCount}</strong> Favorited Outfits ♥`;
+    }
+    return;
+  }
+
+  elements.viewAllCollectionsBtn.classList.remove('hidden');
+  if (elements.catalogCountIndicator) {
+    elements.catalogCountIndicator.innerHTML = `Showing <strong id="displayedProductsCount">${displayedCount}</strong> of <strong id="totalProductsCount">${totalCount}</strong> Boutique Styles`;
+  }
 
   if (totalCount <= 10) {
     elements.catalogPaginationWrap.classList.add('hidden');
@@ -926,6 +963,9 @@ function createProductCard(product) {
 
 function renderActiveFilterChips() {
   const chips = [];
+  if (state.favoritesOnly) {
+    chips.push({ type: 'favorites', label: `♥ Favorites (${state.wishlist.length})`, className: 'chip-favorite' });
+  }
   if (state.searchQuery.trim() !== '') {
     chips.push({ type: 'search', label: `Search: "${state.searchQuery}"` });
   }
@@ -936,7 +976,7 @@ function renderActiveFilterChips() {
   if (chips.length > 0) {
     elements.activeFilterChips.classList.remove('hidden');
     elements.activeFilterChips.innerHTML = chips.map(c => `
-      <span class="chip">
+      <span class="chip ${c.className || ''}">
         <span>${c.label}</span>
         <span class="chip-remove" data-chip="${c.type}">✕</span>
       </span>
@@ -945,6 +985,13 @@ function renderActiveFilterChips() {
     elements.activeFilterChips.querySelectorAll('.chip-remove, [data-chip="clear-all"]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const type = e.currentTarget.dataset.chip;
+        if (type === 'favorites' || type === 'clear-all') {
+          state.favoritesOnly = false;
+          if (elements.headerWishlistBtn) {
+            elements.headerWishlistBtn.classList.remove('active');
+            elements.headerWishlistBtn.setAttribute('aria-pressed', 'false');
+          }
+        }
         if (type === 'search' || type === 'clear-all') {
           state.searchQuery = '';
           elements.inlineSearchInput.value = '';
@@ -978,7 +1025,35 @@ function updateAdminPriceStatusSummary() {
   elements.adminPricedCount.textContent = priced;
 }
 
-// --- WISHLIST LOGIC ---
+// --- WISHLIST & FAVORITES LOGIC ---
+export function toggleFavoritesFilter(forceState) {
+  const targetState = forceState !== undefined ? forceState : !state.favoritesOnly;
+  state.favoritesOnly = targetState;
+
+  if (elements.headerWishlistBtn) {
+    elements.headerWishlistBtn.classList.toggle('active', state.favoritesOnly);
+    elements.headerWishlistBtn.setAttribute('aria-pressed', state.favoritesOnly ? 'true' : 'false');
+  }
+
+  renderProducts();
+
+  // Scroll smoothly down to the catalog section where products are listed
+  const catalog = document.getElementById('catalogSection');
+  if (catalog) {
+    catalog.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  if (state.favoritesOnly) {
+    if (state.wishlist.length === 0) {
+      showToast("No favorited outfits yet. Tap the ♥ on any outfit to save it!", '♥');
+    } else {
+      showToast(`Showing ${state.wishlist.length} favorited outfit${state.wishlist.length > 1 ? 's' : ''} ♥`, '♥');
+    }
+  } else {
+    showToast('Showing all boutique styles', '🛍️');
+  }
+}
+
 function toggleWishlist(productId, btnElement) {
   const index = state.wishlist.indexOf(productId);
   if (index > -1) {
@@ -991,6 +1066,9 @@ function toggleWishlist(productId, btnElement) {
     showToast('Saved to your favorites', '♥');
   }
   state.saveWishlist();
+  if (state.favoritesOnly) {
+    renderProducts();
+  }
 }
 
 function updateWishlistBadge() {
@@ -999,7 +1077,13 @@ function updateWishlistBadge() {
     elements.wishlistCount.textContent = count;
     elements.wishlistCount.classList.remove('hidden');
   } else {
+    elements.wishlistCount.textContent = '0';
     elements.wishlistCount.classList.add('hidden');
+  }
+
+  const drawerWishlistCount = document.getElementById('drawerWishlistCount');
+  if (drawerWishlistCount) {
+    drawerWishlistCount.textContent = count;
   }
 }
 
@@ -2373,12 +2457,49 @@ function setupEventListeners() {
   elements.resetFiltersBtn.addEventListener('click', () => {
     state.searchQuery = '';
     state.priceFilter = 'all';
+    state.favoritesOnly = false;
     state.showAllProducts = false;
+    if (elements.headerWishlistBtn) {
+      elements.headerWishlistBtn.classList.remove('active');
+      elements.headerWishlistBtn.setAttribute('aria-pressed', 'false');
+    }
     elements.catalogSearchInput.value = '';
     elements.inlineSearchInput.value = '';
     elements.priceFilterSelect.value = 'all';
     renderProducts();
   });
+
+  // Drawer specific wishlist & shop all handlers
+  const drawerWishlistBtn = document.getElementById('drawerWishlistBtn');
+  if (drawerWishlistBtn) {
+    drawerWishlistBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeDrawer();
+      toggleFavoritesFilter(true);
+    });
+  }
+
+  const drawerShopAllBtn = document.getElementById('drawerShopAllBtn');
+  if (drawerShopAllBtn) {
+    drawerShopAllBtn.addEventListener('click', () => {
+      if (state.favoritesOnly) {
+        state.favoritesOnly = false;
+        if (elements.headerWishlistBtn) {
+          elements.headerWishlistBtn.classList.remove('active');
+          elements.headerWishlistBtn.setAttribute('aria-pressed', 'false');
+        }
+        renderProducts();
+      }
+    });
+  }
+
+  // Header Wishlist / Favorites Button
+  if (elements.headerWishlistBtn) {
+    elements.headerWishlistBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleFavoritesFilter();
+    });
+  }
 
   // View All Collections Button Toggle
   if (elements.viewAllCollectionsBtn) {

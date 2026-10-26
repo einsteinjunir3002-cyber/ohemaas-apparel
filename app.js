@@ -1130,9 +1130,9 @@ export function addToCart(product, size, colorOrQty = 1, quantity = 1) {
 
 function updateCartBadges() {
   const totalCount = state.cart.reduce((sum, item) => sum + item.quantity, 0);
-  elements.cartCount.textContent = totalCount;
-  elements.dockCartCount.textContent = totalCount;
-  elements.cartHeaderCount.textContent = `${totalCount} ${totalCount === 1 ? 'Item' : 'Items'}`;
+  if (elements.cartCount) elements.cartCount.textContent = totalCount;
+  if (elements.dockCartCount) elements.dockCartCount.textContent = totalCount;
+  if (elements.cartHeaderCount) elements.cartHeaderCount.textContent = `${totalCount} ${totalCount === 1 ? 'Item' : 'Items'}`;
 }
 
 function openCartDrawer() {
@@ -2531,7 +2531,7 @@ function setupEventListeners() {
   }
 
   // Cart Buttons
-  elements.headerCartBtn.addEventListener('click', openCartDrawer);
+  if (elements.headerCartBtn) elements.headerCartBtn.addEventListener('click', openCartDrawer);
   elements.dockCartBtn.addEventListener('click', openCartDrawer);
   elements.closeCartBtn.addEventListener('click', closeCartDrawer);
   elements.cartOverlay.addEventListener('click', closeCartDrawer);

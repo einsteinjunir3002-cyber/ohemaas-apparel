@@ -3403,6 +3403,7 @@ img.reel-media-element.hidden,
   background: var(--bg-dark);
   z-index: 250;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
 }
@@ -3414,13 +3415,17 @@ img.reel-media-element.hidden,
 /* Admin Login & Sign Up Screens */
 .admin-login-screen {
   flex: 1;
+  min-height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 24px 16px;
+  justify-content: flex-start;
+  padding: 16px 12px calc(36px + env(safe-area-inset-bottom, 24px));
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .admin-login-screen.hidden {
@@ -3458,18 +3463,20 @@ img.reel-media-element.hidden,
 /* Luxury Glassmorphic Card */
 .login-card.glass-luxury {
   width: 100%;
-  max-width: 430px;
-  background: rgba(10, 12, 22, 0.88);
+  max-width: 420px;
+  margin: auto auto;
+  background: rgba(10, 12, 22, 0.92);
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
   border: 1px solid rgba(212, 175, 55, 0.22);
-  border-radius: 28px;
-  padding: 34px 26px 28px;
+  border-radius: 22px;
+  padding: 24px 18px 20px;
   position: relative;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(212, 175, 55, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
   text-align: center;
   overflow: hidden;
   z-index: 2;
+  box-sizing: border-box;
 }
 
 .card-top-hairline {
@@ -3533,10 +3540,10 @@ img.reel-media-element.hidden,
 
 /* Pulsing Crest Icon Box */
 .brand-icon-box {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  margin: 0 auto 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  margin: 0 auto 8px;
   background: rgba(212, 175, 55, 0.12);
   border: 1px solid rgba(212, 175, 55, 0.30);
   display: flex;
@@ -3567,9 +3574,9 @@ img.reel-media-element.hidden,
   font-weight: 700;
   letter-spacing: 0.20em;
   text-transform: uppercase;
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: var(--radius-full);
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .badge-sparkle {
@@ -3578,22 +3585,22 @@ img.reel-media-element.hidden,
 
 .auth-card-title {
   font-family: var(--font-royal);
-  font-size: 2.1rem;
+  font-size: 1.55rem;
   font-weight: 400;
   color: #ffffff;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin: 0 0 6px 0;
+  margin: 0 0 4px 0;
   text-align: center;
 }
 
 .auth-card-desc {
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   color: #94a3b8;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.45;
   max-width: 320px;
-  margin: 0 auto 18px auto;
+  margin: 0 auto 10px auto;
   text-align: center;
 }
 
@@ -3602,13 +3609,13 @@ img.reel-media-element.hidden,
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   background: rgba(212, 175, 55, 0.06);
   border: 1px solid rgba(212, 175, 55, 0.22);
-  border-radius: 12px;
-  padding: 7px 12px;
-  margin: 0 auto 16px;
-  font-size: 0.70rem;
+  border-radius: 10px;
+  padding: 5px 8px;
+  margin: 0 auto 10px;
+  font-size: 0.65rem;
   color: #cbd5e1;
   max-width: 360px;
 }
@@ -3621,7 +3628,7 @@ img.reel-media-element.hidden,
 .admin-login-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   text-align: left;
   width: 100%;
 }
@@ -3629,7 +3636,7 @@ img.reel-media-element.hidden,
 .input-luxury-group {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   text-align: left;
 }
 
@@ -3666,16 +3673,16 @@ img.reel-media-element.hidden,
   width: 100%;
   background: rgba(6, 7, 14, 0.82);
   border: 1px solid rgba(212, 175, 55, 0.22);
-  border-radius: 16px;
-  padding: 13px 14px 13px 44px;
-  font-size: 0.85rem;
+  border-radius: 12px;
+  padding: 10px 12px 10px 40px;
+  font-size: 0.82rem;
   color: #eef1f8;
   font-family: var(--font-body);
   transition: all var(--transition-fast) ease;
 }
 
 .input-luxury.pr-12 {
-  padding-right: 44px;
+  padding-right: 40px;
 }
 
 .input-luxury::placeholder {
@@ -3733,20 +3740,20 @@ img.reel-media-element.hidden,
   color: #07080b;
   font-family: var(--font-body);
   font-weight: 700;
-  font-size: 0.82rem;
+  font-size: 0.80rem;
   letter-spacing: 0.10em;
   text-transform: uppercase;
-  padding: 14px 24px;
+  padding: 11px 18px;
   border: none;
   border-radius: var(--radius-full);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   transition: all var(--transition-fast) ease;
   box-shadow: 0 4px 20px rgba(212, 175, 55, 0.30), 0 1px 3px rgba(0, 0, 0, 0.5);
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .btn-gold-luxury:hover {
@@ -3759,8 +3766,8 @@ img.reel-media-element.hidden,
 .gold-divider-wrap {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin: 18px 0;
+  gap: 10px;
+  margin: 10px 0;
 }
 
 .gold-divider {
@@ -3785,10 +3792,10 @@ img.reel-media-element.hidden,
   color: #f5e4ab;
   font-family: var(--font-body);
   font-weight: 600;
-  font-size: 0.80rem;
+  font-size: 0.78rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 12px 20px;
+  padding: 10px 16px;
   border-radius: var(--radius-full);
   cursor: pointer;
   display: flex;
@@ -3806,8 +3813,8 @@ img.reel-media-element.hidden,
 
 /* Auth Footer Prompts & Gold Links */
 .auth-footer-prompt {
-  margin-top: 18px;
-  font-size: 0.78rem;
+  margin-top: 10px;
+  font-size: 0.75rem;
   color: #64748b;
   text-align: center;
   display: flex;

@@ -43,20 +43,29 @@ class StoreState {
   }
 
   loadReels() {
+    let list = [...REELS_COLLECTION];
     if (typeof localStorage !== 'undefined' && localStorage.getItem) {
       const saved = localStorage.getItem('ohemaa_reels');
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+          if (Array.isArray(parsed) && parsed.length > 0) list = parsed;
         } catch (e) {}
       }
     }
-    return [...REELS_COLLECTION];
+    return list.map(r => ({
+      ...r,
+      src: r.src || r.videoUrl || '',
+      videoUrl: r.videoUrl || r.src || ''
+    }));
   }
 
   saveReels(newReels) {
-    this.reels = newReels;
+    this.reels = (newReels || []).map(r => ({
+      ...r,
+      src: r.src || r.videoUrl || '',
+      videoUrl: r.videoUrl || r.src || ''
+    }));
     if (typeof localStorage !== 'undefined' && localStorage.setItem) {
       try {
         localStorage.setItem('ohemaa_reels', JSON.stringify(this.reels));
@@ -88,12 +97,16 @@ class StoreState {
         .eq('key', 'store_reels')
         .single();
       if (data && Array.isArray(data.value) && data.value.length > 0) {
-        this.reels = data.value;
+        this.reels = data.value.map(r => ({
+          ...r,
+          src: r.src || r.videoUrl || '',
+          videoUrl: r.videoUrl || r.src || ''
+        }));
         if (typeof localStorage !== 'undefined' && localStorage.setItem) {
           localStorage.setItem('ohemaa_reels', JSON.stringify(this.reels));
         }
+        renderReelProgressBars();
         renderReelsShowcaseTrack();
-        initReelsEngine();
         renderAdminReelsList();
         if (elements.adminReelsBadge) elements.adminReelsBadge.textContent = this.reels.length;
         if (elements.adminReelsCount) elements.adminReelsCount.textContent = this.reels.length;
@@ -1490,8 +1503,14 @@ function closeProductModal() {
 // INTERACTIVE REELS CAROUSEL ENGINE (BACK & FORWARD ARROWS & PROGRESS BARS)
 // ==========================================================================
 
-function initReelsEngine() {
-  // Render Progress Bars for every reel
+// ==========================================================================
+// INTERACTIVE REELS CAROUSEL ENGINE (BACK & FORWARD ARROWS & PROGRESS BARS)
+// ==========================================================================
+
+let reelsEngineInitialized = false;
+
+function renderReelProgressBars() {
+  if (!elements.reelProgressBarWrap) return;
   elements.reelProgressBarWrap.innerHTML = '';
   state.reels.forEach((_, idx) => {
     const segment = document.createElement('div');
@@ -1501,8 +1520,21 @@ function initReelsEngine() {
     fill.className = 'reel-prog-fill';
     fill.id = `reelFill-${idx}`;
     segment.appendChild(fill);
+    segment.addEventListener('click', (e) => {
+      e.stopPropagation();
+      state.currentReelIndex = idx;
+      renderCurrentReel();
+    });
     elements.reelProgressBarWrap.appendChild(segment);
   });
+}
+
+function initReelsEngine() {
+  renderReelProgressBars();
+  renderReelsShowcaseTrack();
+
+  if (reelsEngineInitialized) return;
+  reelsEngineInitialized = true;
 
   // Navigation Arrows
   elements.reelPrevBtn.addEventListener('click', (e) => {
@@ -1584,6 +1616,19 @@ function initReelsEngine() {
     nextReel();
   });
 
+  // Error fallback for video
+  elements.reelModalVideo.addEventListener('error', (e) => {
+    console.warn('Reel video playback error:', e);
+    const current = state.reels[state.currentReelIndex];
+    if (current && current.poster) {
+      elements.reelModalVideo.style.display = 'none';
+      elements.reelModalVideo.classList.add('hidden');
+      elements.reelModalImage.style.display = 'block';
+      elements.reelModalImage.classList.remove('hidden');
+      elements.reelModalImage.src = current.poster;
+    }
+  });
+
   // Keyboard navigation
   window.addEventListener('keydown', (e) => {
     if (!elements.reelModal.classList.contains('hidden')) {
@@ -1615,9 +1660,6 @@ function initReelsEngine() {
       prevReel(); // Swipe Right -> Previous
     }
   }, { passive: true });
-
-  // Render on-page showcase rail with all videos
-  renderReelsShowcaseTrack();
 }
 
 function renderReelsShowcaseTrack() {
@@ -1634,10 +1676,9 @@ function renderReelsShowcaseTrack() {
     card.setAttribute('tabindex', '0');
     card.setAttribute('aria-label', `Play reel ${idx + 1} of ${state.reels.length}: ${reel.title}`);
 
+    const videoSrc = reel.src || reel.videoUrl || '';
     card.innerHTML = `
-      <video class="reel-card-video" playsinline loop muted preload="metadata" poster="${escapeHtml(reel.poster)}">
-        <source src="${escapeHtml(reel.src)}" type="video/mp4">
-      </video>
+      <video class="reel-card-video" playsinline loop muted preload="metadata" poster="${escapeHtml(reel.poster || '')}" src="${escapeHtml(videoSrc)}"></video>
       <div class="reel-card-overlay">
         <div class="reel-card-top">
           <span class="reel-card-tag">${escapeHtml(reel.tag || 'Live Reel')}</span>
@@ -1646,7 +1687,7 @@ function renderReelsShowcaseTrack() {
         <div class="reel-card-play-center" aria-hidden="true">▶</div>
         <div class="reel-card-bottom">
           <h3 class="reel-card-title">${escapeHtml(reel.title)}</h3>
-          <p class="reel-card-desc">${escapeHtml(reel.description)}</p>
+          <p class="reel-card-desc">${escapeHtml(reel.description || '')}</p>
           <div class="reel-card-actions">
             <button type="button" class="reel-card-action-btn primary" data-action="watch" data-index="${idx}">
               ▶ Watch Reel
@@ -1682,14 +1723,14 @@ function renderReelsShowcaseTrack() {
     });
 
     // Video hover preview on desktop
-    const videoEl = card.querySelector('video');
-    if (videoEl) {
+    const cardVideo = card.querySelector('video');
+    if (cardVideo) {
       card.addEventListener('mouseenter', () => {
-        videoEl.play().catch(() => {});
+        cardVideo.play().catch(() => {});
       });
       card.addEventListener('mouseleave', () => {
-        videoEl.pause();
-        videoEl.currentTime = 0;
+        cardVideo.pause();
+        try { cardVideo.currentTime = 0; } catch (_) {}
       });
     }
 
@@ -1727,8 +1768,12 @@ function renderCurrentReel() {
   const reel = state.reels[state.currentReelIndex];
   if (!reel) return;
 
-  // Update Counter Badge (e.g. "1 / 10")
-  elements.reelCounterBadge.textContent = `${state.currentReelIndex + 1} / ${state.reels.length}`;
+  const videoSrc = reel.src || reel.videoUrl || '';
+
+  // Update Counter Badge (e.g. "1 / 14")
+  if (elements.reelCounterBadge) {
+    elements.reelCounterBadge.textContent = `${state.currentReelIndex + 1} / ${state.reels.length}`;
+  }
 
   // Update Progress Bars
   document.querySelectorAll('.reel-prog-segment').forEach((seg, idx) => {
@@ -1746,70 +1791,81 @@ function renderCurrentReel() {
   });
 
   // Media Render: Video vs Image
-  if (reel.type === 'video') {
+  if (reel.type === 'video' && videoSrc) {
     elements.reelModalImage.style.display = 'none';
     elements.reelModalImage.classList.add('hidden');
     elements.reelModalVideo.style.display = 'block';
     elements.reelModalVideo.classList.remove('hidden');
 
-    // Load THIS reel's own video file
     const videoEl = elements.reelModalVideo;
-    if (videoEl.dataset.reelId !== reel.id) {
+    if (videoEl.dataset.reelId !== reel.id || videoEl.src !== videoSrc) {
       videoEl.pause();
       videoEl.dataset.reelId = reel.id;
       videoEl.poster = reel.poster || '';
-      videoEl.src = reel.src;
+      videoEl.src = videoSrc;
       videoEl.load();
     }
-    videoEl.currentTime = 0;
+    try {
+      videoEl.currentTime = 0;
+    } catch (_) {}
+
     videoEl.muted = false;
     const playAttempt = videoEl.play();
     if (playAttempt && typeof playAttempt.catch === 'function') {
       playAttempt.catch(() => {
-        // Browsers may block sound until the first tap - fall back to silent playback
+        // Browsers may block sound until user gesture - fall back to silent playback
         videoEl.muted = true;
-        elements.reelSoundIcon.textContent = '🔇';
+        if (elements.reelSoundIcon) elements.reelSoundIcon.textContent = '🔇';
         videoEl.play().catch(() => {});
       });
     }
-    elements.reelSoundIcon.textContent = videoEl.muted ? '🔇' : '🔊';
+    if (elements.reelSoundIcon) {
+      elements.reelSoundIcon.textContent = videoEl.muted ? '🔇' : '🔊';
+    }
+    if (elements.reelPlayToggle) {
+      elements.reelPlayToggle.classList.remove('show');
+    }
   } else {
     elements.reelModalVideo.pause();
     elements.reelModalVideo.style.display = 'none';
     elements.reelModalVideo.classList.add('hidden');
     elements.reelModalImage.style.display = 'block';
     elements.reelModalImage.classList.remove('hidden');
-    elements.reelModalImage.src = reel.src;
+    elements.reelModalImage.src = reel.poster || reel.src || './pics/Gh100.jpg.jpeg';
     elements.reelModalImage.alt = reel.title || 'Reel Outfit';
 
-    // Start 5-second automatic progression for photo reel
     startPhotoReelTimer(5000);
   }
 
   // Update Text Details
-  elements.reelCurrentTag.textContent = reel.tag || 'Ohemaa Fit';
-  elements.reelCurrentTitle.textContent = reel.title;
-  elements.reelCurrentDesc.textContent = reel.description;
+  if (elements.reelCurrentTag) elements.reelCurrentTag.textContent = reel.tag || 'Ohemaa Fit';
+  if (elements.reelCurrentTitle) elements.reelCurrentTitle.textContent = reel.title;
+  if (elements.reelCurrentDesc) elements.reelCurrentDesc.textContent = reel.description || '';
 
   // "Shop This Look" Button
-  elements.reelShopBtn.onclick = () => {
-    closeReelModal();
-    if (reel.productId) {
-      openProductModal(reel.productId);
-    } else {
-      window.location.hash = '#catalogSection';
-    }
-  };
+  if (elements.reelShopBtn) {
+    elements.reelShopBtn.onclick = () => {
+      closeReelModal();
+      if (reel.productId) {
+        openProductModal(reel.productId);
+      } else {
+        const catalog = document.getElementById('catalogSection');
+        if (catalog) catalog.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+  }
 
   // "Order on WhatsApp" Button
-  elements.reelWhatsAppOrderBtn.onclick = () => {
-    const photoUrl = getProductPublicImageUrl(reel.poster || reel.src);
-    const photoLine = photoUrl ? `\n*📸 Look Photo:* ${photoUrl}` : '';
-    const text = encodeURIComponent(
-      `Hello Ohemaa’s Apparel! 👑\nI just watched your *${reel.title}* story reel and would love to order this look!${photoLine}\n\nPolicy Check: I understand deliveries are on Friday only, or store pick-up is available.\n\nPlease confirm availability!`
-    );
-    window.open(`https://wa.me/${state.settings.whatsappNumber}?text=${text}`, '_blank');
-  };
+  if (elements.reelWhatsAppOrderBtn) {
+    elements.reelWhatsAppOrderBtn.onclick = () => {
+      const photoUrl = getProductPublicImageUrl(reel.poster || reel.src || './pics/Gh100.jpg.jpeg');
+      const photoLine = photoUrl ? `\n*📸 Look Photo:* ${photoUrl}` : '';
+      const text = encodeURIComponent(
+        `Hello Ohemaa’s Apparel! 👑\nI just watched your *${reel.title}* story reel and would love to order this look!${photoLine}\n\nPolicy Check: I understand deliveries are on Friday only, or store pick-up is available.\n\nPlease confirm availability!`
+      );
+      window.open(`https://wa.me/${state.settings.whatsappNumber}?text=${text}`, '_blank');
+    };
+  }
 
   updateReelWishlistState();
 }
@@ -2626,8 +2682,8 @@ function renderAdminReelsList() {
         state.reels = state.reels.filter(r => r.id !== id);
         state.saveReels(state.reels);
         renderAdminReelsList();
+        renderReelProgressBars();
         renderReelsShowcaseTrack();
-        initReelsEngine();
         showToast('Video reel deleted', '🗑️');
       }
     });
@@ -3390,6 +3446,7 @@ function setupEventListeners() {
           productId: productId || null,
           description: desc || 'Exclusive motion look from Ohemaa’s Apparel collection.',
           type: 'video',
+          src: videoSource,
           videoUrl: videoSource,
           poster: posterSource || './pics/Gh100.jpg.jpeg',
           views: 0
@@ -3399,8 +3456,8 @@ function setupEventListeners() {
         state.saveReels(state.reels);
 
         renderAdminReelsList();
+        renderReelProgressBars();
         renderReelsShowcaseTrack();
-        initReelsEngine();
 
         elements.addNewReelForm.reset();
         if (elements.reelVideoPreviewGroup) {
@@ -3425,13 +3482,13 @@ function setupEventListeners() {
 
   if (elements.resetReelsDefaultBtn) {
     elements.resetReelsDefaultBtn.addEventListener('click', () => {
-      if (confirm('Restore the default 13 boutique video reels?')) {
+      if (confirm('Restore default boutique video reels?')) {
         state.reels = [...REELS_COLLECTION];
         state.saveReels(state.reels);
         renderAdminReelsList();
+        renderReelProgressBars();
         renderReelsShowcaseTrack();
-        initReelsEngine();
-        showToast('Restored default 13 video reels! 🎬', '↺');
+        showToast('Restored default boutique video reels! 🎬', '↺');
       }
     });
   }
@@ -3475,8 +3532,8 @@ function setupEventListeners() {
         renderAdminInventoryList();
         renderAdminReelsList();
         populateReelProductDropdown();
+        renderReelProgressBars();
         renderReelsShowcaseTrack();
-        initReelsEngine();
         updateStoreItemCounters();
         showToast('Store data restored successfully!', '✅');
       } catch (err) {

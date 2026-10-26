@@ -8,9 +8,22 @@ export const SUPABASE_CONFIG = {
 
 export const REELS_COLLECTION = [
   {
+    id: "reel-1793038220944",
+    type: "video",
+    src: "./pics/reel-testing.mp4",
+    videoUrl: "./pics/reel-testing.mp4",
+    poster: "./pics/reel-testing-poster.jpg",
+    title: "Testing",
+    subtitle: "Ignore this okay",
+    description: "Available as seen",
+    productId: "ohem-687217",
+    tag: "Live Reel"
+  },
+  {
     id: "reel-0",
     type: "video",
     src: "./pics/VID-20261022-WA0108.mp4",
+    videoUrl: "./pics/VID-20261022-WA0108.mp4",
     poster: "./pics/Gh100.jpg.jpeg",
     title: "Studio Walkthrough & Co-ord Outfits",
     subtitle: "Friday Drop Lookbook Preview",

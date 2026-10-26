@@ -4346,13 +4346,39 @@ img.reel-media-element.hidden,
   border-radius: 3px;
 }
 
-/* Admin Video Reels List */
+/* Admin Video Reels Tab Dimensions & Screen Fit */
+#reelsTab {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+#reelsTab .tab-two-col {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#reelsTab .admin-card {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+
+#reelsTab .input-group input[type="file"] {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 0.78rem;
+  padding: 7px 8px;
+}
+
 .admin-reels-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
   max-height: 520px;
   overflow-y: auto;
+  box-sizing: border-box;
+  padding-right: 2px;
 }
 
 .reel-admin-row {
